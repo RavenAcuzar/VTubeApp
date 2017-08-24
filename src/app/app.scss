@@ -14,6 +14,7 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
 .menubanner{
     background-image: url("../assets/img/menu_banner.jpg");
     background-size: 100% 100%;
@@ -37,6 +38,10 @@
     position: absolute;
     bottom: 2px;
     left: 20px;
+    
+    > h6{
+        margin-bottom: -1rem;
+    }
 }
 .userpoints{
     position: absolute;
@@ -54,6 +59,17 @@
     }
 }
 
+.menuItems{
+    color:#616161;
+
+    &.item-block > .item-inner{
+        border-bottom: 0;
+    }
+}
+
+
+
 .activeHighlight{
     background-color: map-get($colors, secondary );
+    color: #232323;
 }

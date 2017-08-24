@@ -4,19 +4,33 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
-
+import { ChannelsPage } from "../pages/channels/channels";
+import { ChannelPrevPage } from "../pages/channel-prev/channel-prev";
+import { DownloadsPage } from "../pages/downloads/downloads";
+import { LoginPage } from "../pages/login/login";
+import { NowPlayingPage } from "../pages/now-playing/now-playing";
+import { PlaylistPage } from "../pages/playlist/playlist";
+import { ProfilePage } from "../pages/profile/profile";
+import { SearchPage } from "../pages/search/search";
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { PopoverPage } from "./popover";
 
 
+
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ListPage,
+    ChannelsPage,
+    ChannelPrevPage,
+    DownloadsPage,
+    LoginPage,
+    NowPlayingPage,
+    PlaylistPage,
+    ProfilePage,
+    SearchPage,
     PopoverPage
   ],
   imports: [
@@ -27,7 +41,14 @@ import { PopoverPage } from "./popover";
   entryComponents: [
     MyApp,
     HomePage,
-    ListPage,
+    ChannelsPage,
+    ChannelPrevPage,
+    DownloadsPage,
+    LoginPage,
+    NowPlayingPage,
+    PlaylistPage,
+    ProfilePage,
+    SearchPage,
     PopoverPage
   ],
   providers: [

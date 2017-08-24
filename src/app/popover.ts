@@ -12,6 +12,7 @@ export class PopoverPage {
   constructor(public viewCtrl: ViewController) {}
 
   close() {
+    //do add to playlist code here//
     this.viewCtrl.dismiss();
   }
 }

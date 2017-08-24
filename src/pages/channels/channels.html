@@ -1,0 +1,51 @@
+<!--
+  Generated template for the ChannelsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar no-border-bottom>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Channels</ion-title>
+  </ion-navbar>
+   <ion-toolbar no-border-top>
+    <ion-segment [(ngModel)]="channelType" mode="md">
+      <ion-segment-button value="myChannel">
+        My Channel
+      </ion-segment-button>
+      <ion-segment-button value="allChannels">
+        All Channels
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+  <div [ngSwitch]="channelType">
+    <!--MY CHANNEL SECTION  -->
+    <ion-list *ngSwitchCase="'myChannel'">
+      Hi
+    </ion-list>
+
+    <!--ALL CHANNELS SECTION  -->
+    <ion-list *ngSwitchCase="'allChannels'">
+      <ion-item>
+        <h6>Following</h6>
+        <ion-scroll scrollX="true" direction="x">
+          <ion-card >
+            <img src="assets/img/avatarSample.png"/>
+            <ion-item>
+              <h2>Channel Name</h2>
+              <p># Followers</p>
+            </ion-item>
+          </ion-card>
+        </ion-scroll>
+      </ion-item>
+    </ion-list>
+
+  </div>
+</ion-content>

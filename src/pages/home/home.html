@@ -24,6 +24,7 @@
   </ion-toolbar>
 </ion-header>
 
+<!--ADD IONIC INFINITE SCROLL IN CONTENT  -->
 <ion-content>
   <div [ngSwitch]="vidType">
     <ion-list *ngSwitchCase="'freeVid'">
@@ -53,7 +54,7 @@
             <p>Channel Name &bull; # Views</p>
             <p><ion-icon name="globe"></ion-icon>: EN, RU, TR, &hellip;</p>
             <div item-end icon-only (click)="presentPopover($event)">
-              <ion-icon name="more"></ion-icon>
+              <ion-icon name="md-more"></ion-icon>
             </div>
           </ion-item>
         </ion-card>
@@ -90,7 +91,7 @@
           <p>Channel Name &bull; # Views</p>
           <p><ion-icon name="globe"></ion-icon> : No Subtitles Available</p>
           <div item-end icon-only (click)="presentPopover($event)">
-            <ion-icon name="more"></ion-icon>
+            <ion-icon name="md-more"></ion-icon>
           </div>
         </ion-item>
       </ion-card>
