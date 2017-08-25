@@ -15,6 +15,8 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+
+
 .menubanner{
     background-image: url("../assets/img/menu_banner.jpg");
     background-size: 100% 100%;
@@ -45,7 +47,7 @@
 }
 .userpoints{
     position: absolute;
-    left: 200px;
+    right: 15px;
     bottom: 0;
     text-align: end;
 

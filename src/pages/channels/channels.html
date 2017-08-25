@@ -27,25 +27,346 @@
 <ion-content padding>
   <div [ngSwitch]="channelType">
     <!--MY CHANNEL SECTION  -->
-    <ion-list *ngSwitchCase="'myChannel'">
-      Hi
-    </ion-list>
+    <div *ngSwitchCase="'myChannel'">
+      <div class="channelMain">
+        <img src="assets/img/channel-banner.jpg"/>
+        <div class="channelDetail">
+          <img src="assets/img/avatarChannel3.png"/>
+        </div>
+        <div class="channelDetails">
+            <h6>CHANNEL NAME</h6>
+            <p>321321 Followers</p>
+          </div>
+      </div>
+        <details>
+          <summary>See Description</summary>
+          <div>
+            <h3>Description</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+          </div>
+        </details>
+         <div padding>
+            <h4>UPLOADS</h4>
+            <ion-card>
+          <div class="parent">
+            <img src="assets/img/cardIMG.jpg" />
+            <div class="duration">
+              <ion-badge color="duration">00:00</ion-badge>
+            </div>
+            <div class="vidpoints">
+             <ion-chip color="secondary" >
+                <ion-icon name="star"></ion-icon>
+                <ion-label>40 Points</ion-label>
+              </ion-chip>
+            </div>
+            <div class="vidplay">
+              <ion-icon name="play"></ion-icon>
+            </div>
+          </div>
+
+          <ion-item>
+            <ion-avatar item-start>
+              <img src="assets/img/volt-placeholder.png" />
+            </ion-avatar>
+            <h2>Title</h2>
+            <p>Channel Name &bull; # Views</p>
+            <p><ion-icon name="globe"></ion-icon>: EN, RU, TR, &hellip;</p>
+            <div item-end icon-only (click)="presentPopover($event)">
+              <ion-icon name="md-more"></ion-icon>
+            </div>
+          </ion-item>
+        </ion-card>
+          </div>
+    </div>
 
     <!--ALL CHANNELS SECTION  -->
-    <ion-list *ngSwitchCase="'allChannels'">
-      <ion-item>
+    <div *ngSwitchCase="'allChannels'">
+      <div class="divider">
         <h6>Following</h6>
         <ion-scroll scrollX="true" direction="x">
-          <ion-card >
-            <img src="assets/img/avatarSample.png"/>
-            <ion-item>
-              <h2>Channel Name</h2>
-              <p># Followers</p>
-            </ion-item>
-          </ion-card>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
         </ion-scroll>
-      </ion-item>
-    </ion-list>
+      </div>
+      <div class="divider">
+        <h6>Recommended</h6>
+        <ion-scroll scrollX="true" direction="x">
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+        </ion-scroll>
+      </div>
+      <div class="divider">
+        <h6>All Channels</h6>
+        <ion-scroll scrollX="true" direction="x">
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel3.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+          <div class="channelBlock">
+            <ion-card class="channelCard">
+              <img src="assets/img/avatarChannel2.png"/>
+            </ion-card>
+            <div>
+              <b>Channel Name</b><br>
+              # Followers
+            </div>
+          </div>
+        </ion-scroll>
+      </div>
+    </div>
 
   </div>
 </ion-content>
