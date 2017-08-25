@@ -29,7 +29,7 @@
   <div [ngSwitch]="vidType">
     <ion-list *ngSwitchCase="'freeVid'">
         <!--here goes vid cards  ng-repeat-->
-        <ion-card>
+        <ion-card (click)="playVideo('')">
           <div class="parent">
             <img src="assets/img/cardIMG.jpg" />
             <div class="duration">
