@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
 import { PopoverPage } from "../../app/popover";
+import { ChannelPrevPage } from "../channel-prev/channel-prev";
 
 /**
  * Generated class for the ChannelsPage page.
@@ -30,5 +31,7 @@ export class ChannelsPage {
       ev: myEvent
     });
   }
-
+  goToChannelView(){
+    this.navCtrl.push(ChannelPrevPage);
+  }
 }
