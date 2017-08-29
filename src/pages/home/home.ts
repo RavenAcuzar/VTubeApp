@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, PopoverController } from 'ionic-angular';
 import { PopoverPage } from "../../app/popover";
+import { NowPlayingPage } from "../now-playing/now-playing";
 
 
 @Component({
@@ -18,6 +19,10 @@ export class HomePage {
     popover.present({
       ev: myEvent
     });
+  }
+
+  playVideo(id: string) {
+    this.navCtrl.push(NowPlayingPage);
   }
 }
 

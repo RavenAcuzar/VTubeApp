@@ -1,3 +1,220 @@
 page-now-playing {
+    > ion-content > div.scroll-content > ion-content {
+        margin-top: 40vh;
+    }
 
+    .vid-header {
+        display: flex;
+        align-items: flex-start;
+        padding: 8px 16px 0px 16px;
+
+        .vid-info {
+            flex-grow: 1;
+    
+            h1 { font-weight: normal; font-size: 12pt; margin: 5px 0px; }
+            h4 { font-weight: normal; font-size: 10pt; margin: 7px 0 10px 0; color: #7d7d7d; }
+        }
+
+        #vidDescToggle {
+            flex-shrink: 0;
+            font-size: 16pt;
+            width: 40px;
+            height: 40px;
+
+            color: #3a3a3a;
+            background-color: transparent;
+    
+            box-shadow: none;
+            -webkit-box-shadow: none;
+        }
+    }
+
+    .vid-description {
+        padding: 0 16px;
+        color: #666;
+        font-size: 10pt;
+        margin-bottom: 15px;
+    }
+
+    .vid-channel-info {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid #ddd;
+
+        > :not(:last-child) {
+            margin-right: 10px;
+        }
+
+        button.btn-follow {
+            flex-shrink: 0;
+        }
+
+        ion-img {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+        }
+
+        div.info {
+            flex-grow: 1;
+
+            h1 { font-weight: normal; font-size: 10pt; margin: 0 0 5px 0; }
+            h4 { font-weight: normal; font-size: 8pt; margin: 7px 0 0 0; color: #7d7d7d; }
+        }
+    }
+
+    .container-vid-actions {
+        border-bottom: 1px solid #ddd;
+
+        ion-grid {
+            padding: 0;
+            margin: 0 0 8px 0;
+
+            ion-row {
+                text-align: center;
+            }
+        }
+        
+        div.vid-actions {
+            height: 50px;
+            
+            .text { 
+                font-size: 1.1rem;
+                margin-top: -1px;
+                display: block;
+            }
+
+            button {
+                color: #3a3a3a;
+                background-color: transparent;
+                text-transform: unset;
+        
+                box-shadow: none;
+                -webkit-box-shadow: none;
+
+                &.activated {
+                    box-shadow: none;
+                    -webkit-box-shadow: none;
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+
+    .vid-related-vids {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+
+        h4 {
+            font-size: 1.5rem;
+            color: #444;
+            margin-top: 0;
+        }
+
+        .container-videos {
+            > :not(:last-child) {
+                padding-bottom: 15px;
+            }
+
+            .video-box {
+                display: flex;
+                flex-direction: row;
+                flex-basis: content;
+                
+                > :not(:last-child) {
+                    margin-right: 10px;
+                }
+
+                ion-img {
+                    width: 40vw;
+                    contain: none;
+                }
+
+                .info {
+                    h2 {
+                        font-size: 12pt;
+                        margin: 0 0 5px 0;
+                        font-weight: normal;
+                    }
+                    p {
+                        color: #7d7d7d;
+                        font-size: 10pt;
+                        margin: 0;
+
+                        > span {
+                            display: inline-block;
+
+                            &.points {
+                                border-radius: 2px;
+                                padding: 3px 3px 1px 3px;
+                                background-color: #777;
+                                font-size: 9pt;
+                                color: white;
+                            }
+                        }
+                    }
+                }
+
+                button {
+                    padding: 0px 10px 5px 10px;
+                    font-size: 15pt;
+                    color: #3a3a3a;
+                    background-color: transparent;
+            
+                    box-shadow: none;
+                    -webkit-box-shadow: none;
+                }
+            }
+        }
+    }
+    
+    .vid-comments {
+        padding: 15px;
+
+        h4 {
+            font-size: 1.5rem;
+            color: #444;
+            margin-top: 0;
+        }
+
+        div.comment-box {
+            display: flex;
+            flex-direction: row;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            
+            button { align-self: flex-end; }
+
+            > :not(:last-child) { margin-right: 10px; }
+
+            ion-img {
+                flex-shrink: 0;
+                width: 50px;
+                height: 50px;
+            }
+
+            ion-textarea {
+                align-self: stretch;
+                border-radius: 5px;
+                border: 1px solid #eee;
+
+                textarea { margin: 6px; }
+            }
+
+            &.uneditable {
+                .content {
+                    h3 {
+                        margin: 0 0 5px 0;
+                        font-size: 9pt;
+                    }
+                    p {
+                        margin: 0 0 5px 0;
+                    }
+                }
+            }
+        }
+    }
 }
