@@ -1,6 +1,16 @@
 page-now-playing {
-    ion-navbar button.bar-button {
-        color: white;
+    ion-header {
+        z-index: 20;
+
+        > ion-navbar {
+            > div.toolbar-background {
+                background: linear-gradient(rgba(0,0,0,0.6), transparent) !important;
+            }
+    
+            button.bar-button {
+                color: white;
+            }
+        }
     }
 
     > ion-content {
@@ -15,7 +25,11 @@ page-now-playing {
     }
 
     .videoPlayer {
-        z-index: 1;
+        z-index: 10;
+        height: 40vh;
+        min-height: 200px;
+        width: 100%;
+        background-color: black;
     }
 
     .vid-header {
