@@ -1,18 +1,137 @@
-<!--
-  Generated template for the NowPlayingPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>Now-Playing</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
-
-<ion-content padding>
-
+<ion-content no-padding>
+  <video ion-fixed controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer"
+    style="height: 40vh; width: 100%; background-color: black;">
+    <source src="https://player.vimeo.com/external/85569724.sd.mp4?s=43df5df0d733011263687d20a47557e4" type="video/mp4" />
+  </video>
+  <ion-content no-padding>
+    <div class="vid-header">
+      <div class="vid-info">
+        <h1>Lorem Ipsum Dolor Sit Amet</h1>
+        <h4>900K views</h4>
+      </div>
+      <button ion-button padding-bottom="false" id="vidDescToggle" (click)="toggleDescriptionVisibility()">
+        <ion-icon name="{{vidDescButtonIcon}}"></ion-icon>
+      </button>
+    </div>
+    <div class="vid-description" [hidden]="!isDescriptionShown">
+      <p>Lorem ipsum dolor sit amet, aliquip deserunt id cum, eu eos mundi nonumes tacimates. Eum iisque oporteat persequeris
+        no, quodsi habemus laboramus at sit, dicit insolens eu sed. Et has modo adolescens, eu repudiare constituam cum.
+        Has te utinam ridens theophrastus, an enim idque voluptatibus usu, est an magna atomorum maluisset. No vix vidisse
+        virtute, vix veri omnium verear ad, ut nam eius eripuit delenit. Duo ei dolor quodsi iudicabit, at qui liber complectitur,
+        idque labitur nec ei.</p>
+    </div>
+    <div class="container-vid-actions">
+      <ion-grid>
+        <ion-row>
+          <ion-col col-3>
+            <div class="vid-actions">
+              <button ion-button icon-only block>
+                <ion-icon class="icon" name="md-heart"></ion-icon>
+              </button>
+              <span class="text">7K</span>
+            </div>
+          </ion-col>
+          <ion-col col-3>
+            <div class="vid-actions">
+              <button ion-button icon-only block>
+                <ion-icon class="icon" name="md-download"></ion-icon>
+              </button>
+              <span class="text">Download</span>
+            </div>
+          </ion-col>
+          <ion-col col-3>
+            <div class="vid-actions">
+              <button ion-button icon-only block>
+                <ion-icon class="icon" name="md-globe"></ion-icon>
+              </button>
+              <span class="text">Set language</span>
+            </div>
+          </ion-col>
+          <ion-col col-3>
+            <div class="vid-actions">
+              <button ion-button icon-only block>
+                <ion-icon class="icon" name="md-add"></ion-icon>
+              </button>
+              <span class="text">Add to</span>
+              <span class="text">playlist</span>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div class="vid-channel-info">
+      <ion-img></ion-img>
+      <div class="info">
+        <h1>The V Official Channel</h1>
+        <h4>10K followers</h4>
+      </div>
+      <button ion-button round outline class="btn-follow">
+        <span>Follow</span>
+      </button>
+    </div>
+    <div class="vid-related-vids">
+      <h4>Related Videos</h4>
+      <div class="container-videos">
+        <div class="video-box">
+          <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
+          <div class="info">
+            <h2>Lorem ipsum dolor sit amet</h2>
+            <p>
+              <span class="channel">The V Official Channel</span>
+              <span>&nbsp;&bull;&nbsp;</span>
+              <span class="views">900K views</span>
+              <span>&nbsp;&bull;&nbsp;</span>
+              <span class="points">40 points</span>
+            </p>
+          </div>
+          <button ion-button padding-bottom="false">
+            <ion-icon name="md-more"></ion-icon>
+          </button>
+        </div>
+        <div class="video-box">
+          <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
+          <div class="info">
+            <h2>Lorem ipsum dolor sit amet</h2>
+            <p>
+              <span class="channel">The V Official Channel</span>
+              <span>&nbsp;&bull;&nbsp;</span>
+              <span class="views">900K views</span>
+              <span>&nbsp;&bull;&nbsp;</span>
+              <span class="points">40 points</span>
+            </p>
+          </div>
+          <button ion-button padding-bottom="false">
+            <ion-icon name="md-more"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="vid-comments">
+      <h4>Comments</h4>
+      <div class="comment-box">
+        <ion-img src="assets/img/volt-placeholder.png"></ion-img>
+        <ion-textarea class="txt-comment" placeholder="Leave a comment"></ion-textarea>
+        <button ion-button>Post</button>
+      </div>
+      <div class="container-comments">
+        <div class="comment-box uneditable">
+          <ion-img src="assets/img/volt-placeholder.png"></ion-img>
+          <div class="content">
+            <h3>VP Donna Marie</h3>
+            <p>Lorem ipsum dolor sit amet, aliquip deserunt id cum, eu eos mundi nonumes tacimates. Eum iisque oporteat persequeris
+              no, quodsi habemus laboramus at sit, dicit insolens eu sed. Et has modo adolescens, eu repudiare constituam
+              cum. Has te utinam ridens theophrastus, an enim idque voluptatibus usu, est an magna atomorum maluisset.</p>
+          </div>
+        </div>
+        <div class="comment-box uneditable">
+          <ion-img src="assets/img/volt-placeholder.png"></ion-img>
+          <div class="content">
+            <h3>VP George Arun</h3>
+            <p>No vix vidisse virtute, vix veri omnium verear ad, ut nam eius eripuit delenit. Duo ei dolor quodsi iudicabit,
+              at qui liber complectitur, idque labitur nec ei.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
 </ion-content>

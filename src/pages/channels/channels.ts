@@ -3,14 +3,6 @@ import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-an
 import { PopoverPage } from "../../app/popover";
 import { ChannelPrevPage } from "../channel-prev/channel-prev";
 
-/**
- * Generated class for the ChannelsPage page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
-
-@IonicPage()
 @Component({
   selector: 'page-channels',
   templateUrl: 'channels.html',
