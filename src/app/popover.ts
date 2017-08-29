@@ -5,6 +5,7 @@ import { ViewController } from "ionic-angular";
   template: `
     <ion-list class="popover-page">
       <button ion-item (click)="close()">Add to Playlist</button>
+       <button ion-item (click)="close()">Download</button>
     </ion-list>
   `
 })

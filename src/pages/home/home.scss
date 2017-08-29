@@ -6,6 +6,7 @@ page-home {
     ion-header [class^="toolbar"] {
         min-height: 40px;
         padding: 0;
+        color: map-get($colors,primary );
     }
     ion-segment [class^="segment"]{
         color: map-get($colors, primary) !important;
@@ -13,11 +14,12 @@ page-home {
         max-width: 100% !important;
     }
     ion-content [class^="fixed-content"] [class^="scroll-content"]{
-        margin-top: 13vh;
+        margin-top: 16vh !important;
     }
     ion-content {
         background-color: #cecece!important;
     }
+    
 
     ion-navbar {
         min-height: 6vh;

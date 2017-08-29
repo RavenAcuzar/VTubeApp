@@ -21,6 +21,9 @@ page-channels {
     ion-content {
         background-color: #cecece!important;
     }
+    ion-title{
+        margin-top: 12px;
+    }
 
     ion-navbar {
         min-height: 6vh;
@@ -156,47 +159,16 @@ page-channels {
         color:rgba(256,256,256,0.5);
         font-size: 40pt;
     }
-    details{
+    .details{
         overflow: hidden;
         background: white;
         display: block;
         
     }
-    details summary{
+    .details_summary{
         padding: 4px;
-        padding-left: 96px;
+        padding-left: 112px;
     }
 
-    details summary::-webkit-details-marker {
-    background: url(/images/toggle-expand.png) center no-repeat;
-    color: transparent;
-    }
-    details[open] summary ~*{
-        animation-name: invisiblyGrowFontSize, fadeIn;
-        animation-duration: 500ms, 200ms;
-        animation-delay: 0ms, 500ms;    
-    }
-    @keyframes invisiblyGrowFontSize {
-	0% {
-            font-size: 0;
-            opacity: 0;
-        }
-    100% {
-            font-size: 1em;
-            opacity: 0;
-        }
-    }
-    @keyframes fadeIn {
-    0% {
-        opacity: 0;
-        }
-    100% {
-            opacity: 1;
-        }
-    }
-
-    details[open] summary::-webkit-details-marker {
-        background: url(/images/toggle-collapse.png) center no-repeat;
-        color: transparent; 
-    }
+    
 }

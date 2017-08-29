@@ -1,3 +1,29 @@
 page-search {
+    ion-header [class^="toolbar-background"] {
+        background-color: map-get($colors,light );
+        border:none !important;
+    }
+    ion-header [class^="toolbar"] {
+        min-height: 40px;
+        padding: 0;
+        color: map-get($colors,primary );
+    }
+    ion-segment [class^="segment"]{
+        color: map-get($colors, primary) !important;
+        border-color: map-get($colors, primary) !important;
+        max-width: 100% !important;
+    }
+    ion-content [class^="fixed-content"] [class^="scroll-content"]{
+        margin-top: 16vh !important;
+    }
+    ion-content {
+        background-color: #cecece!important;
+    }
+    
+
+    ion-navbar {
+        min-height: 6vh;
+        padding: 0;
+    }
 
 }

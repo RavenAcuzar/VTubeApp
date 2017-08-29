@@ -9,13 +9,15 @@ page-profile {
 
     ion-header [class^="toolbar"] {
         min-height: 40px;
-        padding: 5px 0 0 0;
         color: map-get( $colors, light );
         text-shadow: 2px 2px 5px rgba(0,0,0,0.2);  
     }
 
     ion-content {
         background-color: map-get($colors, light)!important;
+    }
+    ion-title{
+        margin-top: 12px;
     }
 
     ion-navbar {
@@ -50,7 +52,7 @@ page-profile {
         background-image: url('../assets/img/profBanner.png');
         height: 30vh;
         background-size: 100% 100%;
-        margin-top: -6px;
+        margin-top: -13px;
     }
     .avatar{
         position: absolute;

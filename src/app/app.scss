@@ -69,7 +69,9 @@
     }
 }
 
-
+.popover-page{
+    margin: 0 !important;
+}
 
 .activeHighlight{
     background-color: map-get($colors, secondary );

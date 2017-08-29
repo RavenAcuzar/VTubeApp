@@ -7,8 +7,10 @@
       <img src="assets/img/vtube-logo.png" style="width:25vw" />
       <!--here goes vtube logo  -->
     </ion-title>
-    <ion-buttons icon-only end>
+    <ion-buttons end >
+      <button ion-button icon-only (click)="searchThing()"> 
       <ion-icon name="search"></ion-icon>
+      </button>
     </ion-buttons>
   </ion-navbar>
 
@@ -29,8 +31,8 @@
   <div [ngSwitch]="vidType">
     <ion-list *ngSwitchCase="'freeVid'">
         <!--here goes vid cards  ng-repeat-->
-        <ion-card (click)="playVideo('')">
-          <div class="parent">
+        <ion-card >
+          <div class="parent" (click)="playVideo('')">
             <img src="assets/img/cardIMG.jpg" />
             <div class="duration">
               <ion-badge color="duration">00:00</ion-badge>
@@ -53,8 +55,8 @@
             <h2>Title</h2>
             <p>Channel Name &bull; # Views</p>
             <p><ion-icon name="globe"></ion-icon>: EN, RU, TR, &hellip;</p>
-            <div item-end icon-only (click)="presentPopover($event)">
-              <ion-icon name="md-more"></ion-icon>
+            <div item-end icon-only class="more" (click)="presentPopover($event)">
+              <ion-icon class="more" name="md-more"></ion-icon>
             </div>
           </ion-item>
         </ion-card>

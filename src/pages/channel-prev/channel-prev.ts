@@ -8,6 +8,8 @@ import { PopoverPage } from "../../app/popover";
 })
 export class ChannelPrevPage {
 
+  private descLabel:string = 'See Description';
+  private isDescriptionShown: boolean = false;
   constructor(public navCtrl: NavController, public navParams: NavParams, public popoverCtrl: PopoverController) {
   }
 
@@ -19,6 +21,10 @@ export class ChannelPrevPage {
     popover.present({
       ev: myEvent
     });
+  }
+  seeDesc(){
+    this.isDescriptionShown = !this.isDescriptionShown;
+    this.descLabel= this.isDescriptionShown ? 'Show Less' : 'See Description';
   }
 
 }

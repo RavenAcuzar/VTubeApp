@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, PopoverController } from 'ionic-angular';
 import { PopoverPage } from "../../app/popover";
 import { NowPlayingPage } from "../now-playing/now-playing";
+import { SearchPage } from "../search/search";
 
 
 @Component({
@@ -23,6 +24,9 @@ export class HomePage {
 
   playVideo(id: string) {
     this.navCtrl.push(NowPlayingPage);
+  }
+  searchThing(){
+    this.navCtrl.push(SearchPage);
   }
 }
 
