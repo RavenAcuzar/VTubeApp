@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { PopoverPage } from "../../app/popover";
 
 /**
  * Generated class for the ChannelPrevPage page.
@@ -15,11 +16,17 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class ChannelPrevPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public popoverCtrl: PopoverController) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChannelPrevPage');
+  }
+  presentPopover(myEvent) {
+    let popover = this.popoverCtrl.create(PopoverPage);
+    popover.present({
+      ev: myEvent
+    });
   }
 
 }
