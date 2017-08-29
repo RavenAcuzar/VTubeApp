@@ -1,3 +1,80 @@
 page-profile {
 
+    ion-header [class^="toolbar-background"] {
+        background-color: map-get($colors, secondary );
+    }
+    [class^="header"]::after{
+        background-image: none;
+    }
+
+    ion-header [class^="toolbar"] {
+        min-height: 40px;
+        padding: 5px 0 0 0;
+        color: map-get( $colors, light );
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.2);  
+    }
+
+    ion-content {
+        background-color: map-get($colors, light)!important;
+    }
+
+    ion-navbar {
+        min-height: 6vh;
+        padding: 0;
+    }
+
+     
+    ion-list {
+        
+        > ion-list-header[class^="item"]{
+            margin-bottom: 0 !important;
+            background-color: transparent !important;
+            border-top: none !important;
+            color: black !important;
+        }
+        >ion-item{
+            background-color: transparent !important;
+            >.item-inner .input-wrapper ion-label{
+                color: map-get($colors,secondary)!important;
+            } 
+        }
+
+    }
+    
+    div item-content{
+        color: #757575;
+    }
+
+    .profBanner{
+        position: relative;
+        background-image: url('../assets/img/profBanner.png');
+        height: 30vh;
+        background-size: 100% 100%;
+        margin-top: -6px;
+    }
+    .avatar{
+        position: absolute;
+        top: 25px;
+        right: 30vw;
+        width: 40vw;
+        height: 40vw;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+        -webkit-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+        -moz-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+        box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
+    }
+    .profileName{
+        text-align: center;
+        color: map-get($colors, primary);
+        text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        >h3{
+            margin-bottom: 0rem;
+        }
+        >p{
+            color:rgba(213, 39, 48, 0.64);
+        }
+    }
+
 }
