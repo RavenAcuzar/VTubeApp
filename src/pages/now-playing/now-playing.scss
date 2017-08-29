@@ -1,6 +1,35 @@
 page-now-playing {
-    > ion-content > div.scroll-content > ion-content {
-        margin-top: 40vh;
+    ion-header {
+        z-index: 20;
+
+        > ion-navbar {
+            > div.toolbar-background {
+                background: linear-gradient(rgba(0,0,0,0.6), transparent) !important;
+            }
+    
+            button.bar-button {
+                color: white;
+            }
+        }
+    }
+
+    > ion-content {
+        > div.scroll-content, > div.fixed-content {
+            margin-top: 0 !important;
+        }
+        > div.scroll-content {
+            > ion-content {
+                margin-top: 40vh;
+            }
+        }
+    }
+
+    .videoPlayer {
+        z-index: 10;
+        height: 40vh;
+        min-height: 200px;
+        width: 100%;
+        background-color: black;
     }
 
     .vid-header {
@@ -98,6 +127,10 @@ page-now-playing {
                     box-shadow: none;
                     -webkit-box-shadow: none;
                     background-color: transparent;
+                }
+
+                &:hover:not(.disable-hover) {
+                    background-color: transparent !important;
                 }
             }
         }
