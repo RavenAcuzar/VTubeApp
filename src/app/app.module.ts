@@ -12,6 +12,8 @@ import { NowPlayingPage } from "../pages/now-playing/now-playing";
 import { PlaylistPage } from "../pages/playlist/playlist";
 import { ProfilePage } from "../pages/profile/profile";
 import { SearchPage } from "../pages/search/search";
+import { FallbackPage } from "../pages/fallback/fallback";
+import { ForgotPasswordPage } from "../pages/forgot-password/forgot-password";
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -31,6 +33,8 @@ import { PopoverPage } from "./popover";
     PlaylistPage,
     ProfilePage,
     SearchPage,
+    FallbackPage,
+    ForgotPasswordPage,
     PopoverPage
   ],
   imports: [
@@ -49,6 +53,8 @@ import { PopoverPage } from "./popover";
     PlaylistPage,
     ProfilePage,
     SearchPage,
+    FallbackPage,
+    ForgotPasswordPage,
     PopoverPage
   ],
   providers: [

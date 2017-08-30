@@ -1,5 +1,5 @@
-page-login {
-    ion-header {
+page-fallback {
+     ion-header {
         z-index: 20;
 
         > ion-navbar {
@@ -12,39 +12,30 @@ page-login {
     [class^="header"]::after{
         background-image: none;
     }
-
     > ion-content {
-        background: url("../assets/img/loginbg.jpg") center / cover;
+        background-color: map-get($colors, light ) !important;
         img{
             position: absolute;
-            top:15vh;
-            right: 27vw;
-            width: 50vw;
+            top:16vh;
+            right: 20vw;
+            width: 62vw;
+            opacity: 0.6;
         }
         .loginCred{
-            margin-top: 29vh;
-             >ion-item{
-            background-color: transparent !important;
-            >.item-inner .input-wrapper ion-label{
-                color: map-get($colors,secondary)!important;
-                } 
-            }
+            margin-top: 55vh;
+            padding: 0px 6vw;
+            text-align: center;
+            color: map-get($colors,secondary)!important;
             >button{
                 border-radius: 13px;
-                width: 100%;
+                width: 60%;
                 padding: 21px 0px;
-                margin-top: 30px;
+                margin-top: 15vh;
                 background-color: #5f5f5f;
             }
         }
         > div.scroll-content, > div.fixed-content {
             margin-top: 0 !important;
-            padding-bottom: 0 !important;
         }
-    }
-    .forgot{
-        padding: 10px 10px;
-        text-align: center;
-        color: #5f5f5f;
     }
 }

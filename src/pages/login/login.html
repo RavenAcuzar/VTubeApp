@@ -6,13 +6,27 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>Login</ion-title>
+  <ion-navbar no-border>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
   </ion-navbar>
-
 </ion-header>
 
 
 <ion-content padding>
+  <img src="assets/img/vtube-logo.png">
+  <div class="loginCred">
+    <ion-item>
+      <ion-label floating>Username</ion-label>
+      <ion-input type="text"></ion-input>
+    </ion-item>
 
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password"></ion-input>
+    </ion-item>
+    <button ion-button><b>LOGIN</b></button>
+    <div class="forgot" (click)="forgotPass()" >Forgot password?</div>
+  </div>
 </ion-content>

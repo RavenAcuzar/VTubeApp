@@ -10,7 +10,7 @@ import { SearchPage } from "../search/search";
 })
 export class ChannelsPage {
 
-  private descLabel:string = 'See Description';
+  private descLabel:string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
   channelType: string="myChannel";
   constructor(public navCtrl: NavController, public navParams: NavParams, protected popoverCtrl: PopoverController) {
@@ -34,6 +34,6 @@ export class ChannelsPage {
   }
   seeDesc(){
     this.isDescriptionShown = !this.isDescriptionShown;
-    this.descLabel= this.isDescriptionShown ? 'Show Less' : 'See Description';
+    this.descLabel= this.isDescriptionShown ? 'md-arrow-dropup' : 'md-arrow-dropdown';
   }
 }

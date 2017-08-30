@@ -8,7 +8,7 @@ import { PopoverPage } from "../../app/popover";
 })
 export class ChannelPrevPage {
 
-  private descLabel:string = 'See Description';
+  private descLabel:string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
   constructor(public navCtrl: NavController, public navParams: NavParams, public popoverCtrl: PopoverController) {
   }
@@ -24,7 +24,7 @@ export class ChannelPrevPage {
   }
   seeDesc(){
     this.isDescriptionShown = !this.isDescriptionShown;
-    this.descLabel= this.isDescriptionShown ? 'Show Less' : 'See Description';
+    this.descLabel= this.isDescriptionShown ? 'md-arrow-dropup' : 'md-arrow-dropdown';
   }
 
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { ForgotPasswordPage } from "../forgot-password/forgot-password";
 
 @Component({
   selector: 'page-login',
@@ -12,6 +13,10 @@ export class LoginPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
+  }
+
+  forgotPass(){
+    this.navCtrl.push(ForgotPasswordPage);
   }
 
 }

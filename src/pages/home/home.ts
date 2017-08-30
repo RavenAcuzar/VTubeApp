@@ -3,6 +3,7 @@ import { NavController, PopoverController } from 'ionic-angular';
 import { PopoverPage } from "../../app/popover";
 import { NowPlayingPage } from "../now-playing/now-playing";
 import { SearchPage } from "../search/search";
+import { FallbackPage } from "../fallback/fallback";
 
 
 @Component({
@@ -27,6 +28,9 @@ export class HomePage {
   }
   searchThing(){
     this.navCtrl.push(SearchPage);
+  }
+  goToFallback(){
+    this.navCtrl.push(FallbackPage);
   }
 }
 
