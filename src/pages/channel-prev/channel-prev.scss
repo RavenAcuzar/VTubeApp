@@ -137,6 +137,7 @@ page-channel-prev {
         font-size: 1.2rem;
         color: map-get($colors,light);
         background-color: map-get($colors,primary);
+        border-radius: 10px;
         flex-shrink: 0;
     }
     .followChannel{

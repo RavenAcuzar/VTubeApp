@@ -32,6 +32,12 @@
           <ion-icon name="md-videocam"></ion-icon>
         </div>
         <ion-icon name={{descLabel}} (click)='seeDesc()'></ion-icon>
+        <div class="followChannel">
+      <button ion-button round outline class="btn-follow">
+        <span>Follow</span>
+      </button>
+    </div>
+
       </div>
       <div class="details">
           <div padding [hidden]="!isDescriptionShown">

@@ -171,6 +171,13 @@ page-channels {
         display: block;
         box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
     }
+    .channelPlaceholder{
+        text-align: center;
+        color: map-get($colors, secondary);
+        img{
+            opacity: 0.4;
+        }
+    }
 
     
 }
