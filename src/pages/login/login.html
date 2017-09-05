@@ -16,17 +16,17 @@
 
 <ion-content padding>
   <img src="assets/img/vtube-logo.png">
-  <div class="loginCred">
+  <form class="loginCred" #form="ngForm" (ngSubmit)="logForm(form)" validate>
     <ion-item>
       <ion-label floating>Username</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input type="text" required autofocus></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label floating>Password</ion-label>
-      <ion-input type="password"></ion-input>
+      <ion-input type="password" required></ion-input>
     </ion-item>
-    <button ion-button><b>LOGIN</b></button>
+    <button ion-button type="submit"><b>LOGIN</b></button>
     <div class="forgot" (click)="forgotPass()" >Forgot password?</div>
-  </div>
+  </form>
 </ion-content>

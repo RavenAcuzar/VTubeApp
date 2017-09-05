@@ -18,6 +18,7 @@ import { ForgotPasswordPage } from "../pages/forgot-password/forgot-password";
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { PopoverPage } from "./popover";
+import { HttpModule } from "@angular/http";
 
 
 
@@ -40,6 +41,7 @@ import { PopoverPage } from "./popover";
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

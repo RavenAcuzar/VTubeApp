@@ -7,7 +7,7 @@
       <img src="assets/img/vtube-logo.png" style="width:25vw" />
       <!--here goes vtube logo  -->
     </ion-title>
-    <ion-buttons end >
+    <ion-buttons end>
       <button ion-button icon-only (click)="searchThing()"> 
       <ion-icon name="search"></ion-icon>
       </button>
@@ -30,53 +30,57 @@
 <ion-content>
   <div [ngSwitch]="vidType">
     <ion-list *ngSwitchCase="'freeVid'">
-        <!--here goes vid cards  ng-repeat-->
-        <ion-card >
-          <div class="parent" (click)="playVideo('')">
-            <img src="assets/img/cardIMG.jpg" />
-            <div class="duration">
-              <ion-badge color="duration">00:00</ion-badge>
-            </div>
-            <div class="vidpoints">
-             <ion-chip color="secondary" >
-                <ion-icon name="star"></ion-icon>
-                <ion-label>40 Points</ion-label>
-              </ion-chip>
-            </div>
-            <div class="vidplay">
-              <ion-icon name="play"></ion-icon>
-            </div>
+      <!--here goes vid cards  ng-repeat-->
+      <ion-card *ngFor="let vids of freeVids">
+        <div class="parent" (click)="playVideo('')">
+          <img src="http://the-v.net{{vids.image}}" />
+          <div class="duration">
+            <ion-badge color="duration">{{vids.time}}</ion-badge>
           </div>
+          <div class="vidpoints">
+            <ion-chip color="secondary">
+              <ion-icon name="star"></ion-icon>
+              <ion-label>{{vids.points}} Points</ion-label>
+            </ion-chip>
+          </div>
+          <div class="vidplay">
+            <ion-icon name="play"></ion-icon>
+          </div>
+        </div>
 
-          <ion-item>
-            <ion-avatar item-start>
-              <img src="assets/img/volt-placeholder.png" />
-            </ion-avatar>
-            <h2>Title</h2>
-            <p>Channel Name &bull; # Views</p>
-            <p><ion-icon name="globe"></ion-icon>: EN, RU, TR, &hellip;</p>
-            <div item-end icon-only class="more" (click)="presentPopover($event)">
-              <ion-icon class="more" name="md-more"></ion-icon>
-            </div>
-          </ion-item>
-        </ion-card>
-      
+        <ion-item>
+          <ion-avatar item-start>
+            <img [src]="vids.channelImage" />
+          </ion-avatar>
+          <h2>{{vids.title}}</h2>
+          <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
+          <p>
+            <ion-icon name="globe"></ion-icon>: {{vids.language}}</p>
+          <div item-end icon-only class="more" (click)="presentPopover($event)">
+            <ion-icon class="more" name="md-more"></ion-icon>
+          </div>
+        </ion-item>
+      </ion-card>
+      <ion-infinite-scroll (ionInfinite)="loadMoreFree($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-list>
 
     <ion-list *ngSwitchCase="'premVid'">
 
       <!--here goes vid cards ng-repeat -->
-      <ion-card>
+      <ion-card *ngFor="let vids of premiumVids">
         <ion-card-content no-padding (click)="goToFallback()">
           <div class="parent">
-            <img src="assets/img/cardIMG2.jpg" />
+            <img src="http://the-v.net{{vids.image}}"/>
             <div class="duration">
-              <ion-badge color="duration">00:00</ion-badge>
+              <ion-badge color="duration">{{vids.time}}</ion-badge>
             </div>
             <div class="vidpoints">
               <ion-chip color="secondary">
                 <ion-icon name="star" color="primary"></ion-icon>
-                <ion-label>40 Points</ion-label>
+                <ion-label>{{vids.points}} Points</ion-label>
               </ion-chip>
             </div>
             <div class="vidplay">
@@ -87,17 +91,22 @@
 
         <ion-item>
           <ion-avatar item-start>
-            <img src="assets/img/volt-placeholder.png" />
+           <img [src]="vids.channelImage" />
           </ion-avatar>
-          <h2><ion-icon name="lock" color="secondary"></ion-icon> Title</h2>
-          <p>Channel Name &bull; # Views</p>
-          <p><ion-icon name="globe"></ion-icon> : No Subtitles Available</p>
+          <h2>
+            <ion-icon name="lock" color="secondary"></ion-icon> {{vids.title}}</h2>
+          <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
+          <p>
+            <ion-icon name="globe"></ion-icon> : {{vids.language}}</p>
           <div item-end icon-only (click)="presentPopover($event)">
             <ion-icon name="md-more"></ion-icon>
           </div>
         </ion-item>
       </ion-card>
-
+      <ion-infinite-scroll (ionInfinite)="loadMorePrem($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-list>
   </div>
 </ion-content>
