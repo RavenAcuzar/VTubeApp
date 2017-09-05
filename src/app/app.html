@@ -4,21 +4,30 @@
 
   <ion-content>
     <div class="menubanner">
-      <div class="username">
+      <img src="assets/img/vtube-logo-gray.png" 
+      style="position: absolute; bottom: 10px; left: 10px; width: 44vw;" 
+      [hidden]='false'/> <!-- put global boolean login variable here -->
+      <div class="username" [hidden]='true'> <!-- put global boolean login variable here -->
         <div class="avatar">
           <img src="assets/img/volt-placeholder.png" />
         </div>
-        <h6>Username</h6>
-        <p>email@thisemail.com</p>
+        <h6>{{username}}</h6>
+        <p>{{email}}</p>
       </div>
-      <div class="userpoints">
-          <h3>20130</h3>
-          <p>POINTS</p>
+      <div class="userpoints" [hidden]='true'> <!-- put global boolean login variable here -->
+        <h3>{{points}}</h3>
+        <p>POINTS</p>
       </div>
     </div>
     <ion-list>
       <button menuClose ion-item *ngFor="let p of pages" class="menuItems" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">
         <ion-icon [name]="p.icon" item-left></ion-icon>{{p.title}}
+      </button>
+      <button menuClose ion-item class="menuItems" (click)="logoutAlert()" [hidden]="true"> <!-- put global boolean login variable here -->
+        <ion-icon name="md-log-out" item-left></ion-icon>Logout
+      </button>
+      <button menuClose ion-item class="menuItems" (click)="login()" [hidden]="false"> <!-- put global boolean login variable here -->
+        <ion-icon name="md-log-in" item-left></ion-icon>Login
       </button>
     </ion-list>
   </ion-content>

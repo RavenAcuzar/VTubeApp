@@ -17,21 +17,20 @@
         <h1>Lorem Ipsum Dolor Sit Amet</h1>
         <h4>900K views</h4>
       </div>
-      <button ion-button padding-bottom="false" id="vidDescToggle" (click)="toggleDescriptionVisibility()">
-        <ion-icon name="{{vidDescButtonIcon}}"></ion-icon>
-      </button>
     </div>
-    <div class="vid-description" [hidden]="!isDescriptionShown">
+    <div class="vid-description">
+      <ion-icon name="md-globe"></ion-icon>:&nbsp;EN, RU, TR, ...
       <p>Lorem ipsum dolor sit amet, aliquip deserunt id cum, eu eos mundi nonumes tacimates. Eum iisque oporteat persequeris
         no, quodsi habemus laboramus at sit, dicit insolens eu sed. Et has modo adolescens, eu repudiare constituam cum.
         Has te utinam ridens theophrastus, an enim idque voluptatibus usu, est an magna atomorum maluisset. No vix vidisse
         virtute, vix veri omnium verear ad, ut nam eius eripuit delenit. Duo ei dolor quodsi iudicabit, at qui liber complectitur,
         idque labitur nec ei.</p>
+        
     </div>
     <div class="container-vid-actions">
       <ion-grid>
         <ion-row>
-          <ion-col col-3>
+          <ion-col col-4>
             <div class="vid-actions">
               <button ion-button icon-only block>
                 <ion-icon class="icon" name="md-heart"></ion-icon>
@@ -39,7 +38,7 @@
               <span class="text">7K</span>
             </div>
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-4>
             <div class="vid-actions">
               <button ion-button icon-only block>
                 <ion-icon class="icon" name="md-download"></ion-icon>
@@ -47,15 +46,7 @@
               <span class="text">Download</span>
             </div>
           </ion-col>
-          <ion-col col-3>
-            <div class="vid-actions">
-              <button ion-button icon-only block>
-                <ion-icon class="icon" name="md-globe"></ion-icon>
-              </button>
-              <span class="text">Set language</span>
-            </div>
-          </ion-col>
-          <ion-col col-3>
+          <ion-col col-4>
             <div class="vid-actions">
               <button ion-button icon-only block>
                 <ion-icon class="icon" name="md-add"></ion-icon>

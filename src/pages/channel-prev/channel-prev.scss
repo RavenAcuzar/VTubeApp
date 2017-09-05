@@ -33,18 +33,24 @@ page-channel-prev {
 
     .channelMain{
         position: relative;
-        height: 29vh;
+        height: 23vh;
         background-color: #fff;
-        box-shadow: 2px 0px 5px rgba(0,0,0,0.2);
+        box-shadow: 4px 0px 0px rgba(0,0,0,0.2);
         >img{
-            height: 20vh;
+            height: 15vh;
             object-fit: cover;
+        }
+        >ion-icon{
+            position: absolute;
+            bottom: 3px;
+            right: 15px;
+            font-size: 2.5rem;
         } 
     }
     .channelDetail{
         position: absolute;
-        bottom: 4px;
-        left: 15px;
+        top: 7px;
+        left: 7px;
         z-index: 1;
         >img{
             height: 21vw;
@@ -55,7 +61,7 @@ page-channel-prev {
         z-index: 1;
         text-align: center;
         position: absolute;
-        bottom: 67px;
+        bottom: 56px;
         right: 26px;
         color: map-get($colors, light );
         >h6{
@@ -69,8 +75,8 @@ page-channel-prev {
         z-index: 1;
         text-align: center;
         position: absolute;
-        bottom:67px;
-        right: 64px;
+        bottom:56px;
+        right: 84px;
         color: map-get($colors, light );
         >h6{
             margin-bottom: 0rem;
@@ -84,16 +90,16 @@ page-channel-prev {
         display: block;
         position: relative;
         background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0, #D52730 100%);
-        margin-top: -136px;
-        height: 133px;
+        margin-top: -15.8vh;
+        height: 16.1vh;
         width: 100%;
         content: '';
     }
 
     .channelDetails{
             position: absolute;
-            bottom: -7px;
-            left: 109px;
+            bottom: -9px;
+            left: 10px;
             >h6{
                 margin-bottom: -1rem;
             }
@@ -120,69 +126,18 @@ page-channel-prev {
         color:rgba(256,256,256,0.5);
         font-size: 40pt;
     }
-    details{
+    .details{
         overflow: hidden;
         background: white;
         display: block;
-        
+        box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
     }
-    details summary{
-        padding: 4px;
-        padding-left: 96px;
-    }
-
-    details summary::-webkit-details-marker {
-    background: url(/images/toggle-expand.png) center no-repeat;
-    color: transparent;
-    }
-    details[open] summary ~*{
-        animation-name: invisiblyGrowFontSize, fadeIn;
-        animation-duration: 500ms, 200ms;
-        animation-delay: 0ms, 500ms;    
-    }
-    @keyframes invisiblyGrowFontSize {
-	0% {
-            font-size: 0;
-            opacity: 0;
-        }
-    100% {
-            font-size: 1em;
-            opacity: 0;
-        }
-    }
-    @keyframes fadeIn {
-    0% {
-        opacity: 0;
-        }
-    100% {
-            opacity: 1;
-        }
-    }
-
-    details[open] summary::-webkit-details-marker {
-        background: url(/images/toggle-collapse.png) center no-repeat;
-        color: transparent; 
-    }
-     button {
-                
-                background-color: transparent;
-                text-transform: unset;
-                
-                box-shadow: none;
-                -webkit-box-shadow: none;
-
-                &.activated {
-                    color: map-get($colors,primary);
-                    box-shadow: none;
-                    -webkit-box-shadow: none;
-                    background-color: transparent;
-                }
-            }
     button.btn-follow{
         height: 2.6rem;
         font-size: 1.2rem;
         color: map-get($colors,light);
         background-color: map-get($colors,primary);
+        border-radius: 10px;
         flex-shrink: 0;
     }
     .followChannel{

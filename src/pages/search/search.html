@@ -9,10 +9,32 @@
   <ion-navbar>
     <ion-title>Search</ion-title>
   </ion-navbar>
-
+  <ion-searchbar
+      [(ngModel)]="myInput"
+      [showCancelButton]="shouldShowCancel"
+      (ionInput)="onInput($event)"
+      (ionCancel)="onCancel($event)">
+    </ion-searchbar>
 </ion-header>
 
 
 <ion-content padding>
-
+  <div class="container-videos">
+    <div class="video-box">
+      <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
+      <div class="info">
+        <h2>Lorem ipsum dolor sit amet</h2>
+        <p>
+          <span class="channel">The V Official Channel</span>
+          <span>&nbsp;&bull;&nbsp;</span>
+          <span class="views">900K views</span>
+          <span>&nbsp;&bull;&nbsp;</span>
+          <span class="points">40 points</span>
+        </p>
+      </div>
+      <button ion-button padding-bottom="false">
+            <ion-icon name="md-more"></ion-icon>
+          </button>
+    </div>
+  </div>
 </ion-content>

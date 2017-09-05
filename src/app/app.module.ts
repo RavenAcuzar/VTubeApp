@@ -12,13 +12,14 @@ import { NowPlayingPage } from "../pages/now-playing/now-playing";
 import { PlaylistPage } from "../pages/playlist/playlist";
 import { ProfilePage } from "../pages/profile/profile";
 import { SearchPage } from "../pages/search/search";
+import { FallbackPage } from "../pages/fallback/fallback";
+import { ForgotPasswordPage } from "../pages/forgot-password/forgot-password";
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { PopoverPage } from "./popover";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
-
-
+import { HttpModule } from "@angular/http";
 
 @NgModule({
   declarations: [
@@ -32,11 +33,14 @@ import { ScreenOrientation } from "@ionic-native/screen-orientation";
     PlaylistPage,
     ProfilePage,
     SearchPage,
+    FallbackPage,
+    ForgotPasswordPage,
     PopoverPage
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -50,6 +54,8 @@ import { ScreenOrientation } from "@ionic-native/screen-orientation";
     PlaylistPage,
     ProfilePage,
     SearchPage,
+    FallbackPage,
+    ForgotPasswordPage,
     PopoverPage
   ],
   providers: [
