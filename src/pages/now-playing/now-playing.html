@@ -1,16 +1,17 @@
 <ion-header no-border>
   <ion-navbar transparent mode="md">
     <button ion-button menuToggle>
-        <ion-icon name="arrow-back"></ion-icon>
-      </button>
+      <ion-icon name="arrow-back"></ion-icon>
+    </button>
   </ion-navbar>
 </ion-header>
 
 <ion-content no-padding>
-  <video ion-fixed controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="videoPlayer">
-    <source src="https://player.vimeo.com/external/85569724.sd.mp4?s=43df5df0d733011263687d20a47557e4" type="video/mp4" />
+  <video #videoPlayer ion-fixed controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" 
+    class="videoPlayer" [class.fullscreen]="isVideoFullscreen">
+    <source src="http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_20mb.mp4" type="video/mp4" />
   </video>
-  <ion-content no-padding>
+  <ion-content no-padding *ngIf="!isVideoFullscreen">
     <div class="vid-header">
       <div class="vid-info">
         <h1>Lorem Ipsum Dolor Sit Amet</h1>

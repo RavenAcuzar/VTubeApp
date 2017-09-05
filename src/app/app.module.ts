@@ -16,6 +16,7 @@ import { SearchPage } from "../pages/search/search";
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { PopoverPage } from "./popover";
+import { ScreenOrientation } from "@ionic-native/screen-orientation";
 
 
 
@@ -54,6 +55,7 @@ import { PopoverPage } from "./popover";
   providers: [
     StatusBar,
     SplashScreen,
+    ScreenOrientation,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
