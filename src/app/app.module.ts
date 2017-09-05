@@ -19,7 +19,9 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { PopoverPage } from "./popover";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
+import { IonicStorageModule } from "@ionic/storage";
 import { HttpModule } from "@angular/http";
+import { FormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { HttpModule } from "@angular/http";
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    HttpModule
+    IonicStorageModule.forRoot(),
+    HttpModule,
+    FormsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
