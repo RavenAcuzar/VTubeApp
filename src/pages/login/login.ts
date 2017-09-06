@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, Events } from 'ionic-angular';
 import { ForgotPasswordPage } from "../forgot-password/forgot-password";
 import { Http, Headers, URLSearchParams } from "@angular/http";
 import { Storage } from '@ionic/storage';
-import { IS_LOGGED_IN_KEY } from "../../app/app.constants";
+import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
+import { HomePage } from "../home/home";
+import { AppStateService } from "../../app/services/app_state.service";
 
 @Component({
   selector: 'page-login',
@@ -26,7 +28,8 @@ export class LoginPage {
     private navParams: NavParams,
     private http: Http,
     private storage: Storage,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private event: Events
   ) { }
 
   login() {
@@ -39,7 +42,7 @@ export class LoginPage {
 
     let headers = new Headers()
     headers.set('Content-Type', 'application/x-www-form-urlencoded')
-    
+
     let errCallback = e => {
       this.didLoginHadErrors = true;
     };
@@ -51,7 +54,13 @@ export class LoginPage {
       this.isCredentialsIncorrect = userArray.length <= 0;
 
       if (!this.isCredentialsIncorrect) {
-        this.storage.set(IS_LOGGED_IN_KEY, true).catch(errCallback)
+        this.storage.set(IS_LOGGED_IN_KEY, true).then(() =>{ 
+          return this.storage.set(USER_DATA_KEY, userArray[0])
+        }).then(() => {
+          AppStateService.publishAppStateChange(this.event);
+          this.navCtrl.setRoot(HomePage); 
+        }).catch(errCallback);
+        
       }
     }, errCallback)
   }

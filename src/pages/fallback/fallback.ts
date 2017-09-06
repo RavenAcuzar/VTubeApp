@@ -9,7 +9,7 @@ import { LoginPage } from "../login/login";
  * on Ionic pages and navigation.
  */
 
-@IonicPage()
+
 @Component({
   selector: 'page-fallback',
   templateUrl: 'fallback.html',

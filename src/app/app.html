@@ -6,15 +6,13 @@
     <div class="menubanner">
       <img src="assets/img/vtube-logo-gray.png" 
       style="position: absolute; bottom: 10px; left: 10px; width: 44vw;" 
-      [hidden]='false'/> <!-- put global boolean login variable here -->
-      <div class="username" [hidden]='true'> <!-- put global boolean login variable here -->
-        <div class="avatar">
-          <img src="assets/img/volt-placeholder.png" />
-        </div>
+      [hidden]='pageState'/> <!-- put global boolean login variable here -->
+      <div class="username" [hidden]='!pageState'> <!-- put global boolean login variable here -->
+          <img class="avatar" [src]="avatar" />
         <h6>{{username}}</h6>
         <p>{{email}}</p>
       </div>
-      <div class="userpoints" [hidden]='true'> <!-- put global boolean login variable here -->
+      <div class="userpoints" [hidden]='!pageState'> <!-- put global boolean login variable here -->
         <h3>{{points}}</h3>
         <p>POINTS</p>
       </div>
@@ -23,10 +21,10 @@
       <button menuClose ion-item *ngFor="let p of pages" class="menuItems" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">
         <ion-icon [name]="p.icon" item-left></ion-icon>{{p.title}}
       </button>
-      <button menuClose ion-item class="menuItems" (click)="logoutAlert()" [hidden]="true"> <!-- put global boolean login variable here -->
+      <button menuClose ion-item class="menuItems" (click)="logoutAlert()" [hidden]="!pageState"> <!-- put global boolean login variable here -->
         <ion-icon name="md-log-out" item-left></ion-icon>Logout
       </button>
-      <button menuClose ion-item class="menuItems" (click)="login()" [hidden]="false"> <!-- put global boolean login variable here -->
+      <button menuClose ion-item class="menuItems" (click)="login()" [hidden]="pageState"> <!-- put global boolean login variable here -->
         <ion-icon name="md-log-in" item-left></ion-icon>Login
       </button>
     </ion-list>

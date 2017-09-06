@@ -7,11 +7,12 @@
 </ion-header>
 <ion-content padding>
   <img src="assets/img/vtube-logo.png">
-  
-  <p *ngIf="isCredentialsIncorrect">Log in failed! Incorrect email address or password.</p>
-  <p *ngIf="didLoginHadErrors">An error occurred while trying to log you in. Please try again</p>
+
+
 
   <form class="loginCred" (ngSubmit)="login()" validate>
+    <p *ngIf="isCredentialsIncorrect">Log in failed! Incorrect email address or password.</p>
+    <p *ngIf="didLoginHadErrors">An error occurred while trying to log you in. Please try again</p>
     <ion-item>
       <ion-label floating>Email</ion-label>
       <ion-input type="text" required autofocus name="email" [(ngModel)]="loginForm.email"></ion-input>
@@ -21,6 +22,6 @@
       <ion-input type="password" required name="password" [(ngModel)]="loginForm.password"></ion-input>
     </ion-item>
     <button ion-button type="submit"><b>LOGIN</b></button>
-    <div class="forgot" (click)="forgotPass()" >Forgot password?</div>
+    <div class="forgot" (click)="forgotPass()">Forgot password?</div>
   </form>
 </ion-content>

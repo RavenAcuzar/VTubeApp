@@ -68,6 +68,8 @@ page-profile {
         box-shadow: 0 0 0 3px #fff, 0 0 0 4px #999, 0 2px 5px 4px rgba(0,0,0,.2);
     }
     .profileName{
+        margin-left: 40px;
+        margin-right: 40px;
         text-align: center;
         color: map-get($colors, primary);
         text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
