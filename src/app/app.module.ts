@@ -22,6 +22,10 @@ import { ScreenOrientation } from "@ionic-native/screen-orientation";
 import { IonicStorageModule } from "@ionic/storage";
 import { HttpModule } from "@angular/http";
 import { FormsModule } from "@angular/forms";
+import { SQLite } from "@ionic-native/sqlite";
+import { DownloadService } from "./services/download.service";
+import { PlaylistService } from "./services/playlist.service";
+import { VideoService } from "./services/video.service";
 
 @NgModule({
   declarations: [
@@ -63,9 +67,13 @@ import { FormsModule } from "@angular/forms";
     PopoverPage
   ],
   providers: [
+    SQLite,
     StatusBar,
     SplashScreen,
     ScreenOrientation,
+    VideoService,
+    PlaylistService,
+    DownloadService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

@@ -32,7 +32,7 @@
         <ion-row>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block>
+              <button ion-button icon-only block (click)="likeVideo()">
                 <ion-icon class="icon" name="md-heart"></ion-icon>
               </button>
               <span class="text">7K</span>
@@ -40,7 +40,7 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block>
+              <button ion-button icon-only block (click)="downloadVideo()">
                 <ion-icon class="icon" name="md-download"></ion-icon>
               </button>
               <span class="text">Download</span>
@@ -48,7 +48,7 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block>
+              <button ion-button icon-only block (click)="addVideoToPlaylist()">
                 <ion-icon class="icon" name="md-add"></ion-icon>
               </button>
               <span class="text">Add to playlist</span>

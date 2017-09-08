@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Subscription } from "rxjs/Subscription";
+import { VideoService } from "../../app/services/video.service";
 
 @Component({
   selector: 'page-now-playing',
@@ -18,9 +19,9 @@ export class NowPlayingPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    private screenOrientation: ScreenOrientation
-  ) {
-  }
+    private screenOrientation: ScreenOrientation,
+    private videoService: VideoService
+  ) { }
 
   ionViewWillEnter() {
     // initialize screen orientation variable
@@ -45,6 +46,28 @@ export class NowPlayingPage {
   toggleDescriptionVisibility() {
     this.isDescriptionShown = !this.isDescriptionShown;
     this.vidDescButtonIcon = this.isDescriptionShown ? 'md-arrow-dropup' : 'md-arrow-dropdown';
+  }
+
+  loadRelatedVideo() {
+    // TODO: REPLACE THE VIDEO IN THE CURRENT PAGE WITH THE
+    // SELECTED RELATED VIDEO
+  }
+
+  likeVideo() {
+    // TODO: call `addLike` in the video service
+  }
+
+  commentOnVideo() {
+    // TODO: call `addComment` in the video service
+  }
+
+  addVideoToPlaylist() {
+    this.videoService.addToPlaylist('<id>', '<userid>').then(isSuccessful => {
+      // TODO: do something when action is successful
+    })
+  }
+
+  downloadVideo() {
   }
 
   private isOrientationPortrait(type: string): boolean {
