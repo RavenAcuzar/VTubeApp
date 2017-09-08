@@ -1,3 +1,5 @@
+import { SQLite } from "@ionic-native/sqlite";
+import { SQLITE_DB_NAME } from "./app.constants";
 
 
 /////////////////////Number Formater for followers, likes, views, etc//////////////////
@@ -31,4 +33,11 @@ export function formatDate(date) {
     var year = date.getFullYear();
 
     return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
+export function openSqliteDb(sqlite: SQLite) {
+    return sqlite.create({
+        name: SQLITE_DB_NAME,
+        location: 'default'
+    })
 }
