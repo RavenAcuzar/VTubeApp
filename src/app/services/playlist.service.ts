@@ -16,7 +16,6 @@ export class PlaylistService {
         return this.preparePlaylistTable().then(db => {
             return db.executeSql(`SELECT * FROM playlist WHERE memid = ?`, [userId])
         }).then(a => {
-            console.log(JSON.stringify(a))
             return new Promise<PlaylistEntry[]>((resolve, reject) => {
                 try {
                     let playlistEntries: PlaylistEntry[] = []
