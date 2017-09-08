@@ -23,9 +23,11 @@ import { IonicStorageModule } from "@ionic/storage";
 import { HttpModule } from "@angular/http";
 import { FormsModule } from "@angular/forms";
 import { SQLite } from "@ionic-native/sqlite";
+import { FileTransfer } from '@ionic-native/file-transfer';
 import { DownloadService } from "./services/download.service";
 import { PlaylistService } from "./services/playlist.service";
 import { VideoService } from "./services/video.service";
+import { File } from '@ionic-native/file';
 
 @NgModule({
   declarations: [
@@ -67,6 +69,8 @@ import { VideoService } from "./services/video.service";
     PopoverPage
   ],
   providers: [
+    File,
+    FileTransfer,
     SQLite,
     StatusBar,
     SplashScreen,

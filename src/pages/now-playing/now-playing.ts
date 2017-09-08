@@ -10,7 +10,7 @@ import { VideoService } from "../../app/services/video.service";
 })
 export class NowPlayingPage {
   @ViewChild('videoPlayer') videoplayer;
-  
+
   private vidDescButtonIcon: string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
   private isVideoFullscreen: boolean = false;
@@ -68,6 +68,15 @@ export class NowPlayingPage {
   }
 
   downloadVideo() {
+    this.videoService.download('<id>', '<userid>').then(observable => {
+      observable.subscribe(progress => {
+        // progress
+      }, e => {
+        // error
+      }, () => {
+        // complete
+      })
+    })
   }
 
   private isOrientationPortrait(type: string): boolean {

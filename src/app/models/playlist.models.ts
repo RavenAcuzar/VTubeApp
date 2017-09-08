@@ -1,6 +1,6 @@
 
 export type PlaylistEntry = {
-    id: string,
+    id: number,
     bcid: string, 
     memid: string
 }
