@@ -68,7 +68,7 @@ export class NowPlayingPage {
   }
 
   downloadVideo() {
-    this.videoService.download('<id>', '<userid>').then(observable => {
+    this.videoService.download('<id>', '<userid>', '<email>').then(observable => {
       observable.subscribe(progress => {
         // progress
       }, e => {

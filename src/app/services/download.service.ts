@@ -8,6 +8,9 @@ import { DownloadEntry } from "../models/download.models";
 import { File } from '@ionic-native/file';
 import { FileTransfer, FileTransferObject } from "@ionic-native/file-transfer";
 import { Platform } from "ionic-angular";
+import { Http } from "@angular/http";
+import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class DownloadService {
@@ -17,7 +20,8 @@ export class DownloadService {
         fileTransfer: FileTransfer,
         private platform: Platform,
         private sqlite: SQLite,
-        private file: File
+        private file: File,
+        private http: Http
     ) {
         this.fileTransferObject = fileTransfer.create();
     }
@@ -48,40 +52,47 @@ export class DownloadService {
         })
     }
 
-    addVideoFor(userId: string, bcid: string) {
+    addVideoFor(userId: string, email: string, bcid: string) {
         return new Promise<Observable<number>>((resolve, reject) => {
             let rootPath = '';
             if (this.platform.is('ios')) {
-                rootPath = `${this.file.dataDirectory}/vtube`;
+                rootPath = `${this.file.dataDirectory}/vtube/videos`;
             } else if (this.platform.is('android')) {
-                rootPath = `${this.file.externalDataDirectory}/vtube`;
+                rootPath = `${this.file.externalDataDirectory}/vtube/videos`;
             } else {
                 reject({ error: 'Platform not supported.' })
                 return;
             }
 
             this.preparePlaylistTable().then(db => {
-                // 1) save entry to local database
+                // save entry to local database
                 return db.executeSql('INSERT INTO downloads(bcid, memid, dl_date) VALUES(?, ?, ?)', [
                     bcid, userId, new Date().toLocaleDateString()
                 ])
             }).then(a => {
                 if (a.rowsAffected === 1) {
-                    // TODO: 2) start download of the video and return an observable so 
-                    // the download progress can be observed 
-
-                    let url = '';
-                    let path = `${rootPath}/${bcid}.mp4`;
-                    // let url = `http://cums.the-v.net/vid.aspx?id=${$location.search()["id"]}&irid=${window.localStorage.getItem("email")}`;
+                    // get the download url of the video
+                    let url = `http://cums.the-v.net/vid.aspx?id=${bcid}&irid=${email}`;
+                    return this.http.get(url).map(response => response.toString()).toPromise();
+                } else {
+                    reject({ error: 'Download entry was not successfully inserted.' })
+                }
+            }).then(finalUrl => {
+                // start download of the video and return an observable so 
+                // the download progress can be observed
+                
+                if (finalUrl === null || finalUrl === '') {
                     resolve(new Observable((observer: Subscriber<number>) => {
+                        let path = `${rootPath}/${bcid}.mp4`;
+    
                         this.fileTransferObject.onProgress(e => {
                             let progress = (e.lengthComputable) ?  Math.floor(e.loaded / e.total * 100) : -1;
                             observer.next(progress);
                         });
-                        this.fileTransferObject.download(url, path, true).then(entry => {
+                        this.fileTransferObject.download(finalUrl, path, true).then(entry => {
                             observer.complete();
                         });
-
+    
                         // update progress using next 
                         let progress = 0;
                         let handle = setInterval(() => {
@@ -93,15 +104,13 @@ export class DownloadService {
                                 observer.next(progress);
                             }
                         }, 125);
-
-                        return () => {
-                            // cleaup logic
-                        }
+    
+                        return () => { /* cleaup logic */ }
                     }));
                 } else {
-                    reject({ error: 'Download entry was not successfully inserted.' })
+                    reject({ error: 'Final URL is null or empty.' });
                 }
-            });
+            })
         })
     }
 

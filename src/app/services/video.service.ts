@@ -96,11 +96,11 @@ export class VideoService {
         })
     }
 
-    download(id: string, userId: string) {
-        return this.downloadService.addVideoFor(userId, id)
+    download(id: string, userId: string, userEmail: string) {
+        return this.downloadService.addVideoFor(userId, userEmail, id);
     }
 
     addToPlaylist(id: string, userId: string) {
-        return this.playlistService.addVideoFor(userId, id)
+        return this.playlistService.addVideoFor(userId, id);
     }
 }
