@@ -13,8 +13,8 @@
 </ion-header>
 
 
-<ion-content padding>
-  <div class="channelMain">
+<ion-content>
+  <!-- <div class="channelMain">
         <img src="assets/img/channel-banner.png"/>
         <div class="channelDetail">
           <img src="assets/img/avatarChannel.png"/>
@@ -44,7 +44,33 @@
             <h6>Description</h6>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
           </div>
-      </div>
+      </div> -->
+ <ion-card>
+          <div class="channelMain">
+            <img [src]="channelCover" />
+            <img [src]="channelDetail.channelImageFinalUrl" class="channelDetail" />
+            <button ion-button round outline class="btn-follow">20PTS Follow</button>
+            <div class="channelViews">
+              <h6>{{channelDetail.views}}</h6>
+              <ion-icon name="md-eye"></ion-icon>
+            </div>
+            <div class="channelVids">
+              <h6>{{channelDetail.numVideos}}</h6>
+              <ion-icon name="md-videocam"></ion-icon>
+            </div>
+          </div>
+          <ion-item class="channelLabel">
+            <h2>{{channelDetail.name}}</h2>
+            <p>{{channelDetail.followers}} Followers</p>
+            <div item-end icon-only (click)='seeDesc()' class="showDescBtn">
+              <ion-icon name={{descLabel}}></ion-icon>
+            </div>
+            <div [hidden]="!isDescriptionShown" style="margin-top:15px;">
+              <h6>Description</h6>
+              <p>{{channelDetail.description}}</p>
+            </div>
+          </ion-item>
+        </ion-card>
 
   <div padding>
     <h4>UPLOADS</h4>

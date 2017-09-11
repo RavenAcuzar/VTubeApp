@@ -32,7 +32,7 @@
     <ion-list *ngSwitchCase="'freeVid'">
       <!--here goes vid cards  ng-repeat-->
       <ion-card *ngFor="let vids of freeVids">
-        <div class="parent" (click)="playVideo('')">
+        <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
           <img src="http://the-v.net{{vids.image}}" />
           <div class="duration">
             <ion-badge color="duration">{{vids.time}}</ion-badge>
@@ -71,7 +71,7 @@
 
       <!--here goes vid cards ng-repeat -->
       <ion-card *ngFor="let vids of premiumVids">
-        <ion-card-content no-padding (click)="goToFallback()">
+        <ion-card-content no-padding (click)="playVideo(vids.id, vids.videoPrivacy)">
           <div class="parent">
             <img src="http://the-v.net{{vids.image}}"/>
             <div class="duration">

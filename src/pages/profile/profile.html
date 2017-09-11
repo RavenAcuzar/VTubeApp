@@ -12,36 +12,54 @@
     </button>
     <ion-title>Profile</ion-title>
   </ion-navbar>
-  <div no-padding class="profBanner">
-    <img class="avatar" [src]="avatar" />
+  <div no-padding class="profBanner" >
+    <img class="avatar" [src]="userDetails.finalAvatarUrl" />
   </div>
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding >
   <div class="profileName">
-    <h3>{{username}}</h3>
-    <p> IR ID: {{ir_id}}</p>
+    <h3>{{userDetails.username}}</h3>
+    <p> IR ID: {{userDetails.irid}}</p>
   </div>
   <ion-list>
     <ion-list-header><ion-icon item-start name="md-person"></ion-icon> Details</ion-list-header>
     <ion-item>
+      <ion-label><ion-icon item-start name="md-contact"></ion-icon>Name</ion-label>
+      <div item-content>
+        {{userDetails.fullname}}
+      </div>
+    </ion-item>
+    <ion-item>
       <ion-label><ion-icon item-start name="md-mail"></ion-icon>Email</ion-label>
       <div item-content>
-        {{email}}
+        {{userDetails.email}}
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-label><ion-icon item-start name="md-ice-cream"></ion-icon>Birthday</ion-label>
+      <div item-content>
+        {{userDetails.userBday}}
       </div>
     </ion-item>
      <ion-item>
-      <ion-label><ion-icon item-start name="star"></ion-icon>Points</ion-label>
+      <ion-label><ion-icon item-start name="md-star"></ion-icon>Points</ion-label>
       <div item-content>
-        {{points}}
+        {{userDetails.points}}
+      </div>
+    </ion-item>
+     <ion-item>
+      <ion-label><ion-icon item-start name="ios-star-outline"></ion-icon>Redeemable Points</ion-label>
+      <div item-content>
+        {{userDetails.redeemablePoints}}
       </div>
     </ion-item>
     <ion-list-header><ion-icon item-start name="md-videocam"></ion-icon>Subscription Details</ion-list-header>
     <ion-item>
       <ion-label>Membership Type</ion-label>
       <div item-content>
-        {{membership}}
+        {{userDetails.membership}}
       </div>
     </ion-item>
     <ion-item>
@@ -53,7 +71,7 @@
     <ion-item>
       <ion-label>Expiration</ion-label>
       <div item-content>
-        {{expire}}
+        {{userDetails.membershipExpiry}}
       </div>
     </ion-item>
   </ion-list>

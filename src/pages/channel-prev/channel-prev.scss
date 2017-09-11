@@ -33,38 +33,44 @@ page-channel-prev {
 
     .channelMain{
         position: relative;
-        height: 23vh;
-        background-color: #fff;
-        box-shadow: 4px 0px 0px rgba(0,0,0,0.2);
         >img{
             height: 15vh;
             object-fit: cover;
         }
-        >ion-icon{
-            position: absolute;
-            bottom: 3px;
-            right: 15px;
-            font-size: 2.5rem;
-        } 
     }
     .channelDetail{
         position: absolute;
         top: 7px;
         left: 7px;
         z-index: 1;
-        >img{
-            height: 21vw;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        height: 21vw !important;
+        width: 21vw;
+        object-fit: cover;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+    .channelLabel{
+        ion-label{
+            margin: 11px 33px 11px 0 !important;
+            white-space: normal;
         }
     }
+    .showDescBtn{
+        position: absolute;
+        top: 6px;
+        right: 0px;
+        font-size: 1.5rem;
+    }
+
     .channelViews{
         z-index: 1;
         text-align: center;
         position: absolute;
-        bottom: 56px;
-        right: 26px;
+        bottom: 5px;
+        left: 26vw;
         color: map-get($colors, light );
         >h6{
+            color: map-get($colors, light )!important;
+            font-weight: 800 !important;
             margin-bottom: 0rem;
         }
         >ion-icon{
@@ -75,10 +81,12 @@ page-channel-prev {
         z-index: 1;
         text-align: center;
         position: absolute;
-        bottom:56px;
-        right: 84px;
+        bottom:5px;
+        left: 38vw;
         color: map-get($colors, light );
         >h6{
+            color: map-get($colors, light )!important;
+            font-weight: 800 !important;
             margin-bottom: 0rem;
         }
         >ion-icon{
@@ -96,14 +104,6 @@ page-channel-prev {
         content: '';
     }
 
-    .channelDetails{
-            position: absolute;
-            bottom: -9px;
-            left: 10px;
-            >h6{
-                margin-bottom: -1rem;
-            }
-    }
      .parent {
         position: relative;
     }
@@ -126,25 +126,16 @@ page-channel-prev {
         color:rgba(256,256,256,0.5);
         font-size: 40pt;
     }
-    .details{
-        overflow: hidden;
-        background: white;
-        display: block;
-        box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
-    }
     button.btn-follow{
-        height: 2.6rem;
-        font-size: 1.2rem;
-        color: map-get($colors,light);
-        background-color: map-get($colors,primary);
-        border-radius: 10px;
-        flex-shrink: 0;
-    }
-    .followChannel{
         position: absolute;
         z-index: 1;
         top: 5px;
         right: 10px;
+        height: 2.6rem;
+        font-size: 1.2rem;
+        color: map-get($colors,light);
+        background-color: map-get($colors,primary);
+        flex-shrink: 0;
     }
 
 }
