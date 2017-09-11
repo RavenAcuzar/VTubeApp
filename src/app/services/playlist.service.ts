@@ -31,6 +31,14 @@ export class PlaylistService {
         })
     }
 
+    isVideoAddedToPlaylist(userId: string, bcid: string) {
+        return this.preparePlaylistTable().then(db => {
+            return db.executeSql(`SELECT * FROM playlist WHERE memid = ?, bcid = ?`, [userId, bcid]);
+        }).then(a => {
+            return a.rows.length > 0;
+        });
+    }
+
     addVideoFor(userId: string, bcid: string) {
         return this.preparePlaylistTable().then(db => {
             return db.executeSql(`INSERT INTO playlist(bcid, memid) VALUES(?, ?)`, [bcid, userId])

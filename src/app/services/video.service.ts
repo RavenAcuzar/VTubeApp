@@ -47,7 +47,7 @@ export class VideoService {
                     playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
                 }
             })
-            return videoDetailsArray;
+            return videoDetailsArray[0];
         })
     }
 
@@ -75,6 +75,14 @@ export class VideoService {
         }), { headers: headers }).map(response => {
             return <VideoComment[]>response.json();
         })
+    }
+
+    isDownloaded(id: string, userId: string) {
+        return this.downloadService.isVideoDownloaded(userId, id);
+    }
+
+    isAddedToPlaylist(id: string, userId: string) {
+        return this.playlistService.isVideoAddedToPlaylist(userId, id);
     }
 
     addLike(id: string, userId: string) {
