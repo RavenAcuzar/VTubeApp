@@ -26,35 +26,9 @@ export class VideoService {
             'idorname': id
         }), { headers: headers }).map((response, index) => {
             let videoDetailsArray = <VideoDetails[]>response.json();
-<<<<<<< HEAD
             let mapped = this.getMappedVideoDetailsArray(videoDetailsArray);
             return mapped[0];
         }).toPromise<VideoDetails>();
-=======
-            videoDetailsArray.map(videoDetail => {
-                videoDetail.mapped = {
-                    tags: videoDetail.tags.split(',').map(t => t.trim()),
-                    availableLanguages: videoDetail.tags.split(',').map(t => t.trim()),
-
-                    numOfViews: parseInt(videoDetail.views),
-                    numOfPlays: parseInt(videoDetail.plays),
-                    numOfPoints: parseInt(videoDetail.points),
-                    numOfLikes: parseInt(videoDetail.likes),
-                    numOfComments: parseInt(videoDetail.comments),
-
-                    isApproved: videoDetail.isapproved.toLowerCase() === 'true',
-                    isRecommended: videoDetail.is_recommended.toLowerCase() === 'true',
-                    isHighlighted: videoDetail.isHighlighted.toLowerCase() === 'true',
-                    isDownloadable: videoDetail.videoDl.toLowerCase() !== 'locked',
-                    canBeAccessedAnonymously: videoDetail.videoPrivacy.toLowerCase() === 'public',
-
-                    imageUrl: `http://the-v.net/${videoDetail.image}`,
-                    playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
-                }
-            })
-            return videoDetailsArray;
-        })
->>>>>>> 3874b2977c2b9eaaf7c541882862c64b2f786888
     }
 
     getRelatedVideos(id: string, count = 5, page = 1) {
@@ -67,15 +41,10 @@ export class VideoService {
             'id': id,
             'page': page
         }), { headers: headers }).map(response => {
-<<<<<<< HEAD
             let videoDetailsArray = <VideoDetails[]>response.json();
             let mapped = this.getMappedVideoDetailsArray(videoDetailsArray);
             return mapped;
         }).toPromise<VideoDetails[]>();
-=======
-            return <VideoDetails[]>response.json();
-        })
->>>>>>> 3874b2977c2b9eaaf7c541882862c64b2f786888
     }
 
     getComments(id: string) {
@@ -87,7 +56,6 @@ export class VideoService {
             'title': id
         }), { headers: headers }).map(response => {
             return <VideoComment[]>response.json();
-<<<<<<< HEAD
         }).toPromise<VideoComment[]>()
     }
 
@@ -112,17 +80,11 @@ export class VideoService {
         .toPromise()
         .then((channelIds: string[]) => {
             return channelIds.some(cid => cid === channelId);
-=======
->>>>>>> 3874b2977c2b9eaaf7c541882862c64b2f786888
         })
     }
 
     addLike(id: string, userId: string) {
-<<<<<<< HEAD
         let headers = new Headers();
-=======
-        let headers = new Headers()
->>>>>>> 3874b2977c2b9eaaf7c541882862c64b2f786888
         headers.set('Content-Type', 'application/x-www-form-urlencoded')
 
         return this.http.post(VideoService.API_URL, encodeObject({
@@ -140,7 +102,6 @@ export class VideoService {
         })
     }
 
-<<<<<<< HEAD
     addComment(id: string, userId: string) {
 
     }
@@ -177,13 +138,5 @@ export class VideoService {
             }
             return videoDetail;
         });
-=======
-    download(id: string, userId: string) {
-        return this.downloadService.addVideoFor(userId, id)
-    }
-
-    addToPlaylist(id: string, userId: string) {
-        return this.playlistService.addVideoFor(userId, id)
->>>>>>> 3874b2977c2b9eaaf7c541882862c64b2f786888
     }
 }
