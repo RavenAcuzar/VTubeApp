@@ -6,25 +6,24 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content no-padding>
-  <video #videoPlayer ion-fixed controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" 
+<ion-content no-padding *ngIf="videoDetails">
+  <!-- <video #videoPlayer ion-fixed controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" 
     class="videoPlayer" [class.fullscreen]="isVideoFullscreen">
     <source src="http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_20mb.mp4" type="video/mp4" />
-  </video>
+  </video> -->
+  <iframe ion-fixed class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl"
+    allowfullscreen="allowfullscreen"  mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" 
+    oallowfullscreen="oallowfullscreen"  webkitallowfullscreen="webkitallowfullscreen"></iframe>
   <ion-content no-padding *ngIf="!isVideoFullscreen">
     <div class="vid-header">
       <div class="vid-info">
-        <h1>Lorem Ipsum Dolor Sit Amet</h1>
-        <h4>900K views</h4>
+        <h1>{{videoDetails.title}}</h1>
+        <h4>{{videoDetails.views}} views</h4>
       </div>
     </div>
     <div class="vid-description">
-      <ion-icon name="md-globe"></ion-icon>:&nbsp;EN, RU, TR, ...
-      <p>Lorem ipsum dolor sit amet, aliquip deserunt id cum, eu eos mundi nonumes tacimates. Eum iisque oporteat persequeris
-        no, quodsi habemus laboramus at sit, dicit insolens eu sed. Et has modo adolescens, eu repudiare constituam cum.
-        Has te utinam ridens theophrastus, an enim idque voluptatibus usu, est an magna atomorum maluisset. No vix vidisse
-        virtute, vix veri omnium verear ad, ut nam eius eripuit delenit. Duo ei dolor quodsi iudicabit, at qui liber complectitur,
-        idque labitur nec ei.</p>
+      <ion-icon name="md-globe"></ion-icon>&nbsp;{{videoDetails.language}}
+      <p>{{videoDetails.description}}</p>
         
     </div>
     <div class="container-vid-actions">
@@ -35,7 +34,7 @@
               <button ion-button icon-only block (click)="likeVideo()">
                 <ion-icon class="icon" name="md-heart"></ion-icon>
               </button>
-              <span class="text">7K</span>
+              <span class="text">{{videoDetails.likes}}</span>
             </div>
           </ion-col>
           <ion-col col-4>
@@ -58,44 +57,30 @@
       </ion-grid>
     </div>
     <div class="vid-channel-info">
-      <ion-img></ion-img>
+      <img [src]="videoDetails.mapped.channelImageUrl"/>
       <div class="info">
-        <h1>The V Official Channel</h1>
-        <h4>10K followers</h4>
+        <h1>{{videoDetails.channelName}}</h1>
+        <h4>XXXX followers</h4>
       </div>
-      <button ion-button round outline class="btn-follow">
+      <button ion-button round outline class="btn-follow" (click)="followChannel()" *ngIf="!isFollowing">
         <span>Follow</span>
+      </button>
+      <button ion-button round outline class="btn-follow" (click)="unfollowChannel()" *ngIf="isFollowing">
+        <span>Unfollow</span>
       </button>
     </div>
     <div class="vid-related-vids">
       <h4>Related Videos</h4>
       <div class="container-videos">
-        <div class="video-box">
-          <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
+        <div class="video-box" *ngFor="let rv of relatedVideoDetails" (click)="goToVideo(rv.id)">
+          <img [src]="rv.mapped.imageUrl"/>
           <div class="info">
-            <h2>Lorem ipsum dolor sit amet</h2>
+            <h2>{{rv.title}}</h2>
             <p>
-              <span class="channel">The V Official Channel</span>
+              <span class="channel">{{rv.channelName}}</span><br/>
+              <span class="views">{{rv.views}} views</span>
               <span>&nbsp;&bull;&nbsp;</span>
-              <span class="views">900K views</span>
-              <span>&nbsp;&bull;&nbsp;</span>
-              <span class="points">40 points</span>
-            </p>
-          </div>
-          <button ion-button padding-bottom="false">
-            <ion-icon name="md-more"></ion-icon>
-          </button>
-        </div>
-        <div class="video-box">
-          <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
-          <div class="info">
-            <h2>Lorem ipsum dolor sit amet</h2>
-            <p>
-              <span class="channel">The V Official Channel</span>
-              <span>&nbsp;&bull;&nbsp;</span>
-              <span class="views">900K views</span>
-              <span>&nbsp;&bull;&nbsp;</span>
-              <span class="points">40 points</span>
+              <span class="points">{{rv.points}} points</span>
             </p>
           </div>
           <button ion-button padding-bottom="false">
@@ -112,21 +97,11 @@
         <button ion-button>Post</button>
       </div>
       <div class="container-comments">
-        <div class="comment-box uneditable">
+        <div class="comment-box uneditable" *ngFor="let vc of videoComments">
           <ion-img src="assets/img/volt-placeholder.png"></ion-img>
           <div class="content">
-            <h3>VP Donna Marie</h3>
-            <p>Lorem ipsum dolor sit amet, aliquip deserunt id cum, eu eos mundi nonumes tacimates. Eum iisque oporteat persequeris
-              no, quodsi habemus laboramus at sit, dicit insolens eu sed. Et has modo adolescens, eu repudiare constituam
-              cum. Has te utinam ridens theophrastus, an enim idque voluptatibus usu, est an magna atomorum maluisset.</p>
-          </div>
-        </div>
-        <div class="comment-box uneditable">
-          <ion-img src="assets/img/volt-placeholder.png"></ion-img>
-          <div class="content">
-            <h3>VP George Arun</h3>
-            <p>No vix vidisse virtute, vix veri omnium verear ad, ut nam eius eripuit delenit. Duo ei dolor quodsi iudicabit,
-              at qui liber complectitur, idque labitur nec ei.</p>
+            <h3>CommentER NAME</h3>
+            <p>{{vc.Comment}}</p>
           </div>
         </div>
       </div>

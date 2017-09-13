@@ -6,6 +6,7 @@ import { VideoService } from "../../app/services/video.service";
 import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY } from "../../app/app.constants";
 import { VideoDetails, VideoComment } from "../../app/models/video.models";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 
 @Component({
   selector: 'page-now-playing',
@@ -13,14 +14,20 @@ import { VideoDetails, VideoComment } from "../../app/models/video.models";
 })
 export class NowPlayingPage {
   @ViewChild('videoPlayer') videoplayer;
-  
+
   private videoId: string;
   private videoDetails: VideoDetails;
-  private relatedVideoDetails: VideoDetails[];
-  private videoComments: VideoComment[];
-  
+  private relatedVideoDetails: VideoDetails[] = [];
+  private videoComments: VideoComment[] = [];
+
+  private safeVideoUrl: SafeResourceUrl;
+
+  private relatedVideosPage = 1;
+
+  private isLoggedIn = false;
   private isVideoDownloaded = false;
   private isVideoAddedToPlaylist = false;
+  private isFollowing = false;
 
   private vidDescButtonIcon: string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
@@ -33,52 +40,20 @@ export class NowPlayingPage {
     private screenOrientation: ScreenOrientation,
     private videoService: VideoService,
     private storage: Storage,
-    private alertController: AlertController
-  ) { 
+    private alertController: AlertController,
+    private sanitizer: DomSanitizer
+  ) {
     this.videoId = navParams.get('id');
   }
 
   ionViewWillEnter() {
-    // initialize screen orientation variable
-    this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
-
     // get orientation subscription so that this can be unsubscribed later when
     // the user leaves the page
     this.orientationSubscription = this.screenOrientation.onChange().subscribe(() => {
       let videoPlayerNE = this.videoplayer.nativeElement;
-
-      console.log('Orientation changed!')
-      console.log(this.screenOrientation.type);
-
       this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
     });
-
-    // get video information
-    this.videoService.getDetails(this.videoId).subscribe(details => {
-      this.videoDetails = details;
-    });
-    this.videoService.getRelatedVideos(this.videoId).subscribe(relatedVideos => {
-      this.relatedVideoDetails = relatedVideos;
-    });
-    this.videoService.getComments(this.videoId).subscribe(comments => {
-      this.videoComments = comments;
-    });
-
-    // get user dependent details
-    this.storage.get(USER_DATA_KEY).then(userData => {
-      if (userData) {
-        // check if the video has been added to the playlist by the user
-        this.videoService.isAddedToPlaylist(this.videoId, userData.id).then(isAdded => {
-          this.isVideoAddedToPlaylist = isAdded;
-        })
-        // check if the video has been downloaded by the user
-        this.videoService.isDownloaded(this.videoId, userData.id).then(isDownloaded => {
-          this.isVideoDownloaded = isDownloaded;
-        });
-        // TODO: check if the video has been liked by the user
-        // DEPENDS ON: requires a new API call
-      }
-    })
+    this.goToVideo(this.videoId);
   }
 
   ionViewWillLeave() {
@@ -91,17 +66,24 @@ export class NowPlayingPage {
   }
 
   loadRelatedVideo() {
-    // TODO: REPLACE THE VIDEO IN THE CURRENT PAGE WITH THE
-    // SELECTED RELATED VIDEO
+    this.videoService.getRelatedVideos(this.videoId, 5, ++this.relatedVideosPage).then(relatedVideos => {
+      this.relatedVideoDetails = this.relatedVideoDetails.concat(relatedVideos);
+    });
   }
 
   likeVideo() {
-    // TODO: call `addLike` in the video service
-    
+    this.storage.get(USER_DATA_KEY).then(userData => {
+      this.videoService.addLike(this.videoId, userData.id).subscribe(_ => {
+        // do something when the video has been liked by the user
+        // TODO: UPDATE LIKED BUTTON TO RED COLOR
+      });
+    });
   }
 
   commentOnVideo() {
-    // TODO: call `addComment` in the video service
+    this.storage.get(USER_DATA_KEY).then(userData => {
+      // TODO: create add comment service function
+    });
   }
 
   addVideoToPlaylist() {
@@ -109,7 +91,7 @@ export class NowPlayingPage {
       if (userData) {
         return this.videoService.addToPlaylist(this.videoId, userData.id);
       } else {
-        // TODO 4 RICO: DISPLAY A TOAST TO TELL USER THAT
+        // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
         // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
         console.log('The user needs to sign in.');
       }
@@ -118,7 +100,8 @@ export class NowPlayingPage {
         let alert = this.alertController.create({
           title: 'Added to Playlist',
           message: 'The video has been successfully added to your playlist!',
-          buttons: [{ text: 'OK', handler: () => {
+          buttons: [{
+            text: 'OK', handler: () => {
               alert.dismiss();
               return true;
             }
@@ -129,7 +112,8 @@ export class NowPlayingPage {
         let alert = this.alertController.create({
           title: 'Failed to Add to Playlist',
           message: 'The video was not successfully added to your playlist.',
-          buttons: [{ text: 'OK', handler: () => {
+          buttons: [{
+            text: 'OK', handler: () => {
               alert.dismiss();
               return true;
             }
@@ -145,7 +129,7 @@ export class NowPlayingPage {
       if (userData) {
         return this.videoService.download(this.videoId, userData.id, userData.email);
       } else {
-        // TODO 4 RICO: DISPLAY A TOAST TO TELL USER THAT
+        // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
         // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
         console.log('The user needs to sign in.');
       }
@@ -168,13 +152,55 @@ export class NowPlayingPage {
       let alert = this.alertController.create({
         title: 'Oops!',
         message: 'An error occurred while trying to download the video. Please try again.',
-        buttons: [{ text: 'OK', handler: () => {
+        buttons: [{
+          text: 'OK', handler: () => {
             alert.dismiss();
             return true;
           }
         }]
       });
     })
+  }
+
+  goToVideo(id: string) {
+    this.videoId = id;
+    // initialize screen orientation variable
+    this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
+
+    // get video information
+    this.videoService.getDetails(this.videoId).then(details => {
+      this.videoDetails = details;
+      this.safeVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.videoDetails.mapped.playerUrl);
+
+      return this.storage.get(USER_DATA_KEY);
+    }).then(userData => {
+      this.isLoggedIn = userData !== null;
+      if (this.isLoggedIn) {
+        // check if the video has been added to the playlist by the user
+        this.videoService.isAddedToPlaylist(this.videoId, userData.id).then(isAdded => {
+          this.isVideoAddedToPlaylist = isAdded;
+        });
+        // check if the video has been downloaded by the user
+        this.videoService.isDownloaded(this.videoId, userData.id).then(isDownloaded => {
+          this.isVideoDownloaded = isDownloaded;
+        });
+        this.videoService.isFollowingChannel(userData.id, this.videoDetails.channelId).then(isFollowing => {
+          this.isFollowing = isFollowing;
+        });
+
+        // TODO: check if the video has been liked by the user
+        // FIXME: requires a new API call
+      }
+    });
+
+    // load 5 initial related videos
+    this.videoService.getRelatedVideos(this.videoId).then(relatedVideos => {
+      this.relatedVideoDetails = relatedVideos;
+    });
+    // load video's comments
+    this.videoService.getComments(this.videoId).then(comments => {
+      this.videoComments = comments;
+    });
   }
 
   private isOrientationPortrait(type: string): boolean {

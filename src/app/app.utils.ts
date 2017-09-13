@@ -9,16 +9,17 @@ export interface StringMap {
 }
 
 const AMPERSAND = '&'
+const EQUALS = '='
 export function encodeObject(object: StringMap) {
     let encStrArray = []
     for (let key in object) {
         if (object.hasOwnProperty(key)) {
             let o = object[key]
-            encStrArray.push(key, String(o), AMPERSAND)
+            encStrArray.push(key, EQUALS, encodeURIComponent(String(o)), AMPERSAND)
         }
     }
     encStrArray.pop()
-    return encodeURIComponent(encStrArray.join(''))
+    return encStrArray.join('');
 }
 export function formatDate(date) {
     var monthNames = [

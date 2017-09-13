@@ -83,7 +83,7 @@ page-now-playing {
             flex-shrink: 0;
         }
 
-        ion-img {
+        img {
             flex-shrink: 0;
             width: 40px;
             height: 40px;
@@ -164,9 +164,12 @@ page-now-playing {
                     margin-right: 10px;
                 }
 
-                ion-img {
+                img {
                     width: 40vw;
                     contain: none;
+                    flex-shrink: 0;
+                    height: auto;
+                    align-self: flex-start;
                 }
 
                 .info {

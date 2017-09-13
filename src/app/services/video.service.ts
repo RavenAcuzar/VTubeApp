@@ -26,29 +26,9 @@ export class VideoService {
             'idorname': id
         }), { headers: headers }).map((response, index) => {
             let videoDetailsArray = <VideoDetails[]>response.json();
-            videoDetailsArray.map(videoDetail => {
-                videoDetail.mapped = {
-                    tags: videoDetail.tags.split(',').map(t => t.trim()),
-                    availableLanguages: videoDetail.tags.split(',').map(t => t.trim()),
-
-                    numOfViews: parseInt(videoDetail.views),
-                    numOfPlays: parseInt(videoDetail.plays),
-                    numOfPoints: parseInt(videoDetail.points),
-                    numOfLikes: parseInt(videoDetail.likes),
-                    numOfComments: parseInt(videoDetail.comments),
-
-                    isApproved: videoDetail.isapproved.toLowerCase() === 'true',
-                    isRecommended: videoDetail.is_recommended.toLowerCase() === 'true',
-                    isHighlighted: videoDetail.isHighlighted.toLowerCase() === 'true',
-                    isDownloadable: videoDetail.videoDl.toLowerCase() !== 'locked',
-                    canBeAccessedAnonymously: videoDetail.videoPrivacy.toLowerCase() === 'public',
-
-                    imageUrl: `http://the-v.net/${videoDetail.image}`,
-                    playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
-                }
-            })
-            return videoDetailsArray[0];
-        })
+            let mapped = this.getMappedVideoDetailsArray(videoDetailsArray);
+            return mapped[0];
+        }).toPromise<VideoDetails>();
     }
 
     getRelatedVideos(id: string, count = 5, page = 1) {
@@ -61,8 +41,10 @@ export class VideoService {
             'id': id,
             'page': page
         }), { headers: headers }).map(response => {
-            return <VideoDetails[]>response.json();
-        })
+            let videoDetailsArray = <VideoDetails[]>response.json();
+            let mapped = this.getMappedVideoDetailsArray(videoDetailsArray);
+            return mapped;
+        }).toPromise<VideoDetails[]>();
     }
 
     getComments(id: string) {
@@ -74,7 +56,7 @@ export class VideoService {
             'title': id
         }), { headers: headers }).map(response => {
             return <VideoComment[]>response.json();
-        })
+        }).toPromise<VideoComment[]>()
     }
 
     isDownloaded(id: string, userId: string) {
@@ -85,8 +67,24 @@ export class VideoService {
         return this.playlistService.isVideoAddedToPlaylist(userId, id);
     }
 
+    isFollowingChannel(userId: string, channelId: string) {
+        let headers = new Headers();
+        headers.set('Content-Type', 'application/x-www-form-urlencoded')
+
+        return this.http.post(VideoService.API_URL, encodeObject({
+            'action': 'App_UserFollowing',
+            'id': userId
+        }), { headers: headers })
+        .map(response => response.json()
+        .map(c => c.channelId))
+        .toPromise()
+        .then((channelIds: string[]) => {
+            return channelIds.some(cid => cid === channelId);
+        })
+    }
+
     addLike(id: string, userId: string) {
-        let headers = new Headers()
+        let headers = new Headers();
         headers.set('Content-Type', 'application/x-www-form-urlencoded')
 
         return this.http.post(VideoService.API_URL, encodeObject({
@@ -104,11 +102,41 @@ export class VideoService {
         })
     }
 
-    download(id: string, userId: string, userEmail: string) {
-        return this.downloadService.addVideoFor(userId, userEmail, id);
+    addComment(id: string, userId: string) {
+
     }
 
     addToPlaylist(id: string, userId: string) {
         return this.playlistService.addVideoFor(userId, id);
+    }
+
+    download(id: string, userId: string, userEmail: string) {
+        return this.downloadService.addVideoFor(userId, userEmail, id);
+    }
+
+    private getMappedVideoDetailsArray(videoDetailsArray: VideoDetails[]) {
+        return videoDetailsArray.map(videoDetail => {
+            videoDetail.mapped = {
+                tags: videoDetail.tags.split(',').map(t => t.trim()),
+                availableLanguages: videoDetail.tags.split(',').map(t => t.trim()),
+
+                numOfViews: parseInt(videoDetail.views),
+                numOfPlays: parseInt(videoDetail.plays),
+                numOfPoints: parseInt(videoDetail.points),
+                numOfLikes: parseInt(videoDetail.likes),
+                numOfComments: parseInt(videoDetail.comments),
+
+                isApproved: videoDetail.isapproved.toLowerCase() === 'true',
+                isRecommended: videoDetail.is_recommended.toLowerCase() === 'true',
+                isHighlighted: videoDetail.isHighlighted.toLowerCase() === 'true',
+                isDownloadable: videoDetail.videoDl.toLowerCase() !== 'locked',
+                canBeAccessedAnonymously: videoDetail.videoPrivacy.toLowerCase() === 'public',
+
+                imageUrl: `http://the-v.net${videoDetail.image}`,
+                channelImageUrl: `http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?id=${videoDetail.channelId}&type=channel`,
+                playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
+            }
+            return videoDetail;
+        });
     }
 }
