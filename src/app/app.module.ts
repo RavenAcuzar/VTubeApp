@@ -28,6 +28,7 @@ import { DownloadService } from "./services/download.service";
 import { PlaylistService } from "./services/playlist.service";
 import { VideoService } from "./services/video.service";
 import { File } from '@ionic-native/file';
+import { UserService } from "./services/user.service";
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { File } from '@ionic-native/file';
     StatusBar,
     SplashScreen,
     ScreenOrientation,
+    UserService,
     VideoService,
     PlaylistService,
     DownloadService,

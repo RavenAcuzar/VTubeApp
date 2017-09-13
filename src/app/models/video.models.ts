@@ -71,5 +71,9 @@ export type VideoComment = {
     UserId: string,
     Comment: string,
     CreatedOn: string,
-    CreatedBy: string
+    CreatedBy: string,
+
+    mapped: {
+        userImageUrl: string
+    }
 }

@@ -21,6 +21,7 @@ export class NowPlayingPage {
   private videoComments: VideoComment[] = [];
 
   private safeVideoUrl: SafeResourceUrl;
+  private userImageUrl: string;
 
   private relatedVideosPage = 1;
 
@@ -28,6 +29,8 @@ export class NowPlayingPage {
   private isVideoDownloaded = false;
   private isVideoAddedToPlaylist = false;
   private isFollowing = false;
+
+  private commentContent: string = '';
 
   private vidDescButtonIcon: string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
@@ -82,7 +85,27 @@ export class NowPlayingPage {
 
   commentOnVideo() {
     this.storage.get(USER_DATA_KEY).then(userData => {
-      // TODO: create add comment service function
+      this.videoService.addComment(this.videoId, userData.id, this.commentContent).then(isSuccessful => {
+        if (isSuccessful) {
+          this.commentContent = '';
+
+          this.videoService.getComments(this.videoId).then(comments => {
+            this.videoComments = comments;
+          });
+        } else {
+          let alert = this.alertController.create({
+            title: 'Oh no!',
+            message: 'Your comment was not successfully posted.',
+            buttons: [{
+              text: 'Ok', handler: () => {
+                alert.dismiss();
+                return true;
+              }
+            }]
+          });
+          alert.present();
+        }
+      });
     });
   }
 
@@ -176,6 +199,8 @@ export class NowPlayingPage {
     }).then(userData => {
       this.isLoggedIn = userData !== null;
       if (this.isLoggedIn) {
+        this.userImageUrl = `http://the-v.net/Widgets_Site/avatar.ashx?id=${userData.id}`;
+
         // check if the video has been added to the playlist by the user
         this.videoService.isAddedToPlaylist(this.videoId, userData.id).then(isAdded => {
           this.isVideoAddedToPlaylist = isAdded;

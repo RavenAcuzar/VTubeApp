@@ -5,6 +5,8 @@ import { VideoDetails, VideoComment } from "../models/video.models";
 import { DownloadService } from "./download.service";
 import { PlaylistService } from "./playlist.service";
 import { Observable } from "rxjs/Observable";
+import { UserService } from "./user.service";
+import 'rxjs/add/operator/toPromise'
 import 'rxjs/add/operator/map'
 
 @Injectable()
@@ -14,7 +16,8 @@ export class VideoService {
     constructor(
         private http: Http,
         private downloadService: DownloadService,
-        private playlistService: PlaylistService
+        private playlistService: PlaylistService,
+        private userService: UserService
     ) { }
 
     getDetails(id: string) {
@@ -56,7 +59,21 @@ export class VideoService {
             'title': id
         }), { headers: headers }).map(response => {
             return <VideoComment[]>response.json();
-        }).toPromise<VideoComment[]>()
+        }).toPromise<VideoComment[]>().then(comments => {
+            let promises: Promise<VideoComment>[] = [];
+            comments.forEach(c => {
+                let promise = this.userService.getUserDetails(c.UserId).then(ud => {
+                    if (ud) {
+                        c.mapped = {
+                            userImageUrl: `http://the-v.net${ud.imageUser}`
+                        }
+                        return c;
+                    }
+                });
+                promises.push(promise);
+            })
+            return Promise.all(promises)
+        })
     }
 
     isDownloaded(id: string, userId: string) {
@@ -75,12 +92,12 @@ export class VideoService {
             'action': 'App_UserFollowing',
             'id': userId
         }), { headers: headers })
-        .map(response => response.json()
-        .map(c => c.channelId))
-        .toPromise()
-        .then((channelIds: string[]) => {
-            return channelIds.some(cid => cid === channelId);
-        })
+            .map(response => response.json()
+                .map(c => c.channelId))
+            .toPromise()
+            .then((channelIds: string[]) => {
+                return channelIds.some(cid => cid === channelId);
+            })
     }
 
     addLike(id: string, userId: string) {
@@ -102,8 +119,28 @@ export class VideoService {
         })
     }
 
-    addComment(id: string, userId: string) {
+    addComment(id: string, userId: string, comment: string) {
+        let headers = new Headers();
+        headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
+        return this.http.post(VideoService.API_URL, encodeObject({
+            'action': 'Comment_AddComment',
+            'bcid': id,
+            'userid': userId,
+            'comment': comment,
+            'ctype': 'Video'
+        }), { headers: headers }).map(response => {
+            return response.json();
+        }).toPromise().then(data => {
+            switch(data[0].Data) {
+                case 'True':
+                    return true;
+                case 'False':
+                    return false;
+                default:
+                    throw new Error('Unknown response value');
+            }
+        });
     }
 
     addToPlaylist(id: string, userId: string) {

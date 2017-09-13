@@ -24,7 +24,6 @@
     <div class="vid-description">
       <ion-icon name="md-globe"></ion-icon>&nbsp;{{videoDetails.language}}
       <p>{{videoDetails.description}}</p>
-        
     </div>
     <div class="container-vid-actions">
       <ion-grid>
@@ -91,16 +90,16 @@
     </div>
     <div class="vid-comments">
       <h4>Comments</h4>
-      <div class="comment-box">
-        <ion-img src="assets/img/volt-placeholder.png"></ion-img>
-        <ion-textarea class="txt-comment" placeholder="Leave a comment"></ion-textarea>
-        <button ion-button>Post</button>
+      <div class="comment-box" *ngIf="isLoggedIn">
+        <img [src]="userImageUrl"/>
+        <ion-textarea class="txt-comment" placeholder="Leave a comment" [(ngModel)]="commentContent"></ion-textarea>
+        <button ion-button (click)="commentOnVideo()">Post</button>
       </div>
       <div class="container-comments">
         <div class="comment-box uneditable" *ngFor="let vc of videoComments">
-          <ion-img src="assets/img/volt-placeholder.png"></ion-img>
+          <img [src]="vc.mapped.userImageUrl"/>
           <div class="content">
-            <h3>CommentER NAME</h3>
+            <h3>{{vc.CreatedBy}}</h3>
             <p>{{vc.Comment}}</p>
           </div>
         </div>
