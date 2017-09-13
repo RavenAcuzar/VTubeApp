@@ -31,6 +31,7 @@ export class PlaylistService {
         })
     }
 
+<<<<<<< HEAD
     isVideoAddedToPlaylist(userId: string, bcid: string) {
         return this.preparePlaylistTable().then(db => {
             return db.executeSql(`SELECT * FROM playlist WHERE memid = ?, bcid = ?`, [userId, bcid]);
@@ -39,6 +40,8 @@ export class PlaylistService {
         });
     }
 
+=======
+>>>>>>> 3874b2977c2b9eaaf7c541882862c64b2f786888
     addVideoFor(userId: string, bcid: string) {
         return this.preparePlaylistTable().then(db => {
             return db.executeSql(`INSERT INTO playlist(bcid, memid) VALUES(?, ?)`, [bcid, userId])
