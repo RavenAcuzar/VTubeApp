@@ -114,6 +114,8 @@ export class MyApp {
           console.log('Logout clicked');
           this.storage.set(IS_LOGGED_IN_KEY, false).then(()=>{
             AppStateService.publishAppStateChange(this.events);
+            this.nav.setRoot(HomePage);
+            this.activePage = "Home";
           }).catch(errCallback);
           
           alert.dismiss();

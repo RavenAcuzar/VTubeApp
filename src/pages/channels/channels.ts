@@ -1,31 +1,36 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController, AlertController, InfiniteScroll } from 'ionic-angular';
 import { PopoverPage } from "../../app/popover";
 import { ChannelPrevPage } from "../channel-prev/channel-prev";
 import { SearchPage } from "../search/search";
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
 import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY, IS_LOGGED_IN_KEY } from "../../app/app.constants";
+import { NowPlayingPage } from "../now-playing/now-playing";
+import { FallbackPage } from "../fallback/fallback";
 
 @Component({
   selector: 'page-channels',
   templateUrl: 'channels.html',
 })
 export class ChannelsPage {
-
+  channelVids=[];
+  hasVids=false;
   followingChannels = [];
   recommendedChannels = [];
   allChannels = [];
   userChannel =[];
   channelAvatar = 'http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id='
-  num = 10;
+  num = 1;
+  num2=1;
+  page = 1;
   private descLabel: string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
   isLoggedOut: Boolean;
   channelType: string = "myChannel";
 
   constructor(public navCtrl: NavController, public navParams: NavParams, protected popoverCtrl: PopoverController,
-    private http: Http, private storage: Storage) {
+    private http: Http, private storage: Storage, private alertCtrl: AlertController) {
 
   }
 
@@ -35,7 +40,6 @@ export class ChannelsPage {
       this.getUserChannel();
       this.getChannelFollowing();
     }
-    
     this.getChannelRecommended(this.num.toString());
     this.getChannelAll(this.num.toString());
   }
@@ -77,8 +81,8 @@ export class ChannelsPage {
   getChannelRecommended(num) {
     let body = new URLSearchParams();
     body.set('action', 'Channel_GetRecommended');
-    body.set('count', num);
-    body.set('page', '1');
+    body.set('count', '10');
+    body.set('page', num);
 
     let options = new RequestOptions({
       headers: new Headers({
@@ -88,10 +92,10 @@ export class ChannelsPage {
 
     this.http.post('http://cums.the-v.net/site.aspx', body, options)
       .subscribe(response => {
-        this.recommendedChannels = response.json().map(c => {
+        this.recommendedChannels = this.recommendedChannels.concat(response.json().map(c => {
           c.finalAvatarUrl = this.channelAvatar + c.id;
           return c
-        })
+        }))
       }, e => {
         console.log(e);
       }, () => {
@@ -101,8 +105,8 @@ export class ChannelsPage {
   getChannelAll(num) {
     let body = new URLSearchParams();
     body.set('action', 'Channel_GetModerator');
-    body.set('count', num);
-    body.set('page', '1');
+    body.set('count', '10');
+    body.set('page', num);
 
     let options = new RequestOptions({
       headers: new Headers({
@@ -112,14 +116,22 @@ export class ChannelsPage {
 
     this.http.post('http://cums.the-v.net/site.aspx', body, options)
       .subscribe(response => {
-        this.allChannels = response.json().map(c => {
+        this.allChannels = this.allChannels.concat(response.json().map(c => {
           c.finalAvatarUrl = this.channelAvatar + c.id;
           return c
-        })
+        }))
       }, e => {
         console.log(e);
       }, () => {
       });
+  }
+  loadMoreRecommended(){
+    this.num +=1;
+    this.getChannelRecommended(this.num.toString());
+  }
+  loadMoreChannel(){
+    this.num2+=1;
+    this.getChannelAll(this.num2.toString());
   }
   checkUserifLoggedIn(){
     this.storage.get(IS_LOGGED_IN_KEY).then(isloggedin=>{
@@ -152,6 +164,7 @@ export class ChannelsPage {
           })
           if (data.length > 0) {
             this.userChannel = data[0];
+            this.getChannelVids(data[0].id);
           } else {
             //do something here if no channel is available
           }
@@ -159,6 +172,95 @@ export class ChannelsPage {
           console.log(e);
         }, () => {
         });
+    })
+  }
+  loadMoreChannelVids(infiniteScroll: InfiniteScroll){
+    this.page+=1;
+    this.getChannelVids(this.userChannel[0].id, ()=>{
+      infiniteScroll.complete();
+    });
+  }
+
+  getChannelVids(cId, callback?) {
+
+    let body = new URLSearchParams();
+    body.set('action', 'Video_GetByChannel');
+    body.set('count', '10');
+    body.set('id', cId);
+    body.set('page', this.page.toString());
+
+    let options = new RequestOptions({
+      headers: new Headers({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    });
+
+    this.http.post('http://cums.the-v.net/site.aspx', body)
+      .subscribe(response => {
+        this.channelVids = this.channelVids.concat(response.json());
+        if (this.channelVids.length <= 0) {
+          this.hasVids = false;
+        }
+        else {
+          this.hasVids = true;
+          this.channelVids.map(cv => {
+            cv.noLock = (cv.videoPrivacy === 'public');
+            return cv;
+          })
+        }
+        if  (callback)
+          callback();
+      }, e => {
+        console.log(e);
+      }, () => {
+      });
+  }
+    
+  playVideo(id: string, videoPrivacy: string) {
+    this.storage.get(IS_LOGGED_IN_KEY).then(loggedIn => {
+      if (videoPrivacy == "public") {
+        //go to vid
+        this.navCtrl.push(NowPlayingPage, {
+          id: id
+        });
+      }
+      else if (!loggedIn && videoPrivacy == "private") {
+        //go to fallback
+        this.goToFallback();
+      } else if (loggedIn && videoPrivacy == "private") {
+        //check subscription
+        this.userCheckSubscription().then(sub => {
+          if (sub) {
+            this.navCtrl.push(NowPlayingPage, {
+              id: id
+            });
+          }
+          else {
+            let alert = this.alertCtrl.create({
+              title: 'Upgrade to premium',
+              message: 'Upgrade to premium account to access this feature.',
+              buttons: [{
+                text: 'OK',
+                handler: () => {
+                  alert.dismiss();
+                  return false;
+                }
+              }
+              ]
+            })
+            alert.present();
+          }
+          //if true go to vid
+          //else show alert- prompt user to upgrade subscrption
+        })
+      }
+    })
+
+  }
+
+  userCheckSubscription() {
+    return this.storage.get(USER_DATA_KEY).then(userDetails => {
+      return (userDetails.membership !== "Free")
     })
   }
 
@@ -169,6 +271,10 @@ export class ChannelsPage {
   }
   searchThing() {
     this.navCtrl.push(SearchPage);
+  }
+  
+  goToFallback() {
+    this.navCtrl.push(FallbackPage);
   }
   seeDesc() {
     this.isDescriptionShown = !this.isDescriptionShown;

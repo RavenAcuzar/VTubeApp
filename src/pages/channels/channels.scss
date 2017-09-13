@@ -76,6 +76,20 @@ page-channels {
         }
     }
 
+    .channelBlockMore{
+        display: inline-block;
+        width: 29vw;
+        overflow: hidden;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.2);
+        height: 30.8vw;
+        
+        >h3{
+            padding-top: 44%;
+            opacity: 0.6;
+        }
+    }
+
     .scroll-zoom-wrapper{
         white-space: nowrap;
     }

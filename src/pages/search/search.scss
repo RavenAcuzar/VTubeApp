@@ -29,10 +29,8 @@ page-search {
     }
 
     .container-videos {
-            > :not(:last-child) {
-                padding-bottom: 15px;
-            }
-
+        
+            padding-bottom: 15px;
             .video-box {
                 display: flex;
                 flex-direction: row;
@@ -42,9 +40,12 @@ page-search {
                     margin-right: 10px;
                 }
 
-                ion-img {
+                img {
                     width: 40vw;
                     contain: none;
+                    flex-shrink: 0;
+                    height: auto;
+                    align-self: flex-start;
                 }
 
                 .info {

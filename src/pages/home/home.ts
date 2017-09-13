@@ -18,7 +18,7 @@ export class HomePage {
   freeVids = [];
   premiumVids = [];
   channelDetail;
-  numvids = 10;
+  numvids = 1;
 
   vidType: string = "freeVid";
   constructor(public navCtrl: NavController, protected popoverCtrl: PopoverController,
@@ -34,13 +34,13 @@ export class HomePage {
   }
 
   loadMoreFree(infiniteScroll: InfiniteScroll) {
-    this.numvids += 10;
+    this.numvids += 1;
     this.getFreeVids(this.numvids.toString(), () => {
       infiniteScroll.complete();
     });
   }
   loadMorePrem(infiniteScroll: InfiniteScroll) {
-    this.numvids += 10;
+    this.numvids += 1;
     this.getPremVids(this.numvids.toString(), () => {
       infiniteScroll.complete();
     });
@@ -49,9 +49,9 @@ export class HomePage {
   getPremVids(num, callback?) {
     let body = new URLSearchParams();
     body.set('action', 'Video_GetByLevel');
-    body.set('count', num);
+    body.set('count', '10');
     body.set('level', 'Intermediate');
-    body.set('page', '1');
+    body.set('page', num);
 
     let options = new RequestOptions({
       headers: new Headers({
@@ -61,7 +61,7 @@ export class HomePage {
 
     this.http.post('http://cums.the-v.net/site.aspx', body, options)
       .subscribe(response => {
-        this.premiumVids = response.json();
+        this.premiumVids =this.premiumVids.concat(response.json());
         this.premiumVids.forEach(fv => {
           this.channelAvatar(fv);
         })
@@ -76,9 +76,9 @@ export class HomePage {
   getFreeVids(num, callback?) {
     let body = new URLSearchParams();
     body.set('action', 'Video_GetByLevel');
-    body.set('count', num);
+    body.set('count', '10');
     body.set('level', 'Beginner');
-    body.set('page', '1');
+    body.set('page', num);
 
     let options = new RequestOptions({
       headers: new Headers({
@@ -88,9 +88,9 @@ export class HomePage {
 
     this.http.post('http://cums.the-v.net/site.aspx', body, options)
       .subscribe(response => {
-        this.freeVids = response.json().filter((v) => {
+        this.freeVids = this.freeVids.concat(response.json().filter((v) => {
           return v.videoPrivacy === 'public';
-        });
+        }));
         this.freeVids.forEach(fv => {
           this.channelAvatar(fv);
         })

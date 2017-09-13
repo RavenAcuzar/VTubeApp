@@ -74,16 +74,17 @@
 
   <div padding>
     <h4>UPLOADS</h4>
-    <ion-card>
-      <div class="parent">
-        <img src="assets/img/cardIMG.jpg" />
+    <h1 style="opacity:0.5; text-align:center; margin-top:100px;" [hidden]="hasVids">No Videos uploaded.</h1>
+    <ion-card *ngFor="let vids of channelVids" [hidden]="!hasVids">
+      <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
+        <img src="http://the-v.net{{vids.image}}"/>
         <div class="duration">
-          <ion-badge color="duration">00:00</ion-badge>
+          <ion-badge color="duration">{{vids.time}}</ion-badge>
         </div>
         <div class="vidpoints">
           <ion-chip color="secondary">
             <ion-icon name="star"></ion-icon>
-            <ion-label>40 Points</ion-label>
+            <ion-label>{{vids.points}} Points</ion-label>
           </ion-chip>
         </div>
         <div class="vidplay">
@@ -93,16 +94,20 @@
 
       <ion-item>
         <ion-avatar item-start>
-          <img src="assets/img/volt-placeholder.png" />
+          <img [src]="channelDetail.channelImageFinalUrl"/>
         </ion-avatar>
-        <h2>Title</h2>
-        <p>Channel Name &bull; # Views</p>
+        <h2><ion-icon name="lock" color="secondary" [hidden]="vids.noLock"></ion-icon> {{vids.title}}</h2>
+        <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
         <p>
-          <ion-icon name="globe"></ion-icon>: EN, RU, TR, &hellip;</p>
+          <ion-icon name="globe"></ion-icon>: {{vids.language}}</p>
         <div item-end icon-only (click)="presentPopover($event)">
           <ion-icon name="md-more"></ion-icon>
         </div>
       </ion-item>
     </ion-card>
+    <ion-infinite-scroll (ionInfinite)="loadMoreChannelVids($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more videos...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
   </div>
 </ion-content>

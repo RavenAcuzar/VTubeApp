@@ -9,9 +9,8 @@
   <ion-navbar>
     <ion-title>Search</ion-title>
   </ion-navbar>
-  <ion-searchbar
-      [(ngModel)]="myInput"
-      [showCancelButton]="shouldShowCancel"
+  <ion-searchbar autofocus
+      [(ngModel)]="keyword"
       (ionInput)="onInput($event)"
       (ionCancel)="onCancel($event)">
     </ion-searchbar>
@@ -19,20 +18,19 @@
 
 
 <ion-content padding>
-  <div class="container-videos">
+  <div class="container-videos" *ngFor="let items of SearchResults" [hidden]="hideResults">
     <div class="video-box">
-      <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
-      <div class="info">
-        <h2>Lorem ipsum dolor sit amet</h2>
+      <img [src]="items.vidImage" (click)="playVideo(items.URL, items.vidPriv)"/>
+      <div class="info" (click)="playVideo(items.URL, items.vidPriv)">
+        <h2><ion-icon name="lock" color="secondary" [hidden]="items.noLock"></ion-icon> {{items.Title}}</h2>
         <p>
-          <span class="channel">The V Official Channel</span>
+          <span class="channel">{{items.chName}}</span><br>
+          <span class="views">{{items.viewsNo}} views</span>
           <span>&nbsp;&bull;&nbsp;</span>
-          <span class="views">900K views</span>
-          <span>&nbsp;&bull;&nbsp;</span>
-          <span class="points">40 points</span>
+          <span class="points">{{items.vidPoints}} points</span>
         </p>
       </div>
-      <button ion-button padding-bottom="false">
+      <button ion-button padding-bottom="false" (click)="presentPopover($event)">
             <ion-icon name="md-more"></ion-icon>
           </button>
     </div>
