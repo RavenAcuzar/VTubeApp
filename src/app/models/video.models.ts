@@ -61,6 +61,7 @@ export type VideoDetails = {
         canBeAccessedAnonymously: boolean,
 
         imageUrl: string,
+        channelImageUrl: string,
         playerUrl: string
     }
 }
