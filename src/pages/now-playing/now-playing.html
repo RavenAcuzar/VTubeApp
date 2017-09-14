@@ -38,10 +38,14 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="downloadVideo()">
+              <button ion-button icon-only block (click)="downloadVideo()" 
+                  [disabled]="isVideoDownloaded || isVideoDownloading" [class.downloaded]="isVideoDownloaded">
                 <ion-icon class="icon" name="md-download"></ion-icon>
               </button>
-              <span class="text">Download</span>
+              <span class="text" *ngIf="isVideoDownloaded">Downloaded</span>
+              <span class="text" *ngIf="!isVideoDownloaded && !isVideoDownloading">Download</span>
+              <span class="text" *ngIf="!isVideoDownloaded && isStarting">Starting download...</span>
+              <span class="text" *ngIf="!isVideoDownloaded && isVideoDownloading">Downloading... ({{downloadProgress}}%)</span>
             </div>
           </ion-col>
           <ion-col col-4>

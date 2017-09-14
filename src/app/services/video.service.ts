@@ -148,7 +148,11 @@ export class VideoService {
     }
 
     download(id: string, userId: string, userEmail: string) {
-        return this.downloadService.addVideoFor(userId, userEmail, id);
+        return this.getDetails(id).then(userDetails => {
+            return this.downloadService.addVideoFor(userId, userEmail, id, 
+                userDetails.title, userDetails.channelName, userDetails.time,
+                userDetails.mapped.imageUrl);
+        });
     }
 
     private getMappedVideoDetailsArray(videoDetailsArray: VideoDetails[]) {
