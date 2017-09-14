@@ -136,6 +136,10 @@ page-now-playing {
                 &:hover:not(.disable-hover) {
                     background-color: transparent !important;
                 }
+
+                &.downloaded {
+                    color: #D52730;
+                }
             }
         }
     }

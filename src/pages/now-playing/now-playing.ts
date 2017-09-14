@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Subscription } from "rxjs/Subscription";
@@ -7,10 +7,11 @@ import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY } from "../../app/app.constants";
 import { VideoDetails, VideoComment } from "../../app/models/video.models";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { Observable } from "rxjs/Observable";
 
 @Component({
   selector: 'page-now-playing',
-  templateUrl: 'now-playing.html',
+  templateUrl: 'now-playing.html'
 })
 export class NowPlayingPage {
   @ViewChild('videoPlayer') videoplayer;
@@ -27,8 +28,12 @@ export class NowPlayingPage {
 
   private isLoggedIn = false;
   private isVideoDownloaded = false;
+  private isVideoDownloading = false;
   private isVideoAddedToPlaylist = false;
+  private isStarting = false;
   private isFollowing = false;
+
+  private downloadProgress: number = 0;
 
   private commentContent: string = '';
 
@@ -44,7 +49,8 @@ export class NowPlayingPage {
     private videoService: VideoService,
     private storage: Storage,
     private alertController: AlertController,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private ref: ChangeDetectorRef
   ) {
     this.videoId = navParams.get('id');
   }
@@ -148,21 +154,31 @@ export class NowPlayingPage {
   }
 
   downloadVideo() {
+    if (this.isVideoDownloaded) {
+      return;
+    }
+
+    this.isStarting = true;
+    this.isVideoDownloading = true;
+
     this.storage.get(USER_DATA_KEY).then(userData => {
       if (userData) {
         return this.videoService.download(this.videoId, userData.id, userData.email);
       } else {
-        // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
-        // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
-        console.log('The user needs to sign in.');
+        throw new Error('not_logged_in');
       }
     }).then(observable => {
+      this.isStarting = false;
+      this.downloadProgress = 0;
+
       observable.subscribe(progress => {
-        console.log(`Video download progress: ${progress}`);
+        this.downloadProgress = progress;
+        this.ref.detectChanges();
       }, e => {
-        console.log(`Video download error: ${JSON.stringify(e)}`);
+        this.isVideoDownloading = false;
       }, () => {
-        console.log(`Video download complete`);
+        this.isVideoDownloading = false;
+        this.isVideoDownloaded = true;
 
         let alert = this.alertController.create({
           title: 'Download Video',
@@ -170,18 +186,40 @@ export class NowPlayingPage {
         });
         alert.present();
       })
+    }, error => {
+      throw error;
     }).catch(e => {
-      console.error(JSON.stringify(e));
-      let alert = this.alertController.create({
-        title: 'Oops!',
-        message: 'An error occurred while trying to download the video. Please try again.',
-        buttons: [{
-          text: 'OK', handler: () => {
-            alert.dismiss();
-            return true;
-          }
-        }]
-      });
+      let unknownError = (e) => {
+        console.error(JSON.stringify(e));
+        let alert = this.alertController.create({
+          title: 'Oops!',
+          message: 'An error occurred while trying to download the video. Please try again.',
+          buttons: [{
+            text: 'OK', handler: () => {
+              alert.dismiss();
+              return true;
+            }
+          }]
+        });
+      }
+
+      if (e instanceof Error) {
+        switch (e.message) {
+          case 'not_logged_in':
+            // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
+            // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
+            console.log('The user needs to sign in.');
+            break;
+          case 'already_downloaded':
+            console.log('Video has already been downloaded by the user.');
+            break;
+          default:
+            unknownError(e);
+            break;
+        }
+      } else {
+        unknownError(e);
+      }
     })
   }
 
@@ -204,13 +242,19 @@ export class NowPlayingPage {
         // check if the video has been added to the playlist by the user
         this.videoService.isAddedToPlaylist(this.videoId, userData.id).then(isAdded => {
           this.isVideoAddedToPlaylist = isAdded;
+        }).catch(e => {
+          console.log(e);
         });
         // check if the video has been downloaded by the user
         this.videoService.isDownloaded(this.videoId, userData.id).then(isDownloaded => {
           this.isVideoDownloaded = isDownloaded;
+        }).catch(e => {
+          console.log(e);
         });
         this.videoService.isFollowingChannel(userData.id, this.videoDetails.channelId).then(isFollowing => {
           this.isFollowing = isFollowing;
+        }).catch(e => {
+          console.log(e);
         });
 
         // TODO: check if the video has been liked by the user

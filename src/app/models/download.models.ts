@@ -3,5 +3,10 @@ export type DownloadEntry = {
     id: number,
     bcid: string,
     memid: string,
-    dl_date: Date
+    title: string,
+    channelName: string,
+    time: string,
+    dl_date: Date,
+
+    imageUrl: string
 } 

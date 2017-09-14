@@ -1,9 +1,3 @@
-<!--
-  Generated template for the DownloadsPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
@@ -18,24 +12,20 @@
   </div>
 </ion-header>
 
-
 <ion-content padding>
   <div class="container-videos">
-    <div class="video-box">
-      <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
-      <div class="info">
-        <h2>Lorem ipsum dolor sit amet</h2>
+    <div class="video-box" *ngFor="let dv of downloadedVideos">
+      <img [src]="dv.imageUrl"/>
+      <div class="info" (click)="playVideo(dv)">
+        <h2>{{dv.title}}</h2>
         <p>
-          <span class="channel">The V Official Channel</span>
-          <span>&nbsp;&bull;&nbsp;</span>
-          <span class="views">900K views</span>
-          <span>&nbsp;&bull;&nbsp;</span>
-          <span class="points">40 points</span>
+          <span class="channel">{{dv.channelName}}</span><br/>
+          <span class="views">{{dv.time}}</span>
         </p>
       </div>
-      <button ion-button padding-bottom="false">
-            <ion-icon name="md-more"></ion-icon>
-          </button>
+      <button ion-button padding-bottom="false" (click)="deleteEntry(dv)">
+        <ion-icon name="md-trash"></ion-icon>
+      </button>
     </div>
   </div>
   <div class="downloadsFooter">
