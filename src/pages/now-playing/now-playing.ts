@@ -150,6 +150,38 @@ export class NowPlayingPage {
         });
         alert.present();
       }
+    }).catch(e => {
+      let unknownError = (e) => {
+        console.error(JSON.stringify(e));
+        let alert = this.alertController.create({
+          title: 'Oops!',
+          message: 'An error occurred while trying to add the video to your playlist. Please try again.',
+          buttons: [{
+            text: 'OK', handler: () => {
+              alert.dismiss();
+              return true;
+            }
+          }]
+        });
+      }
+
+      if (e instanceof Error) {
+        switch (e.message) {
+          case 'not_logged_in':
+            // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
+            // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
+            console.log('The user needs to sign in.');
+            break;
+          case 'already_downloaded':
+            console.log('Video has already been downloaded by the user.');
+            break;
+          default:
+            unknownError(e);
+            break;
+        }
+      } else {
+        unknownError(e);
+      }
     })
   }
 
@@ -182,7 +214,13 @@ export class NowPlayingPage {
 
         let alert = this.alertController.create({
           title: 'Download Video',
-          message: 'The video has been successfully downloaded!'
+          message: 'The video has been successfully downloaded!',
+          buttons: [{
+            text: 'OK', handler: () => {
+              alert.dismiss();
+              return true;
+            }
+          }]
         });
         alert.present();
       })
@@ -210,8 +248,8 @@ export class NowPlayingPage {
             // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
             console.log('The user needs to sign in.');
             break;
-          case 'already_downloaded':
-            console.log('Video has already been downloaded by the user.');
+          case 'already_in_playlist':
+            console.log('Video has already been added to the playlist by the user.');
             break;
           default:
             unknownError(e);

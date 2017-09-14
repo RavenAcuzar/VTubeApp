@@ -1,17 +1,11 @@
-<!--
-  Generated template for the PlaylistPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <!-- <ion-title>Playlist</ion-title> -->
   </ion-navbar>
+
   <div no-padding class="playlist-Banner">
     <div class="playlist-title">
       <h1><b>My Playlist</b></h1>
@@ -22,24 +16,22 @@
   </div>
 </ion-header>
 
-
 <ion-content padding>
   <div class="container-videos">
-        <div class="video-box">
-          <ion-img src="assets/img/cardIMG2.jpg"></ion-img>
-          <div class="info">
-            <h2>Lorem ipsum dolor sit amet</h2>
-            <p>
-              <span class="channel">The V Official Channel</span>
-              <span>&nbsp;&bull;&nbsp;</span>
-              <span class="views">900K views</span>
-              <span>&nbsp;&bull;&nbsp;</span>
-              <span class="points">40 points</span>
-            </p>
-          </div>
-          <button ion-button padding-bottom="false">
-            <ion-icon name="md-more"></ion-icon>
-          </button>
-        </div>
+    <div class="video-box" *ngFor="let pv of playlistVideos">
+      <img [src]="pv.mapped.imageUrl"/>
+      <div class="info">
+        <h2>{{pv.title}}</h2>
+        <p>
+          <span class="channel">{{pv.channelName}}</span><br/>
+          <span class="views">{{pv.mapped.numOfViews}} views</span>
+          <span>&nbsp;&bull;&nbsp;</span>
+          <span class="points">{{pv.mapped.numOfPoints}} points</span>
+        </p>
+      </div>
+      <button ion-button padding-bottom="false" (click)="showPopover($event, pv)">
+        <ion-icon name="md-more"></ion-icon>
+      </button>
+    </div>
   </div>
 </ion-content>

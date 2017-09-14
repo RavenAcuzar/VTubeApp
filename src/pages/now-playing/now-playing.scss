@@ -137,7 +137,7 @@ page-now-playing {
                     background-color: transparent !important;
                 }
 
-                &.downloaded {
+                &.downloaded, &.addedToPlaylist {
                     color: #D52730;
                 }
             }

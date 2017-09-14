@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController, AlertController, InfiniteScroll } from 'ionic-angular';
-import { PopoverPage } from "../../app/popover";
+import { HomePopoverPage } from "../../app/popover";
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
 import { Storage } from "@ionic/storage";
 import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
@@ -156,8 +156,10 @@ export class ChannelPrevPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad ChannelPrevPage');
   }
-  presentPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage);
+  presentPopover(myEvent, vids) {
+    let popover = this.popoverCtrl.create(HomePopoverPage, {
+      videoDetails: vids
+    });
     popover.present({
       ev: myEvent
     });

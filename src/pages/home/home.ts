@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, PopoverController, InfiniteScroll, AlertController } from 'ionic-angular';
-import { PopoverPage } from "../../app/popover";
+import { HomePopoverPage } from "../../app/popover";
 import { NowPlayingPage } from "../now-playing/now-playing";
 import { SearchPage } from "../search/search";
 import { FallbackPage } from "../fallback/fallback";
@@ -26,8 +26,10 @@ export class HomePage {
     this.getFreeVids(this.numvids.toString());
     this.getPremVids(this.numvids.toString());
   }
-  presentPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage);
+  presentPopover(myEvent, vids) {
+    let popover = this.popoverCtrl.create(HomePopoverPage, {
+      videoDetails: vids
+    });
     popover.present({
       ev: myEvent
     });

@@ -17,7 +17,7 @@ import { ForgotPasswordPage } from "../pages/forgot-password/forgot-password";
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { PopoverPage } from "./popover";
+import { HomePopoverPage, PlaylistPopoverPage } from "./popover";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
 import { IonicStorageModule } from "@ionic/storage";
 import { HttpModule } from "@angular/http";
@@ -44,7 +44,8 @@ import { UserService } from "./services/user.service";
     SearchPage,
     FallbackPage,
     ForgotPasswordPage,
-    PopoverPage
+    HomePopoverPage,
+    PlaylistPopoverPage
   ],
   imports: [
     BrowserModule,
@@ -67,7 +68,8 @@ import { UserService } from "./services/user.service";
     SearchPage,
     FallbackPage,
     ForgotPasswordPage,
-    PopoverPage
+    HomePopoverPage,
+    PlaylistPopoverPage
   ],
   providers: [
     File,

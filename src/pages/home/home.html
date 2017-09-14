@@ -56,7 +56,7 @@
           <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
           <p>
             <ion-icon name="globe"></ion-icon>: {{vids.language}}</p>
-          <div item-end icon-only class="more" (click)="presentPopover($event)">
+          <div item-end icon-only class="more" (click)="presentPopover($event, vids)">
             <ion-icon class="more" name="md-more"></ion-icon>
           </div>
         </ion-item>
@@ -98,7 +98,7 @@
           <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
           <p>
             <ion-icon name="globe"></ion-icon> : {{vids.language}}</p>
-          <div item-end icon-only (click)="presentPopover($event)">
+          <div item-end icon-only (click)="presentPopover($event, vids)">
             <ion-icon name="md-more"></ion-icon>
           </div>
         </ion-item>

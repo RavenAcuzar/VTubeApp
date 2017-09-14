@@ -50,10 +50,12 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="addVideoToPlaylist()">
+              <button ion-button icon-only block (click)="addVideoToPlaylist()"
+                  [disabled]="isVideoAddedToPlaylist" [class.addedToPlaylist]="isVideoAddedToPlaylist">
                 <ion-icon class="icon" name="md-add"></ion-icon>
               </button>
-              <span class="text">Add to playlist</span>
+              <span class="text" *ngIf="!isVideoAddedToPlaylist">Add to playlist</span>
+              <span class="text" *ngIf="isVideoAddedToPlaylist">Added to playlist</span>
             </div>
           </ion-col>
         </ion-row>

@@ -5,7 +5,7 @@ import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
 import { NowPlayingPage } from "../now-playing/now-playing";
 import { FallbackPage } from "../fallback/fallback";
 import { Storage } from "@ionic/storage"
-import { PopoverPage } from "../../app/popover";
+import { HomePopoverPage } from "../../app/popover";
 
 @Component({
   selector: 'page-search',
@@ -130,8 +130,10 @@ export class SearchPage {
     });
     return this.http.post('http://cums.the-v.net/site.aspx', body, options)
   }
-  presentPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage);
+  presentPopover(myEvent, vids) {
+    let popover = this.popoverCtrl.create(HomePopoverPage, {
+      videoDetails: vids
+    });
     popover.present({
       ev: myEvent
     });

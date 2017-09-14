@@ -75,9 +75,10 @@ page-playlist {
                     margin-right: 10px;
                 }
 
-                ion-img {
+                img {
                     width: 40vw;
                     contain: none;
+                    align-self: flex-start;
                 }
 
                 .info {

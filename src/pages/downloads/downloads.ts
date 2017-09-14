@@ -25,6 +25,8 @@ export class DownloadsPage {
     this.storage.get(USER_DATA_KEY).then(userData => {
       if (userData) {
         return this.downloadService.getDownloadedVideosOf(userData.id);
+      } else {
+        throw new Error('user_not_logged_in');
       }
     }).then(downloadedVideos => {
       this.downloadedVideos = downloadedVideos;

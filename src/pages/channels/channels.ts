@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController, AlertController, InfiniteScroll } from 'ionic-angular';
-import { PopoverPage } from "../../app/popover";
+import { HomePopoverPage } from "../../app/popover";
 import { ChannelPrevPage } from "../channel-prev/channel-prev";
 import { SearchPage } from "../search/search";
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
@@ -44,8 +44,10 @@ export class ChannelsPage {
     this.getChannelAll(this.num.toString());
   }
 
-  presentPopover(myEvent) {
-    let popover = this.popoverCtrl.create(PopoverPage);
+  presentPopover(myEvent, vids) {
+    let popover = this.popoverCtrl.create(HomePopoverPage, {
+      videoDetails: vids
+    });
     popover.present({
       ev: myEvent
     });

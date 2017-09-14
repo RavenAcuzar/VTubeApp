@@ -33,21 +33,26 @@ export class PlaylistService {
 
     isVideoAddedToPlaylist(userId: string, bcid: string) {
         return this.preparePlaylistTable().then(db => {
-            return db.executeSql(`SELECT * FROM playlist WHERE memid = ?, bcid = ?`, [userId, bcid]);
+            return db.executeSql(`SELECT * FROM playlist WHERE memid = ? and bcid = ?`, [userId, bcid]);
         }).then(a => {
             return a.rows.length > 0;
         });
     }
 
     addVideoFor(userId: string, bcid: string) {
-        return this.preparePlaylistTable().then(db => {
+        return this.checkIfVideoIsInPlaylistOf(userId, bcid).then(isInPlaylist => {
+            if (!isInPlaylist)
+                return this.preparePlaylistTable()
+            else
+                throw new Error('already_in_playlist');
+        }).then(db => {
             return db.executeSql(`INSERT INTO playlist(bcid, memid) VALUES(?, ?)`, [bcid, userId])
         }).then(a => {
             return new Promise<boolean>((resolve, reject) => {
                 if (a.rowsAffected === 1)
                     resolve(true)
                 else if (a.rowsAffected === 0)
-                    reject(false)
+                    resolve(false)
                 else
                     reject({ error: 'Multiple values were added!' })
             })
@@ -56,13 +61,13 @@ export class PlaylistService {
 
     removeVideoFromPlaylist(bcid: string) {
         return this.preparePlaylistTable().then(db => {
-            return db.executeSql(`DELETE FROM playlist WHERE id = ?`, [bcid])
+            return db.executeSql(`DELETE FROM playlist WHERE bcid = ?`, [bcid])
         }).then(a => {
             return new Promise<boolean>((resolve, reject) => {
                 if (a.rowsAffected === 1)
                     resolve(true)
                 else if (a.rowsAffected === 0)
-                    reject(false)
+                    resolve(false)
                 else
                     reject({ error: 'Multiple values were deleted!' })
             })
