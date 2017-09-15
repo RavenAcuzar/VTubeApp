@@ -29,6 +29,7 @@ import { PlaylistService } from "./services/playlist.service";
 import { VideoService } from "./services/video.service";
 import { File } from '@ionic-native/file';
 import { UserService } from "./services/user.service";
+import { ChannelService } from "./services/channel.service";
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { UserService } from "./services/user.service";
     VideoService,
     PlaylistService,
     DownloadService,
+    ChannelService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

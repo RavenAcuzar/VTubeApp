@@ -19,8 +19,8 @@
 <ion-content padding>
   <div class="container-videos">
     <div class="video-box" *ngFor="let pv of playlistVideos">
-      <img [src]="pv.mapped.imageUrl"/>
-      <div class="info">
+      <img [src]="pv.mapped.imageUrl" (click)="playVideo(pv)"/>
+      <div class="info" (click)="playVideo(pv)">
         <h2>{{pv.title}}</h2>
         <p>
           <span class="channel">{{pv.channelName}}</span><br/>

@@ -11,10 +11,10 @@
     class="videoPlayer" [class.fullscreen]="isVideoFullscreen">
     <source src="http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_20mb.mp4" type="video/mp4" />
   </video> -->
-  <iframe ion-fixed class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl"
+  <iframe #videoPlayer ion-fixed class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl"
     allowfullscreen="allowfullscreen"  mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" 
     oallowfullscreen="oallowfullscreen"  webkitallowfullscreen="webkitallowfullscreen"></iframe>
-  <ion-content no-padding *ngIf="!isVideoFullscreen">
+  <ion-content no-padding *ngIf="!isVideoFullscreen" #content>
     <div class="vid-header">
       <div class="vid-info">
         <h1>{{videoDetails.title}}</h1>
@@ -65,7 +65,7 @@
       <img [src]="videoDetails.mapped.channelImageUrl"/>
       <div class="info">
         <h1>{{videoDetails.channelName}}</h1>
-        <h4>XXXX followers</h4>
+        <h4>{{numOfChannelFollowers}} followers</h4>
       </div>
       <button ion-button round outline class="btn-follow" (click)="followChannel()" *ngIf="!isFollowing">
         <span>Follow</span>
@@ -74,12 +74,12 @@
         <span>Unfollow</span>
       </button>
     </div>
-    <div class="vid-related-vids">
+    <div class="vid-related-vids" *ngIf="!isLoading">
       <h4>Related Videos</h4>
       <div class="container-videos">
-        <div class="video-box" *ngFor="let rv of relatedVideoDetails" (click)="goToVideo(rv.id)">
-          <img [src]="rv.mapped.imageUrl"/>
-          <div class="info">
+        <div class="video-box" *ngFor="let rv of relatedVideoDetails">
+          <img [src]="rv.mapped.imageUrl" (click)="goToVideo(rv.id)"/>
+          <div class="info" (click)="goToVideo(rv.id)">
             <h2>{{rv.title}}</h2>
             <p>
               <span class="channel">{{rv.channelName}}</span><br/>
@@ -88,13 +88,13 @@
               <span class="points">{{rv.points}} points</span>
             </p>
           </div>
-          <button ion-button padding-bottom="false">
+          <button ion-button padding-bottom="false" (click)="presentPopover($event, rv)">
             <ion-icon name="md-more"></ion-icon>
           </button>
         </div>
       </div>
     </div>
-    <div class="vid-comments">
+    <div class="vid-comments" *ngIf="!isLoading">
       <h4>Comments</h4>
       <div class="comment-box" *ngIf="isLoggedIn">
         <img [src]="userImageUrl"/>

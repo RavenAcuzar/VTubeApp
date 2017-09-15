@@ -15,7 +15,7 @@
 <ion-content padding>
   <div class="container-videos">
     <div class="video-box" *ngFor="let dv of downloadedVideos">
-      <img [src]="dv.imageUrl"/>
+      <img [src]="dv.imageUrl" (click)="playVideo(dv)"/>
       <div class="info" (click)="playVideo(dv)">
         <h2>{{dv.title}}</h2>
         <p>

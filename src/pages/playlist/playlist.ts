@@ -7,6 +7,8 @@ import { VideoService } from "../../app/services/video.service";
 import { VideoDetails } from "../../app/models/video.models";
 import { FallbackPage } from "../fallback/fallback";
 import { PlaylistPopoverPage } from "../../app/popover";
+import { DownloadEntry } from "../../app/models/download.models";
+import { NowPlayingPage } from "../now-playing/now-playing";
 
 @Component({
   selector: 'page-playlist',
@@ -36,6 +38,12 @@ export class PlaylistPage {
       }
     });
     popover.present({ ev: event });
+  }
+
+  playVideo(entry: DownloadEntry) {
+    this.navCtrl.push(NowPlayingPage, {
+      id: entry.id
+    });
   }
 
   refreshPlaylist() {

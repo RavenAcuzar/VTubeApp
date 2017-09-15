@@ -1,5 +1,5 @@
-import { Component, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
+import { Component, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, ElementRef, Renderer } from '@angular/core';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, Content } from 'ionic-angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Subscription } from "rxjs/Subscription";
 import { VideoService } from "../../app/services/video.service";
@@ -9,6 +9,9 @@ import { VideoDetails, VideoComment } from "../../app/models/video.models";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { Observable } from "rxjs/Observable";
 import { DownloadService } from "../../app/services/download.service";
+import { HomePopoverPage } from "../../app/popover";
+import { ChannelService } from "../../app/services/channel.service";
+import { ChannelDetails } from "../../app/models/channel.models";
 
 @Component({
   selector: 'page-now-playing',
@@ -16,6 +19,7 @@ import { DownloadService } from "../../app/services/download.service";
 })
 export class NowPlayingPage {
   @ViewChild('videoPlayer') videoplayer;
+  @ViewChild('content') content;
 
   private videoId: string;
   private videoDetails: VideoDetails;
@@ -25,8 +29,10 @@ export class NowPlayingPage {
   private safeVideoUrl: SafeResourceUrl;
   private userImageUrl: string;
 
+  private numOfChannelFollowers = 0;
   private relatedVideosPage = 1;
 
+  private isLoading = false;
   private isLoggedIn = false;
   private isVideoDownloaded = false;
   private isVideoDownloading = false;
@@ -49,10 +55,12 @@ export class NowPlayingPage {
     private screenOrientation: ScreenOrientation,
     private videoService: VideoService,
     private downloadService: DownloadService,
+    private channelService: ChannelService,
     private storage: Storage,
     private alertController: AlertController,
     private sanitizer: DomSanitizer,
-    private ref: ChangeDetectorRef
+    private ref: ChangeDetectorRef,
+    private popoverCtrl: PopoverController
   ) {
     this.videoId = navParams.get('id');
   }
@@ -69,6 +77,15 @@ export class NowPlayingPage {
 
   ionViewWillLeave() {
     this.orientationSubscription.unsubscribe();
+  }
+
+  presentPopover(myEvent, vids) {
+    let popover = this.popoverCtrl.create(HomePopoverPage, {
+      videoDetails: vids
+    });
+    popover.present({
+      ev: myEvent
+    });
   }
 
   toggleDescriptionVisibility() {
@@ -240,14 +257,19 @@ export class NowPlayingPage {
   }
 
   goToVideo(id: string) {
+    this.isLoading = true;
     this.videoId = id;
     // initialize screen orientation variable
     this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
 
     // get video information
-    this.videoService.getDetails(this.videoId).then(details => {
+    let detailsPromise = this.videoService.getDetails(this.videoId).then(details => {
       this.videoDetails = details;
       this.safeVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.videoDetails.mapped.playerUrl);
+
+      this.channelService.getDetailsOf(this.videoDetails.channelId).then(channelDetails => {
+        this.numOfChannelFollowers = parseInt(channelDetails.followers);
+      });
 
       return this.storage.get(USER_DATA_KEY);
     }).then(userData => {
@@ -264,7 +286,7 @@ export class NowPlayingPage {
         // check if the video has been downloaded by the user
         this.videoService.isDownloaded(this.videoId, userData.id).then(isDownloaded => {
           this.isVideoDownloaded = isDownloaded;
-          
+
           let obs = this.videoService.getInProgressDownload(this.videoId);
           if (obs) {
             this.observeInProgressDownload(this.videoId, obs);
@@ -272,7 +294,7 @@ export class NowPlayingPage {
         }).catch(e => {
           console.log(e);
         });
-        this.videoService.isFollowingChannel(userData.id, this.videoDetails.channelId).then(isFollowing => {
+        this.channelService.isFollowing(this.videoDetails.channelId, userData.id).then(isFollowing => {
           this.isFollowing = isFollowing;
         }).catch(e => {
           console.log(e);
@@ -284,12 +306,49 @@ export class NowPlayingPage {
     });
 
     // load 5 initial related videos
-    this.videoService.getRelatedVideos(this.videoId).then(relatedVideos => {
+    let relatedVideosPromise = this.videoService.getRelatedVideos(this.videoId).then(relatedVideos => {
       this.relatedVideoDetails = relatedVideos;
     });
     // load video's comments
-    this.videoService.getComments(this.videoId).then(comments => {
+    let commentsPromise = this.videoService.getComments(this.videoId).then(comments => {
       this.videoComments = comments;
+    });
+
+    Promise.all([detailsPromise, commentsPromise, relatedVideosPromise]).then(_ => {
+      this.isLoading = false;
+      if (this.content) {
+        this.content.scrollToTop();
+      }
+    })
+  }
+
+  followChannel() {
+    this.storage.get(USER_DATA_KEY).then(userdata => {
+      if (userdata) {
+        this.channelService.follow(this.videoDetails.channelId, userdata.id).then(isSuccessful => {
+          if (!isSuccessful)
+            return;
+
+          this.channelService.isFollowing(this.videoDetails.channelId, userdata.id).then(isFollowing => {
+            this.isFollowing = isFollowing;
+          });
+        });
+      }
+    });
+  }
+
+  unfollowChannel() {
+    this.storage.get(USER_DATA_KEY).then(userdata => {
+      if (userdata) {
+        this.channelService.unfollow(this.videoDetails.channelId, userdata.id).then(isSuccessful => {
+          if (!isSuccessful)
+            return;
+
+          this.channelService.isFollowing(this.videoDetails.channelId, userdata.id).then(isFollowing => {
+            this.isFollowing = isFollowing;
+          });
+        });
+      }
     });
   }
 

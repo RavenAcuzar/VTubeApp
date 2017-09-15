@@ -88,22 +88,6 @@ export class VideoService {
         return this.playlistService.isVideoAddedToPlaylist(userId, id);
     }
 
-    isFollowingChannel(userId: string, channelId: string) {
-        let headers = new Headers();
-        headers.set('Content-Type', 'application/x-www-form-urlencoded')
-
-        return this.http.post(VideoService.API_URL, encodeObject({
-            'action': 'App_UserFollowing',
-            'id': userId
-        }), { headers: headers })
-            .map(response => response.json()
-                .map(c => c.channelId))
-            .toPromise()
-            .then((channelIds: string[]) => {
-                return channelIds.some(cid => cid === channelId);
-            })
-    }
-
     addLike(id: string, userId: string) {
         let headers = new Headers();
         headers.set('Content-Type', 'application/x-www-form-urlencoded')
