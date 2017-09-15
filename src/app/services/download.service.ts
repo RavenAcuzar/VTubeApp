@@ -23,6 +23,7 @@ export class DownloadService {
     private rootPath: string;
     private rootDirectory: string;
     private folderPath: string = 'vtube/videos';
+    private thumbsFolderPath: string = 'vtube/videos/thumbs';
 
     private inProgressDownloads: {
         [bcid: string]: {
@@ -246,8 +247,8 @@ export class DownloadService {
 
     removeAllExpiredVideosFor(userId: string) {
         return this.getDownloadedVideosOf(userId).then(downloadEntries => {
-            let thirtyDaysFromNow = new Date();
-            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+            let sevenDaysFromNow = new Date();
+            sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
             // filter videos which are past the expiration data
             let bcidsOfExpiredVideos = downloadEntries.filter(d => {
