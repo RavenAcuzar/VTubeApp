@@ -42,3 +42,13 @@ export function openSqliteDb(sqlite: SQLite) {
         location: 'default'
     })
 }
+
+export function numberFormat(number){
+    let num=parseInt(number);
+    if(num >=1000000){
+        return Math.floor(num/1000000).toString() +'M';
+    }else if(num >=1000){
+        return Math.floor(num/1000).toString() +'K';
+    }else
+        return number;
+}

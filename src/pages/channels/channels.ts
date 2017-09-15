@@ -8,6 +8,7 @@ import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY, IS_LOGGED_IN_KEY } from "../../app/app.constants";
 import { NowPlayingPage } from "../now-playing/now-playing";
 import { FallbackPage } from "../fallback/fallback";
+import { numberFormat } from "../../app/app.utils";
 
 @Component({
   selector: 'page-channels',
@@ -40,7 +41,7 @@ export class ChannelsPage {
       this.getUserChannel();
       this.getChannelFollowing();
     }
-    this.getChannelRecommended(this.num.toString());
+    this.getChannelRecommended(this.num2.toString());
     this.getChannelAll(this.num.toString());
   }
 
@@ -68,8 +69,8 @@ export class ChannelsPage {
 
       this.http.post('http://cums.the-v.net/site.aspx', body, options)
         .subscribe(response => {
-          this.followingChannels = response.json().map(c => {
-            c.finalAvatarUrl = this.channelAvatar + c.id;
+          this.followingChannels =response.json().map(c => {
+            c.finalAvatarUrl = this.channelAvatar + c.channelId;
             return c
           })
         }, e => {
@@ -96,6 +97,7 @@ export class ChannelsPage {
       .subscribe(response => {
         this.recommendedChannels = this.recommendedChannels.concat(response.json().map(c => {
           c.finalAvatarUrl = this.channelAvatar + c.id;
+          c.chFollowers = numberFormat(c.followers);
           return c
         }))
       }, e => {
@@ -120,6 +122,7 @@ export class ChannelsPage {
       .subscribe(response => {
         this.allChannels = this.allChannels.concat(response.json().map(c => {
           c.finalAvatarUrl = this.channelAvatar + c.id;
+          c.chFollowers = numberFormat(c.followers);
           return c
         }))
       }, e => {
@@ -162,6 +165,9 @@ export class ChannelsPage {
         .subscribe(response => {
           let data = response.json().map(c => {
             c.finalAvatarUrl = 'http://the-v.net/' + c.thumbnail;
+            c.chViews = numberFormat(c.views);
+            c.chVidsCount = numberFormat(c.videoCount);
+            c.chFollowers = numberFormat(c.followers);
             return c
           })
           if (data.length > 0) {
@@ -169,6 +175,7 @@ export class ChannelsPage {
             this.getChannelVids(data[0].id);
           } else {
             //do something here if no channel is available
+            console.log("No user channel available");
           }
         }, e => {
           console.log(e);

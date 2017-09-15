@@ -30,6 +30,7 @@ import { VideoService } from "./services/video.service";
 import { File } from '@ionic-native/file';
 import { UserService } from "./services/user.service";
 import { ChannelService } from "./services/channel.service";
+import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-downloaded-video";
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { ChannelService } from "./services/channel.service";
     FallbackPage,
     ForgotPasswordPage,
     HomePopoverPage,
+    PlayDownloadedVideoPage,
     PlaylistPopoverPage
   ],
   imports: [
@@ -70,6 +72,7 @@ import { ChannelService } from "./services/channel.service";
     FallbackPage,
     ForgotPasswordPage,
     HomePopoverPage,
+    PlayDownloadedVideoPage,
     PlaylistPopoverPage
   ],
   providers: [

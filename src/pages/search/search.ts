@@ -65,6 +65,9 @@ export class SearchPage {
           return sr;
         })
         this.SearchResults = data;
+        if(this.SearchResults.length<=0){
+          this.hideResults = true;
+        }
       }, e => {
         console.log(e);
       }, () => {

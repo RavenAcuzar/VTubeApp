@@ -6,6 +6,9 @@ import { Storage } from "@ionic/storage";
 import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
 import { NowPlayingPage } from "../now-playing/now-playing";
 import { FallbackPage } from "../fallback/fallback";
+import { VideoDetails } from "../../app/models/video.models";
+import { ChannelService } from "../../app/services/channel.service";
+import { numberFormat } from "../../app/app.utils";
 
 @Component({
   selector: 'page-channel-prev',
@@ -14,25 +17,39 @@ import { FallbackPage } from "../fallback/fallback";
 export class ChannelPrevPage {
 
   channelCover: string;
+  private videoDetails: VideoDetails;
   id: string = null;
   channelDetail = [];
   channelVids = [];
   hasVids = true;
-  page =1;
+  page = 1;
+  private isFollowing = false;
 
   private descLabel: string = 'md-arrow-dropdown';
   private isDescriptionShown: boolean = false;
   constructor(public navCtrl: NavController, public navParams: NavParams, public popoverCtrl: PopoverController,
     private http: Http, private storage: Storage,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController,
+    private channelService: ChannelService) {
     this.getChannelDatails();
     this.getChannelVids();
+  }
+  ionViewDidEnter() {
+
   }
 
   getChannelDatails() {
     this.id = null;
     this.channelDetail = [];
     this.id = this.navParams.get('id');
+
+    this.storage.get(USER_DATA_KEY).then(userdata => {
+      this.channelService.isFollowing(this.id, userdata.id).then(isFollowing => {
+        this.isFollowing = isFollowing;
+      }).catch(e => {
+        console.log(e);
+      });
+    })
 
     let body = new URLSearchParams();
     body.set('action', 'Channel_GetDetails');
@@ -48,6 +65,9 @@ export class ChannelPrevPage {
       .subscribe(response => {
         let data = response.json().map(ch => {
           ch.channelImageFinalUrl = "http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id=" + ch.id;
+          ch.chViews = numberFormat(ch.views);
+          ch.chVidsCount = numberFormat(ch.numVideos);
+          ch.chFollowers = numberFormat(ch.followers);
           return ch;
         })
         this.channelDetail = data[0];
@@ -98,7 +118,36 @@ export class ChannelPrevPage {
       }, () => {
       });
   }
-    
+  followChannel() {
+    this.storage.get(USER_DATA_KEY).then(userdata => {
+      if (userdata) {
+        this.channelService.follow(this.id, userdata.id).then(isSuccessful => {
+          if (!isSuccessful)
+            return;
+
+          this.channelService.isFollowing(this.id, userdata.id).then(isFollowing => {
+            this.isFollowing = isFollowing;
+          });
+        });
+      }
+    });
+  }
+
+  unfollowChannel() {
+    this.storage.get(USER_DATA_KEY).then(userdata => {
+      if (userdata) {
+        this.channelService.unfollow(this.id, userdata.id).then(isSuccessful => {
+          if (!isSuccessful)
+            return;
+
+          this.channelService.isFollowing(this.id, userdata.id).then(isFollowing => {
+            this.isFollowing = isFollowing;
+          });
+        });
+      }
+    });
+  }
+
   playVideo(id: string, videoPrivacy: string) {
     this.storage.get(IS_LOGGED_IN_KEY).then(loggedIn => {
       if (videoPrivacy == "public") {
@@ -140,9 +189,9 @@ export class ChannelPrevPage {
     })
 
   }
-  loadMoreChannelVids(infiniteScroll: InfiniteScroll){
-    this.page+=1;
-    this.getChannelVids(()=>{
+  loadMoreChannelVids(infiniteScroll: InfiniteScroll) {
+    this.page += 1;
+    this.getChannelVids(() => {
       infiniteScroll.complete();
     });
   }

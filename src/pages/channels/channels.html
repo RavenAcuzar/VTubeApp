@@ -44,17 +44,17 @@
             <img [src]="userChannel.cover" />
             <img [src]="userChannel.finalAvatarUrl" class="channelDetail" />
             <div class="channelViews">
-              <h6>{{userChannel.views}}</h6>
+              <h6>{{userChannel.chViews}}</h6>
               <ion-icon name="md-eye"></ion-icon>
             </div>
             <div class="channelVids">
-              <h6>{{userChannel.videoCount}}</h6>
+              <h6>{{userChannel.chVidsCount}}</h6>
               <ion-icon name="md-videocam"></ion-icon>
             </div>
           </div>
           <ion-item class="channelLabel">
             <h2>{{userChannel.name}}</h2>
-            <p>{{userChannel.followers}} Followers</p>
+            <p>{{userChannel.chFollowers}} Followers</p>
             <div item-end icon-only (click)='seeDesc()' class="showDescBtn">
               <ion-icon name={{descLabel}}></ion-icon>
             </div>
@@ -128,7 +128,7 @@
           <div class="channelBlock" (click)="goToChannelView(channel.id)" *ngFor="let channel of recommendedChannels">
             <img [src]="channel.finalAvatarUrl" />
             <div>
-              <b>{{channel.title}}</b><br> {{channel.followers}} Followers
+              <b>{{channel.title}}</b><br> {{channel.chFollowers}} Followers
             </div>
           </div>
           <div class="channelBlockMore" (click)="loadMoreRecommended()">
@@ -142,7 +142,7 @@
           <div class="channelBlock" (click)="goToChannelView(channel.id)" *ngFor="let channel of allChannels">
             <img [src]="channel.finalAvatarUrl" />
             <div>
-              <b>{{channel.title}}</b><br> {{channel.followers}} Followers
+              <b>{{channel.title}}</b><br> {{channel.chFollowers}} Followers
             </div>
           </div>
           <div class="channelBlockMore" (click)="loadMoreChannel()">

@@ -122,10 +122,13 @@ export class MyApp {
         handler: () => {
           console.log('Logout clicked');
           this.storage.set(IS_LOGGED_IN_KEY, false).then(() => {
-            AppStateService.publishAppStateChange(this.events);
-            this.nav.setRoot(HomePage);
-            this.activePage = "Home";
+            return this.storage.set(USER_DATA_KEY, null).then(() => {
+              AppStateService.publishAppStateChange(this.events);
+              this.nav.setRoot(HomePage);
+              this.activePage = "Home";
+            })
           }).catch(errCallback);
+
 
           alert.dismiss();
           return false;
