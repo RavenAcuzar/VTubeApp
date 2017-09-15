@@ -7,9 +7,10 @@ import { openSqliteDb } from "../app.utils";
 import { DownloadEntry } from "../models/download.models";
 import { File, RemoveResult, FileError } from '@ionic-native/file';
 import { FileTransfer, FileTransferObject } from "@ionic-native/file-transfer";
-import { Platform } from "ionic-angular";
+import { Platform, AlertController } from "ionic-angular";
 import { Http } from "@angular/http";
 import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/map';
 
 type BcidAndResult = {
@@ -23,7 +24,17 @@ export class DownloadService {
     private rootDirectory: string;
     private folderPath: string = 'vtube/videos';
 
+    private inProgressDownloads: {
+        [bcid: string]: {
+            observable?: Observable<number>,
+            isGoingToShowAlert?: boolean,
+            hasShownAlert?: boolean,
+            hasShownError?: boolean
+        }
+    } = {};
+
     constructor(
+        private alertController: AlertController,
         private fileTransfer: FileTransfer,
         private platform: Platform,
         private sqlite: SQLite,
@@ -38,6 +49,13 @@ export class DownloadService {
             throw new Error('Platform not supported.');
         }
         this.rootPath = `${this.rootDirectory}${this.folderPath}`;
+    }
+
+    getInProgressDownloads(bcid: string): Observable<number> {
+        if (this.inProgressDownloads[bcid])
+            return this.inProgressDownloads[bcid].observable;
+        else
+            return null;
     }
 
     getPathOfVideo(id: string) {
@@ -87,11 +105,18 @@ export class DownloadService {
             return a.rows.length === 1;
         }).then(isInManifest => {
             return this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(isPresent => {
-                return isInManifest && isPresent;
+                return isInManifest && isPresent && this.getInProgressDownloads(bcid) === null;
             }).catch(e => {
                 return false;
             });
         });
+    }
+
+    markShowDownloadFinishAlertFor(id: string) {
+        let ipd = this.inProgressDownloads[id];
+        if (ipd && !ipd.isGoingToShowAlert) {
+            ipd.isGoingToShowAlert = true;
+        }
     }
 
     addVideoFor(userId: string, email: string, bcid: string, title: string, channelName: string, time: string, imageUrl: string) {
@@ -138,7 +163,7 @@ export class DownloadService {
                 if (finalUrl === null || finalUrl === '') {
                     throw new Error('url_not_available');
                 } else {
-                    resolve(new Observable((observer: Subscriber<number>) => {
+                    let obs = new Observable((observer: Subscriber<number>) => {
                         let path = `${this.rootPath}/${bcid}.mp4`;
                         let fileTransferObject = this.fileTransfer.create();
                         fileTransferObject.onProgress(e => {
@@ -150,8 +175,21 @@ export class DownloadService {
                         }).catch(e => {
                             observer.error(e);
                         });
-                        return () => { /* cleaup logic */ }
-                    }));
+                        return () => {
+                            if (this.inProgressDownloads[bcid])
+                                this.inProgressDownloads[bcid].observable = null;
+                        }
+                    }).share();
+
+                    if (!this.inProgressDownloads[bcid])
+                        this.inProgressDownloads[bcid] = {
+                            isGoingToShowAlert: false,
+                            hasShownAlert: false,
+                            hasShownError: false
+                        };
+                    this.inProgressDownloads[bcid].observable = obs;
+
+                    resolve(obs);
                 }
             }).catch(e => {
                 reject(e);
@@ -240,6 +278,42 @@ export class DownloadService {
                 resolve(bcidsOfExpiredVideos.length === 0);
             });
         });
+    }
+
+    showDownloadFinishAlertFor(id: string) {
+        let ipd = this.inProgressDownloads[id];
+        if (ipd && !ipd.hasShownAlert) {
+            this.inProgressDownloads[id] = null;
+            let alert = this.alertController.create({
+                title: 'Download Video',
+                message: 'The video has been successfully downloaded!',
+                buttons: [{
+                    text: 'OK', handler: () => {
+                        alert.dismiss();
+                        return true;
+                    }
+                }]
+            });
+            alert.present();
+        }
+    }
+
+    showDownloadErrorFinishAlertFor(id: string) {
+        let ipd = this.inProgressDownloads[id];
+        if (ipd && !ipd.hasShownError) {
+            this.inProgressDownloads[id] = null;
+            let alert = this.alertController.create({
+                title: 'Oh no!',
+                message: 'An error occurred while trying to download the video. Please try again.',
+                buttons: [{
+                    text: 'OK', handler: () => {
+                        alert.dismiss();
+                        return true;
+                    }
+                }]
+            });
+            alert.present();
+        }
     }
 
     private performCleanup(bcids: string[]) {

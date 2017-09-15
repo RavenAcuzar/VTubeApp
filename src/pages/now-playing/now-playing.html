@@ -43,7 +43,7 @@
                 <ion-icon class="icon" name="md-download"></ion-icon>
               </button>
               <span class="text" *ngIf="isVideoDownloaded">Downloaded</span>
-              <span class="text" *ngIf="!isVideoDownloaded && !isVideoDownloading">Download</span>
+              <span class="text" *ngIf="!isVideoDownloaded && !isStarting && !isVideoDownloading">Download</span>
               <span class="text" *ngIf="!isVideoDownloaded && isStarting">Starting download...</span>
               <span class="text" *ngIf="!isVideoDownloaded && isVideoDownloading">Downloading... ({{downloadProgress}}%)</span>
             </div>

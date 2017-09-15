@@ -8,6 +8,7 @@ import { USER_DATA_KEY } from "../../app/app.constants";
 import { VideoDetails, VideoComment } from "../../app/models/video.models";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { Observable } from "rxjs/Observable";
+import { DownloadService } from "../../app/services/download.service";
 
 @Component({
   selector: 'page-now-playing',
@@ -47,6 +48,7 @@ export class NowPlayingPage {
     public navParams: NavParams,
     private screenOrientation: ScreenOrientation,
     private videoService: VideoService,
+    private downloadService: DownloadService,
     private storage: Storage,
     private alertController: AlertController,
     private sanitizer: DomSanitizer,
@@ -191,7 +193,6 @@ export class NowPlayingPage {
     }
 
     this.isStarting = true;
-    this.isVideoDownloading = true;
 
     this.storage.get(USER_DATA_KEY).then(userData => {
       if (userData) {
@@ -200,30 +201,7 @@ export class NowPlayingPage {
         throw new Error('not_logged_in');
       }
     }).then(observable => {
-      this.isStarting = false;
-      this.downloadProgress = 0;
-
-      observable.subscribe(progress => {
-        this.downloadProgress = progress;
-        this.ref.detectChanges();
-      }, e => {
-        this.isVideoDownloading = false;
-      }, () => {
-        this.isVideoDownloading = false;
-        this.isVideoDownloaded = true;
-
-        let alert = this.alertController.create({
-          title: 'Download Video',
-          message: 'The video has been successfully downloaded!',
-          buttons: [{
-            text: 'OK', handler: () => {
-              alert.dismiss();
-              return true;
-            }
-          }]
-        });
-        alert.present();
-      })
+      this.observeInProgressDownload(this.videoId, observable);
     }, error => {
       throw error;
     }).catch(e => {
@@ -286,6 +264,11 @@ export class NowPlayingPage {
         // check if the video has been downloaded by the user
         this.videoService.isDownloaded(this.videoId, userData.id).then(isDownloaded => {
           this.isVideoDownloaded = isDownloaded;
+          
+          let obs = this.videoService.getInProgressDownload(this.videoId);
+          if (obs) {
+            this.observeInProgressDownload(this.videoId, obs);
+          }
         }).catch(e => {
           console.log(e);
         });
@@ -308,6 +291,26 @@ export class NowPlayingPage {
     this.videoService.getComments(this.videoId).then(comments => {
       this.videoComments = comments;
     });
+  }
+
+  private observeInProgressDownload(id: string, observable: Observable<number>) {
+    this.isStarting = false;
+    this.isVideoDownloading = true;
+    this.downloadProgress = 0;
+
+    observable.subscribe(progress => {
+      this.downloadProgress = progress;
+      this.ref.detectChanges();
+    }, e => {
+      this.isVideoDownloading = false;
+
+      this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
+    }, () => {
+      this.isVideoDownloading = false;
+      this.isVideoDownloaded = true;
+
+      this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
+    })
   }
 
   private isOrientationPortrait(type: string): boolean {

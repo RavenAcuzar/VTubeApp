@@ -26,8 +26,9 @@ export class HomePopoverPage {
     private navParams: NavParams,
     private storage: Storage,
     private videoService: VideoService,
+    private downloadService: DownloadService,
     private alertController: AlertController
-  ) { 
+  ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
   }
 
@@ -118,44 +119,20 @@ export class HomePopoverPage {
         throw new Error('not_logged_in');
       }
     }).then(observable => {
-      observable.subscribe(progress => { }, e => { }, () => {
-        let alert = this.alertController.create({
-          title: 'Download Video',
-          message: 'The video has been successfully downloaded!',
-          buttons: [{
-            text: 'OK', handler: () => {
-              this.viewCtrl.dismiss();
-              alert.dismiss();
-              return true;
-            }
-          }]
-        });
-        alert.present();
+      observable.subscribe(progress => { }, e => {
+        this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
+      }, () => {
+        this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
       })
     }, error => {
       throw error;
     }).catch(e => {
-      let unknownError = (e) => {
-        console.error(JSON.stringify(e));
-        let alert = this.alertController.create({
-          title: 'Oops!',
-          message: 'An error occurred while trying to download the video. Please try again.',
-          buttons: [{
-            text: 'OK', handler: () => {
-              alert.dismiss();
-              return true;
-            }
-          }]
-        });
-      }
-
       if (e instanceof Error) {
         switch (e.message) {
           case 'not_logged_in':
             this.navCtrl.push(FallbackPage);
-            break;
+            return;
           case 'already_downloaded':
-            console.log('Video has already been downloaded by the user.');
             let alert = this.alertController.create({
               title: 'Oops!',
               message: 'You already downloaded this video.',
@@ -167,14 +144,10 @@ export class HomePopoverPage {
               }]
             });
             alert.present();
-            break;
-          default:
-            unknownError(e);
-            break;
+            return;
         }
-      } else {
-        unknownError(e);
       }
+      this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
     })
   }
 }
@@ -200,7 +173,7 @@ export class PlaylistPopoverPage {
     private videoService: VideoService,
     private playlistService: PlaylistService,
     private alertController: AlertController
-  ) { 
+  ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
     this.refreshPlaylistCallback = this.navParams.data.refreshPlaylistCallback;
   }

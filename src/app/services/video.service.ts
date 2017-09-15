@@ -80,6 +80,10 @@ export class VideoService {
         return this.downloadService.isVideoDownloaded(userId, id);
     }
 
+    getInProgressDownload(id: string) {
+        return this.downloadService.getInProgressDownloads(id);
+    }
+
     isAddedToPlaylist(id: string, userId: string) {
         return this.playlistService.isVideoAddedToPlaylist(userId, id);
     }
