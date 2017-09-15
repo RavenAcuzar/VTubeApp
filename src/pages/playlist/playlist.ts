@@ -42,7 +42,15 @@ export class PlaylistPage {
 
   playVideo(entry: DownloadEntry) {
     this.navCtrl.push(NowPlayingPage, {
-      id: entry.id
+      id: entry.id,
+      playAll: false
+    });
+  }
+
+  playAll() {
+    this.navCtrl.push(NowPlayingPage, {
+      id: null,
+      playAll: true
     });
   }
 
