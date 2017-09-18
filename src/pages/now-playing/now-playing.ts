@@ -269,8 +269,8 @@ export class NowPlayingPage {
     })
   }
 
-  goToVideo(id: string, isInPlaylist: boolean = false) {
-    if (!isInPlaylist && this.shouldPlayPlaylist) {
+  goToVideo(id: string, playFromPlaylist: boolean = false) {
+    if (!playFromPlaylist && this.shouldPlayPlaylist) {
       this.shouldPlayPlaylist = false;
       this.isDisplayingPlaylist = false;
       this.playlistIndex = 0;
@@ -388,6 +388,9 @@ export class NowPlayingPage {
   }
 
   playVideoInPlaylist(index: number) {
+    if (this.playlistIndex === index)
+      return;
+
     this.playlistIndex = index;
     this.goToVideo(this.playlistVideoIds[index], true);
   }

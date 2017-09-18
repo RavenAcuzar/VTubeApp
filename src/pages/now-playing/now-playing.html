@@ -15,20 +15,21 @@
     mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" oallowfullscreen="oallowfullscreen" webkitallowfullscreen="webkitallowfullscreen"></iframe>
   <ion-content no-padding *ngIf="!isVideoFullscreen" #content>
     <div class="vid-playlist" *ngIf="shouldPlayPlaylist">
-      <button ion-button icon-only block (click)="playPrevVideo()" [disabled]="!hasPreviousVideoInPlaylist()">
+      <button (click)="playPrevVideo()" [disabled]="hasPreviousVideoInPlaylist()">
         <ion-icon class="icon" name="md-skip-backward"></ion-icon>
       </button>
-      <button ion-button icon-only block (click)="playNextVideo()" [disabled]="!hasNextVideoInPlaylist()">
-        <ion-icon class="icon" name="md-skip-forward"></ion-icon> 
-      </button>
-      <button ion-button icon-only block (click)="viewPlaylist()">
+      <button (click)="viewPlaylist()" class="small-icon">
         <ion-icon class="icon" name="md-arrow-dropdown" *ngIf="!isDisplayingPlaylist"></ion-icon> 
         <ion-icon class="icon" name="md-arrow-dropup" *ngIf="isDisplayingPlaylist"></ion-icon>
       </button>
+      <button (click)="playNextVideo()" [disabled]="!hasNextVideoInPlaylist()">
+        <ion-icon class="icon" name="md-skip-forward"></ion-icon> 
+      </button>
     </div>
     <div class="container-videos vid-playlist-videos" [hidden]="!isDisplayingPlaylist">
-      <div class="video-box" *ngFor="let pv of playlistVideoDetails; let idx = index">
-        <div class="info" (click)="playVideoInPlaylist(index)">
+      <div class="video-box" [class.now-playing]="videoId === pv.bcid" *ngFor="let pv of playlistVideoDetails; let idx = index">
+        <div class="info" (click)="playVideoInPlaylist(idx)">
+          <h4 *ngIf="videoId === pv.bcid">Now playing</h4>
           <h2>{{pv.title}}</h2>
         </div>
       </div>
@@ -90,7 +91,7 @@
         <span>Unfollow</span>
       </button>
     </div>
-    <div class="vid-related-vids" *ngIf="!isLoading">
+    <div class="vid-related-vids" *ngIf="!isLoading && !shouldPlayPlaylist">
       <h4>Related Videos</h4>
       <div class="container-videos">
         <div class="video-box" *ngFor="let rv of relatedVideoDetails">
