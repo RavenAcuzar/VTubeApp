@@ -31,6 +31,8 @@ import { File } from '@ionic-native/file';
 import { UserService } from "./services/user.service";
 import { ChannelService } from "./services/channel.service";
 import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-downloaded-video";
+import { ConnectionService } from "./services/network.service";
+import { Network } from "@ionic-native/network";
 
 @NgModule({
   declarations: [
@@ -87,6 +89,8 @@ import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-dow
     PlaylistService,
     DownloadService,
     ChannelService,
+    ConnectionService,
+    Network,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

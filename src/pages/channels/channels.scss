@@ -83,8 +83,11 @@ page-channels {
         text-align: center;
         background-color: rgba(0, 0, 0, 0.2);
         height: 30.8vw;
+        position: relative;
         
         >h3{
+            position: absolute;
+            left: 6vw;
             padding-top: 44%;
             opacity: 0.6;
         }

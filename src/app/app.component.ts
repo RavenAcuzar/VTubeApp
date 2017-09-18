@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, AlertController, Events } from 'ionic-angular';
+import { Nav, Platform, AlertController, Events, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -14,6 +14,8 @@ import { Storage } from '@ionic/storage';
 import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "./app.constants";
 import { AppStateService } from "./services/app_state.service";
 import { DownloadService } from "./services/download.service";
+import { ConnectionService } from "./services/network.service";
+import { Network } from "@ionic-native/network";
 
 @Component({
   templateUrl: 'app.html'
@@ -37,7 +39,10 @@ export class MyApp {
     public alertCtrl: AlertController,
     private events: Events,
     private storage: Storage,
-    private downloadService: DownloadService
+    private downloadService: DownloadService,
+    private network: Network,
+    private toastCtrl: ToastController,
+    private connectionSrvc: ConnectionService
   ) {
     this.initializeApp();
     this.updateMenu();
@@ -54,7 +59,15 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-
+      if(this.network.type ==="none"){
+        let toast = this.toastCtrl.create({
+                message: "You're Offline. Check your internet connection.",
+                position: 'bottom'
+            });
+            toast.present();
+            this.connectionSrvc.setActiveToast(toast);
+      }
+      this.connectionSrvc.checkNetworkConnection();
       this.storage.get(USER_DATA_KEY).then(userdata => {
         if (userdata) {
           this.downloadService.removeAllExpiredVideosFor(userdata.id);

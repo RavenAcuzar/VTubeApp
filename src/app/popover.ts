@@ -1,5 +1,5 @@
 import { ViewController, NavController, NavParams, AlertController } from "ionic-angular";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectorRef } from "@angular/core";
 import { Storage } from "@ionic/storage";
 import { VideoDetails } from "./models/video.models";
 import { VideoService } from "./services/video.service";
@@ -7,17 +7,23 @@ import { USER_DATA_KEY } from "./app.constants";
 import { FallbackPage } from "../pages/fallback/fallback";
 import { PlaylistService } from "./services/playlist.service";
 import { DownloadService } from "./services/download.service";
+import { Observable } from "rxjs/Observable";
 
 @Component({
   template: `
     <ion-list class="playlist-popover-page">
       <button ion-item (click)="addToPlaylist()">Add to Playlist</button>
-      <button ion-item (click)="download()">Download</button>
+      <button ion-item (click)="download()" *ngIf = "!isVideoDownloading && !isVideoDownloaded">Download</button>
+      <button ion-item  *ngIf = "isVideoDownloading && !isVideoDownloaded">Downloading {{downloadProgress}}%</button>
+      <button ion-item  *ngIf = "isVideoDownloaded ">Downloaded</button>
     </ion-list>
   `
 })
 export class HomePopoverPage {
 
+  isVideoDownloading = false;
+  private isVideoDownloaded = false;
+  downloadProgress: number = 0;
   private videoDetails: VideoDetails;
 
   constructor(
@@ -27,6 +33,7 @@ export class HomePopoverPage {
     private storage: Storage,
     private videoService: VideoService,
     private downloadService: DownloadService,
+    private ref: ChangeDetectorRef,
     private alertController: AlertController
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
@@ -126,6 +133,7 @@ export class HomePopoverPage {
         throw new Error('not_logged_in');
       }
     }).then(observable => {
+      this.observeInProgressDownload(this.videoDetails.bcid, observable);
       observable.subscribe(progress => { }, e => {
         this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
       }, () => {
@@ -157,6 +165,22 @@ export class HomePopoverPage {
       this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
     })
   }
+  private observeInProgressDownload(id: string, observable: Observable<number>) {
+    this.downloadProgress = 0;
+    this.isVideoDownloading = true;
+
+    observable.subscribe(progress => {
+      this.downloadProgress = progress;
+      this.ref.detectChanges();
+    }, e => {
+      console.log(e);
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
+    }, () => {
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
+    });
+  }
 }
 
 @Component({
@@ -168,6 +192,10 @@ export class HomePopoverPage {
   `
 })
 export class PlaylistPopoverPage {
+  
+  isVideoDownloading = false;
+  private isVideoDownloaded = false;
+  downloadProgress: number = 0;
   private refreshPlaylistCallback: () => void;
 
   private videoDetails: VideoDetails;
@@ -179,6 +207,8 @@ export class PlaylistPopoverPage {
     private storage: Storage,
     private videoService: VideoService,
     private playlistService: PlaylistService,
+    private ref: ChangeDetectorRef,
+    private downloadService: DownloadService,
     private alertController: AlertController
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
@@ -236,6 +266,7 @@ export class PlaylistPopoverPage {
         throw new Error('not_logged_in');
       }
     }).then(observable => {
+      this.observeInProgressDownload(this.videoDetails.bcid, observable);
       observable.subscribe(progress => { }, e => { }, () => {
         let alert = this.alertController.create({
           title: 'Download Video',
@@ -294,5 +325,22 @@ export class PlaylistPopoverPage {
         unknownError(e);
       }
     })
+
+  }
+  private observeInProgressDownload(id: string, observable: Observable<number>) {
+    this.downloadProgress = 0;
+    this.isVideoDownloading = true;
+
+    observable.subscribe(progress => {
+      this.downloadProgress = progress;
+      this.ref.detectChanges();
+    }, e => {
+      console.log(e);
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
+    }, () => {
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
+    });
   }
 }
