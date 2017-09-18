@@ -31,7 +31,14 @@ export class HomePopoverPage {
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
   }
+  ionViewDidLoad() {
+    document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
+  }
 
+  ionViewWillLeave() {
+    if (document.getElementsByTagName("ion-app").item(0).classList.contains("disable-scroll"))
+      document.getElementsByTagName("ion-app").item(0).classList.remove("disable-scroll");
+  }
   addToPlaylist() {
     this.viewCtrl.dismiss();
     this.storage.get(USER_DATA_KEY).then(userData => {
@@ -177,7 +184,14 @@ export class PlaylistPopoverPage {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
     this.refreshPlaylistCallback = this.navParams.data.refreshPlaylistCallback;
   }
+  ionViewDidLoad() {
+    document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
+  }
 
+  ionViewWillLeave() {
+    if (document.getElementsByTagName("ion-app").item(0).classList.contains("disable-scroll"))
+      document.getElementsByTagName("ion-app").item(0).classList.remove("disable-scroll");
+  }
   removeFromPlaylist() {
     this.viewCtrl.dismiss();
     this.playlistService.removeVideoFromPlaylist(this.videoDetails.bcid).then(isSuccessful => {

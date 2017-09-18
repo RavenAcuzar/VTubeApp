@@ -82,3 +82,8 @@
     background-color: map-get($colors, secondary );
     color: #232323;
 }
+ion-app.disable-scroll {
+    ion-content>.scroll-content {
+        overflow: hidden;
+    }
+}
