@@ -20,6 +20,7 @@
         "@angular/http": "4.1.3",
         "@angular/platform-browser": "4.1.3",
         "@angular/platform-browser-dynamic": "4.1.3",
+        "@ionic-native/android-permissions": "^4.2.1",
         "@ionic-native/core": "3.12.1",
         "@ionic-native/file": "^4.2.1",
         "@ionic-native/file-transfer": "^4.2.1",
@@ -31,6 +32,7 @@
         "@ionic/storage": "2.0.1",
         "cordova-android": "^6.2.3",
         "cordova-ios": "^4.4.0",
+        "cordova-plugin-android-permissions": "^1.0.0",
         "cordova-plugin-console": "^1.0.5",
         "cordova-plugin-device": "^1.1.4",
         "cordova-plugin-file": "^4.0.0",
@@ -66,7 +68,8 @@
             "cordova-plugin-nativestorage": {},
             "cordova-sqlite-storage": {},
             "cordova-plugin-file-transfer": {},
-            "cordova-plugin-file": {}
+            "cordova-plugin-file": {},
+            "cordova-plugin-android-permissions": {}
         },
         "platforms": [
             "android",

@@ -31,6 +31,7 @@ import { File } from '@ionic-native/file';
 import { UserService } from "./services/user.service";
 import { ChannelService } from "./services/channel.service";
 import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-downloaded-video";
+import { AndroidPermissions } from "@ionic-native/android-permissions";
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-dow
     PlaylistService,
     DownloadService,
     ChannelService,
+    AndroidPermissions,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

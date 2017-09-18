@@ -8,6 +8,7 @@ import { DownloadEntry } from "../models/download.models";
 import { File, RemoveResult, FileError } from '@ionic-native/file';
 import { FileTransfer, FileTransferObject } from "@ionic-native/file-transfer";
 import { Platform, AlertController } from "ionic-angular";
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 import { Http } from "@angular/http";
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/share';
@@ -22,8 +23,8 @@ type BcidAndResult = {
 export class DownloadService {
     private rootPath: string;
     private rootDirectory: string;
-    private folderPath: string = 'vtube/videos';
-    private thumbsFolderPath: string = 'vtube/videos/thumbs';
+    private readonly folderPath: string = 'videos';
+    private readonly thumbsFolderPath: string = 'videos/thumbs';
 
     private inProgressDownloads: {
         [bcid: string]: {
@@ -35,13 +36,16 @@ export class DownloadService {
     } = {};
 
     constructor(
+        private androidPermissions: AndroidPermissions,
         private alertController: AlertController,
         private fileTransfer: FileTransfer,
         private platform: Platform,
         private sqlite: SQLite,
         private file: File,
         private http: Http
-    ) {
+    ) { }
+
+    updatePaths() {
         if (this.platform.is('ios')) {
             this.rootDirectory = this.file.dataDirectory;
         } else if (this.platform.is('android')) {
@@ -60,14 +64,18 @@ export class DownloadService {
     }
 
     getPathOfVideo(id: string) {
+        this.updatePaths();
         return `${this.rootPath}/${id}.mp4`;
     }
 
     getPathOfImageForVideo(id: string) {
+        this.updatePaths();
         return `${this.rootPath}/thumbs/${id}.jpeg`;
     }
 
     getDownloadedVideosOf(userId: string) {
+        this.updatePaths();
+        
         return this.preparePlaylistTable().then(db => {
             return db.executeSql('SELECT * FROM downloads WHERE memid = ?', [userId])
         }).then(a => {
@@ -98,6 +106,8 @@ export class DownloadService {
     }
 
     isVideoDownloaded(userId: string, bcid: string) {
+        this.updatePaths();
+        
         return this.preparePlaylistTable().then(db => {
             return db.executeSql('SELECT * FROM downloads WHERE memid = ? and bcid = ?', [userId, bcid])
         }).then(a => {
@@ -121,11 +131,14 @@ export class DownloadService {
     }
 
     addVideoFor(userId: string, email: string, bcid: string, title: string, channelName: string, time: string, imageUrl: string) {
+        this.updatePaths();
+        
         return new Promise<Observable<number>>((resolve, reject) => {
+            // check if the video has lready been downloaded and is stated in the manifest (local db)
             this.isVideoDownloaded(userId, bcid).then(isDownloaded => {
                 if (isDownloaded)
                     throw new Error('already_downloaded');
-                else
+                else // make sure that the playlist table exists
                     return this.preparePlaylistTable();
             }).then(db => {
                 // save entry to local database
@@ -141,18 +154,47 @@ export class DownloadService {
                     throw new Error('not_successfully_inserted');
                 }
             }).then(finalUrl => {
-                return this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(isSuccessful => {
-                    if (isSuccessful)
-                        return this.file.removeFile(`${this.rootPath}`, `${bcid}.mp4`).then(r => finalUrl);
+                // check if the android device has storage permissions
+                if (this.platform.is('android')) {
+                    return Promise.all([
+                        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE),
+                        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE)
+                    ]).then(e => {
+                        if (e.map(r => r.hasPermission).every(hp => hp === true)) {
+                            return finalUrl;
+                        } else {
+                            return this.androidPermissions.requestPermissions([
+                                this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE,
+                                this.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE
+                            ]).then(e => {
+                                if (e.hasPermission)
+                                    return finalUrl;
+                                else
+                                    throw new Error('permission_not_granted');
+                            });
+                        }
+                    });
+                } else {
+                    return finalUrl;
+                }
+            }).then(finalUrl => {
+                // check if video has already been downloaded
+                return this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(isPresent => {
+                    if (isPresent) // remove file if it has already been downloaded
+                        return this.file.removeFile(`${this.rootDirectory}`, `${this.folderPath}/${bcid}.mp4`).then(r => finalUrl);
                     else
                         return finalUrl;
-                }).catch(e => {
-                    // directory probably does not exist
-                    console.log(`error in file checking: ${JSON.stringify(e)}`);
-                    return finalUrl;
+                }).catch(err => {
+                    return Promise.all([
+                        this.file.createDir(this.rootDirectory, this.folderPath, true),
+                        this.file.createDir(this.rootDirectory, this.thumbsFolderPath, true),
+                    ]).then(_ => finalUrl).catch(_ => {
+                        throw new Error('directory_creation');
+                    });
                 });
             }).then(finalUrl => {
-                let path = `${this.rootPath}/thumbs/${bcid}.jpeg`;
+                // download video's thumbnail
+                let path = `${this.rootDirectory}/${this.thumbsFolderPath}/${bcid}.jpeg`;
                 let fileTransferObject = this.fileTransfer.create();
                 return fileTransferObject.download(imageUrl, path, true).then(entry => {
                     return finalUrl;
@@ -199,6 +241,8 @@ export class DownloadService {
     }
 
     removeVideoFor(userId: string, bcid: string) {
+        this.updatePaths();
+        
         return this.preparePlaylistTable().then(db => {
             return db.executeSql('DELETE FROM downloads WHERE memid = ? and bcid = ?', [userId, bcid])
         }).then(a => {
@@ -318,6 +362,8 @@ export class DownloadService {
     }
 
     private performCleanup(bcids: string[]) {
+        this.updatePaths();
+        
         return new Promise<string[]>((resolve, reject) => {
             try {
                 let promises: Promise<BcidAndResult>[] = [];
