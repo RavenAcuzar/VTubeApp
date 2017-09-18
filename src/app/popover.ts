@@ -40,7 +40,22 @@ export class HomePopoverPage {
   }
   ionViewDidLoad() {
     document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
+
+    this.storage.get(USER_DATA_KEY).then(userData => {
+        this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
+          this.isVideoDownloaded = isDownloaded;
+
+          let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
+          if (obs) {
+            this.isVideoDownloading = true;
+            this.observeInProgressDownload(this.videoDetails.bcid, obs);
+          }
+        }).catch(e => {
+          console.log(e);
+        });
+      })
   }
+
 
   ionViewWillLeave() {
     if (document.getElementsByTagName("ion-app").item(0).classList.contains("disable-scroll"))
@@ -216,6 +231,20 @@ export class PlaylistPopoverPage {
   }
   ionViewDidLoad() {
     document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
+    
+      this.storage.get(USER_DATA_KEY).then(userData => {
+        this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
+          this.isVideoDownloaded = isDownloaded;
+
+          let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
+          if (obs) {
+            this.observeInProgressDownload(this.videoDetails.bcid, obs);
+          }
+        }).catch(e => {
+          console.log(e);
+        });
+      })
+    
   }
 
   ionViewWillLeave() {
