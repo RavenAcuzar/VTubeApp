@@ -268,4 +268,58 @@ page-now-playing {
             }
         }
     }
+
+    .vid-playlist {
+        display: flex;
+        background-color: #666;
+        
+        button {
+            background-color: transparent;
+            text-transform: capitalize;
+            display: inline-block;
+            box-shadow: none;
+            font-size: 10pt;
+            height: 40px;
+            color: white;
+            margin: 0;
+            flex-grow: 1;
+
+            &.small-icon {
+                font-size: 15pt;
+            }
+        }
+    }
+
+    .container-videos.vid-playlist-videos {
+        color: white;
+        background-color: #555;
+
+        .video-box {
+            padding: 7.5px 15px;
+            border-bottom: 1px solid #666;
+
+            .info {
+                h4 {
+                    margin: 5px 0 0 0;
+                    font-style: italic;
+                    font-weight: 300;
+                    font-size: 9pt;
+                }
+
+                h2 {
+                    margin: 0;
+                    padding: 5px 0px;
+                    font-size: 10pt;
+                    font-weight: 300;
+                }
+            }
+
+            &.now-playing {
+                .info h2 {
+                    font-size: 12pt;
+                    font-weight: normal;
+                }
+            }
+        }
+    }
 }

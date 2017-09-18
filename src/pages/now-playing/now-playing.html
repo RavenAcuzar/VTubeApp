@@ -11,10 +11,29 @@
     class="videoPlayer" [class.fullscreen]="isVideoFullscreen">
     <source src="http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_20mb.mp4" type="video/mp4" />
   </video> -->
-  <iframe #videoPlayer ion-fixed class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl"
-    allowfullscreen="allowfullscreen"  mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" 
-    oallowfullscreen="oallowfullscreen"  webkitallowfullscreen="webkitallowfullscreen"></iframe>
+  <iframe #videoPlayer ion-fixed class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl" allowfullscreen="allowfullscreen"
+    mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" oallowfullscreen="oallowfullscreen" webkitallowfullscreen="webkitallowfullscreen"></iframe>
   <ion-content no-padding *ngIf="!isVideoFullscreen" #content>
+    <div class="vid-playlist" *ngIf="shouldPlayPlaylist">
+      <button (click)="playPrevVideo()" [disabled]="hasPreviousVideoInPlaylist()">
+        <ion-icon class="icon" name="md-skip-backward"></ion-icon>
+      </button>
+      <button (click)="viewPlaylist()" class="small-icon">
+        <ion-icon class="icon" name="md-arrow-dropdown" *ngIf="!isDisplayingPlaylist"></ion-icon> 
+        <ion-icon class="icon" name="md-arrow-dropup" *ngIf="isDisplayingPlaylist"></ion-icon>
+      </button>
+      <button (click)="playNextVideo()" [disabled]="!hasNextVideoInPlaylist()">
+        <ion-icon class="icon" name="md-skip-forward"></ion-icon> 
+      </button>
+    </div>
+    <div class="container-videos vid-playlist-videos" [hidden]="!isDisplayingPlaylist">
+      <div class="video-box" [class.now-playing]="videoId === pv.bcid" *ngFor="let pv of playlistVideoDetails; let idx = index">
+        <div class="info" (click)="playVideoInPlaylist(idx)">
+          <h4 *ngIf="videoId === pv.bcid">Now playing</h4>
+          <h2>{{pv.title}}</h2>
+        </div>
+      </div>
+    </div>
     <div class="vid-header">
       <div class="vid-info">
         <h1>{{videoDetails.title}}</h1>
@@ -38,8 +57,7 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="downloadVideo()" 
-                  [disabled]="isVideoDownloaded || isVideoDownloading" [class.downloaded]="isVideoDownloaded">
+              <button ion-button icon-only block (click)="downloadVideo()" [disabled]="isVideoDownloaded || isVideoDownloading" [class.downloaded]="isVideoDownloaded">
                 <ion-icon class="icon" name="md-download"></ion-icon>
               </button>
               <span class="text" *ngIf="isVideoDownloaded">Downloaded</span>
@@ -50,8 +68,7 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="addVideoToPlaylist()"
-                  [disabled]="isVideoAddedToPlaylist" [class.addedToPlaylist]="isVideoAddedToPlaylist">
+              <button ion-button icon-only block (click)="addVideoToPlaylist()" [disabled]="isVideoAddedToPlaylist" [class.addedToPlaylist]="isVideoAddedToPlaylist">
                 <ion-icon class="icon" name="md-add"></ion-icon>
               </button>
               <span class="text" *ngIf="!isVideoAddedToPlaylist">Add to playlist</span>
@@ -62,7 +79,7 @@
       </ion-grid>
     </div>
     <div class="vid-channel-info">
-      <img [src]="videoDetails.mapped.channelImageUrl"/>
+      <img [src]="videoDetails.mapped.channelImageUrl" />
       <div class="info">
         <h1>{{videoDetails.channelName}}</h1>
         <h4>{{numOfChannelFollowers}} followers</h4>
@@ -74,11 +91,11 @@
         <span>Unfollow</span>
       </button>
     </div>
-    <div class="vid-related-vids" *ngIf="!isLoading">
+    <div class="vid-related-vids" *ngIf="!isLoading && !shouldPlayPlaylist">
       <h4>Related Videos</h4>
       <div class="container-videos">
         <div class="video-box" *ngFor="let rv of relatedVideoDetails">
-          <img [src]="rv.mapped.imageUrl" (click)="goToVideo(rv.id)"/>
+          <img [src]="rv.mapped.imageUrl" (click)="goToVideo(rv.id)" />
           <div class="info" (click)="goToVideo(rv.id)">
             <h2>{{rv.title}}</h2>
             <p>
@@ -97,13 +114,13 @@
     <div class="vid-comments" *ngIf="!isLoading">
       <h4>Comments</h4>
       <div class="comment-box" *ngIf="isLoggedIn">
-        <img [src]="userImageUrl"/>
+        <img [src]="userImageUrl" />
         <ion-textarea class="txt-comment" placeholder="Leave a comment" [(ngModel)]="commentContent"></ion-textarea>
         <button ion-button (click)="commentOnVideo()">Post</button>
       </div>
       <div class="container-comments">
         <div class="comment-box uneditable" *ngFor="let vc of videoComments">
-          <img [src]="vc.mapped.userImageUrl"/>
+          <img [src]="vc.mapped.userImageUrl" />
           <div class="content">
             <h3>{{vc.CreatedBy}}</h3>
             <p>{{vc.Comment}}</p>

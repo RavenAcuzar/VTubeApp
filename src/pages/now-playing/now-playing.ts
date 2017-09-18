@@ -12,6 +12,7 @@ import { DownloadService } from "../../app/services/download.service";
 import { HomePopoverPage } from "../../app/popover";
 import { ChannelService } from "../../app/services/channel.service";
 import { ChannelDetails } from "../../app/models/channel.models";
+import { PlaylistService } from "../../app/services/playlist.service";
 
 @Component({
   selector: 'page-now-playing',
@@ -23,6 +24,8 @@ export class NowPlayingPage {
 
   private videoId: string;
   private videoDetails: VideoDetails;
+  private playlistVideoIds: string[] = [];
+  private playlistVideoDetails: VideoDetails[] = [];
   private relatedVideoDetails: VideoDetails[] = [];
   private videoComments: VideoComment[] = [];
 
@@ -31,6 +34,8 @@ export class NowPlayingPage {
 
   private numOfChannelFollowers = 0;
   private relatedVideosPage = 1;
+  private playlistIndex = 0;
+  private downloadProgress: number = 0;
 
   private isLoading = false;
   private isLoggedIn = false;
@@ -40,7 +45,8 @@ export class NowPlayingPage {
   private isStarting = false;
   private isFollowing = false;
 
-  private downloadProgress: number = 0;
+  private shouldPlayPlaylist = false;
+  private isDisplayingPlaylist = false;
 
   private commentContent: string = '';
 
@@ -56,12 +62,14 @@ export class NowPlayingPage {
     private videoService: VideoService,
     private downloadService: DownloadService,
     private channelService: ChannelService,
+    private playlistService: PlaylistService,
     private storage: Storage,
     private alertController: AlertController,
     private sanitizer: DomSanitizer,
     private ref: ChangeDetectorRef,
     private popoverCtrl: PopoverController
   ) {
+    this.shouldPlayPlaylist = navParams.get('playAll');
     this.videoId = navParams.get('id');
   }
 
@@ -72,7 +80,12 @@ export class NowPlayingPage {
       let videoPlayerNE = this.videoplayer.nativeElement;
       this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
     });
-    this.goToVideo(this.videoId);
+    if (!this.shouldPlayPlaylist) {
+      this.goToVideo(this.videoId);
+    } else {
+      // TODO: retrieve the first video in playlist
+      this.getPlaylistAndPlayFirstVideo();
+    }
   }
 
   ionViewWillLeave() {
@@ -256,7 +269,15 @@ export class NowPlayingPage {
     })
   }
 
-  goToVideo(id: string) {
+  goToVideo(id: string, playFromPlaylist: boolean = false) {
+    if (!playFromPlaylist && this.shouldPlayPlaylist) {
+      this.shouldPlayPlaylist = false;
+      this.isDisplayingPlaylist = false;
+      this.playlistIndex = 0;
+      this.playlistVideoIds = [];
+      this.playlistVideoDetails = [];
+    }
+
     this.isLoading = true;
     this.videoId = id;
     // initialize screen orientation variable
@@ -352,6 +373,52 @@ export class NowPlayingPage {
     });
   }
 
+  viewPlaylist() {
+    this.isDisplayingPlaylist = !this.isDisplayingPlaylist;
+  }
+
+  playNextVideo() {
+    if (this.hasNextVideoInPlaylist())
+      this.goToVideo(this.playlistVideoIds[++this.playlistIndex], true);
+  }
+
+  playPrevVideo() {
+    if (this.hasPreviousVideoInPlaylist())
+      this.goToVideo(this.playlistVideoIds[--this.playlistIndex], true);
+  }
+
+  playVideoInPlaylist(index: number) {
+    if (this.playlistIndex === index)
+      return;
+
+    this.playlistIndex = index;
+    this.goToVideo(this.playlistVideoIds[index], true);
+  }
+
+  private getPlaylistAndPlayFirstVideo() {
+    this.storage.get(USER_DATA_KEY).then(userdata => {
+      return this.playlistService.getPlaylistOf(userdata.id);
+    }).then(playlistEntries => {
+      return playlistEntries.map(pe => String(pe.bcid));
+    }).then(videoDetails => {
+      this.playlistVideoIds = videoDetails;
+      return Promise.all(this.playlistVideoIds.map(id => {
+        return this.videoService.getDetails(id);
+      }));
+    }).then(playlistVideos => {
+      this.playlistVideoDetails = playlistVideos;
+      this.goToVideo(this.playlistVideoIds[this.playlistIndex], true);
+    });
+  }
+
+  private hasNextVideoInPlaylist() {
+    return this.playlistIndex < (this.playlistVideoIds.length - 1);
+  }
+
+  private hasPreviousVideoInPlaylist() {
+    return this.playlistIndex > 0;
+  }
+
   private observeInProgressDownload(id: string, observable: Observable<number>) {
     this.isStarting = false;
     this.isVideoDownloading = true;
@@ -369,7 +436,7 @@ export class NowPlayingPage {
       this.isVideoDownloaded = true;
 
       this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
-    })
+    });
   }
 
   private isOrientationPortrait(type: string): boolean {
