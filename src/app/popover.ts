@@ -1,4 +1,4 @@
-import { ViewController, NavController, NavParams, AlertController } from "ionic-angular";
+import { ViewController, NavController, NavParams, AlertController, ToastController } from "ionic-angular";
 import { Component } from "@angular/core";
 import { Storage } from "@ionic/storage";
 import { VideoDetails } from "./models/video.models";
@@ -27,7 +27,8 @@ export class HomePopoverPage {
     private storage: Storage,
     private videoService: VideoService,
     private downloadService: DownloadService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastCtrl: ToastController
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
   }
@@ -119,6 +120,12 @@ export class HomePopoverPage {
         throw new Error('not_logged_in');
       }
     }).then(observable => {
+      let toast = this.toastCtrl.create({
+        message: 'Video Downloading. Go to Downloads Page to view progress...',
+        position: 'bottom',
+        duration: 4000
+      });
+      toast.present();
       observable.subscribe(progress => { }, e => {
         this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
       }, () => {
@@ -172,7 +179,8 @@ export class PlaylistPopoverPage {
     private storage: Storage,
     private videoService: VideoService,
     private playlistService: PlaylistService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastCtrl: ToastController
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
     this.refreshPlaylistCallback = this.navParams.data.refreshPlaylistCallback;
@@ -222,6 +230,12 @@ export class PlaylistPopoverPage {
         throw new Error('not_logged_in');
       }
     }).then(observable => {
+      let toast = this.toastCtrl.create({
+        message: 'Video Downloading. Go to Downloads Page to view progress...',
+        position: 'bottom',
+        duration: 4000
+      });
+      toast.present();
       observable.subscribe(progress => { }, e => { }, () => {
         let alert = this.alertController.create({
           title: 'Download Video',
