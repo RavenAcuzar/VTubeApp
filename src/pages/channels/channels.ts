@@ -15,7 +15,8 @@ import { numberFormat } from "../../app/app.utils";
   templateUrl: 'channels.html',
 })
 export class ChannelsPage {
-  channelVids=[];
+  userChannelId: any;
+  channelVids = [];
   hasVids=false;
   followingChannels = [];
   recommendedChannels = [];
@@ -172,6 +173,7 @@ export class ChannelsPage {
           })
           if (data.length > 0) {
             this.userChannel = data[0];
+            this.userChannelId = data[0].id;
             this.getChannelVids(data[0].id);
           } else {
             //do something here if no channel is available
@@ -185,7 +187,7 @@ export class ChannelsPage {
   }
   loadMoreChannelVids(infiniteScroll: InfiniteScroll){
     this.page+=1;
-    this.getChannelVids(this.userChannel[0].id, ()=>{
+    this.getChannelVids(this.userChannelId, ()=>{
       infiniteScroll.complete();
     });
   }
