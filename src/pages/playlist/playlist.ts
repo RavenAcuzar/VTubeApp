@@ -48,10 +48,12 @@ export class PlaylistPage {
   }
 
   playAll() {
-    this.navCtrl.push(NowPlayingPage, {
-      id: null,
-      playAll: true
-    });
+    if (this.playlistVideos.length > 0) {
+      this.navCtrl.push(NowPlayingPage, {
+        id: null,
+        playAll: true
+      });
+    }
   }
 
   refreshPlaylist() {
