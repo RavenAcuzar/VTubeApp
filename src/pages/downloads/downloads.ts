@@ -35,7 +35,7 @@ export class DownloadsPage {
 
   playVideo(entry: DownloadEntry) {
     this.navCtrl.push(PlayDownloadedVideoPage, {
-      id: entry.id
+      id: entry.bcid
     });
   }
 
