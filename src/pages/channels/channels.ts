@@ -15,6 +15,7 @@ import { numberFormat } from "../../app/app.utils";
   templateUrl: 'channels.html',
 })
 export class ChannelsPage {
+  userHasChannel: boolean;
   userChannelId: any;
   channelVids = [];
   hasVids=false;
@@ -172,11 +173,13 @@ export class ChannelsPage {
             return c
           })
           if (data.length > 0) {
+            this.userHasChannel = true;
             this.userChannel = data[0];
             this.userChannelId = data[0].id;
             this.getChannelVids(data[0].id);
           } else {
             //do something here if no channel is available
+            this.userHasChannel = false;
             console.log("No user channel available");
           }
         }, e => {
