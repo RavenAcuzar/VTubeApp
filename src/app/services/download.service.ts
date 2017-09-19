@@ -47,7 +47,7 @@ export class DownloadService {
 
     updatePaths() {
         if (this.platform.is('ios')) {
-            this.rootDirectory = this.file.dataDirectory;
+            this.rootDirectory = this.file.documentsDirectory;
         } else if (this.platform.is('android')) {
             this.rootDirectory = this.file.externalDataDirectory;
         } else {
