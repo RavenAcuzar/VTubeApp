@@ -33,6 +33,7 @@ import { ChannelService } from "./services/channel.service";
 import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-downloaded-video";
 import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
+import { VoltChatPage } from "../pages/volt-chat/volt-chat";
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { Network } from "@ionic-native/network";
     ForgotPasswordPage,
     HomePopoverPage,
     PlayDownloadedVideoPage,
-    PlaylistPopoverPage
+    PlaylistPopoverPage,
+    VoltChatPage
   ],
   imports: [
     BrowserModule,
@@ -75,7 +77,8 @@ import { Network } from "@ionic-native/network";
     ForgotPasswordPage,
     HomePopoverPage,
     PlayDownloadedVideoPage,
-    PlaylistPopoverPage
+    PlaylistPopoverPage,
+    VoltChatPage
   ],
   providers: [
     File,
