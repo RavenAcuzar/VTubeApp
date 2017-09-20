@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Http, Headers, Response } from "@angular/http";
-import { encodeObject } from "../app.utils";
+import { encodeObject, openSqliteDb } from "../app.utils";
 import { VideoDetails, VideoComment } from "../models/video.models";
 import { DownloadService } from "./download.service";
 import { PlaylistService } from "./playlist.service";
@@ -8,6 +8,8 @@ import { Observable } from "rxjs/Observable";
 import { UserService } from "./user.service";
 import 'rxjs/add/operator/toPromise'
 import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/do'
+import { SQLiteObject, SQLite } from "@ionic-native/sqlite";
 
 @Injectable()
 export class VideoService {
@@ -15,6 +17,7 @@ export class VideoService {
 
     constructor(
         private http: Http,
+        private sqlite: SQLite,
         private downloadService: DownloadService,
         private playlistService: PlaylistService,
         private userService: UserService
@@ -32,6 +35,12 @@ export class VideoService {
             let mapped = this.getMappedVideoDetailsArray(videoDetailsArray);
             return mapped[0];
         }).toPromise<VideoDetails>();
+    }
+
+    getLikes(id: string) {
+        return this.getDetails(id).then(videoDetails => {
+            return videoDetails.mapped.numOfLikes;
+        });
     }
 
     getRelatedVideos(id: string, count = 5, page = 1) {
@@ -89,22 +98,50 @@ export class VideoService {
     }
 
     addLike(id: string, userId: string) {
-        let headers = new Headers();
-        headers.set('Content-Type', 'application/x-www-form-urlencoded')
+        return this.preparePlaylistTable().then(db => {
+            return db.executeSql('SELECT FROM likes WHERE bcid = ? AND memid = ?', [id, userId]);
+        }).then(a => {
+            if (a.rows.length === 1) {
+                // this video has already been liked by the user
+                return false;
+            } else if (a.rows.length === 0) {
+                // this video has not yet been liked by the user
+                let headers = new Headers();
+                headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-        return this.http.post(VideoService.API_URL, encodeObject({
-            'action': 'DDrupal_Video_AddLikes',
-            'id': id,
-            'userid': userId
-        }), { headers: headers }).map(response => {
-            let data = <any[]>response.json();
-            let isDataEmpty = data.length > 0;
+                return this.http.post(VideoService.API_URL, encodeObject({
+                    'action': 'DDrupal_Video_AddLikes',
+                    'id': id,
+                    'userid': userId
+                }), { headers: headers }).map(response => {
+                    let data = <any[]>response.json();
+                    let isDataEmpty = data.length > 0;
 
-            let hasError = !isDataEmpty && data[0].Info !== undefined && data[0].Info === 'Error';
-            let isSuccessful = !isDataEmpty && data[0].Data !== undefined && data[0].Data === 'True';
+                    let hasError = !isDataEmpty && data[0].Info !== undefined && data[0].Info === 'Error';
+                    let isSuccessful = !isDataEmpty && data[0].Data !== undefined && data[0].Data === 'True';
 
-            return response.ok && !hasError && isSuccessful;
-        })
+                    return response.ok && !hasError && isSuccessful;
+                }).toPromise().then(isSuccessful => {
+                    if (isSuccessful) {
+                        return this.preparePlaylistTable().then(db => {
+                            return db.executeSql('INSERT INTO likes (bcid, memid) VALUES (?, ?)', [id, userId]);
+                        });
+                    } else {
+                        return isSuccessful;
+                    }
+                }).then(a => {
+                    if (a.rowsAffected === 1) {
+                        return true;
+                    } else if (a.rowsAffected === 0) {
+                        return false;
+                    } else {
+                        throw new Error('never_gonna_happen');
+                    }
+                });
+            } else {
+                throw new Error('multiple_entries'); // DUPES!
+            }
+        });
     }
 
     addComment(id: string, userId: string, comment: string) {
@@ -120,7 +157,7 @@ export class VideoService {
         }), { headers: headers }).map(response => {
             return response.json();
         }).toPromise().then(data => {
-            switch(data[0].Data) {
+            switch (data[0].Data) {
                 case 'True':
                     return true;
                 case 'False':
@@ -137,7 +174,7 @@ export class VideoService {
 
     download(id: string, userId: string, userEmail: string) {
         return this.getDetails(id).then(userDetails => {
-            return this.downloadService.addVideoFor(userId, userEmail, id, 
+            return this.downloadService.addVideoFor(userId, userEmail, id,
                 userDetails.title, userDetails.channelName, userDetails.time,
                 userDetails.mapped.imageUrl);
         });
@@ -166,6 +203,27 @@ export class VideoService {
                 playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
             }
             return videoDetail;
+        });
+    }
+
+    private preparePlaylistTable() {
+        return openSqliteDb(this.sqlite).then(db => {
+            return this.createLikesTable(db);
+        })
+    }
+
+    private createLikesTable(db: SQLiteObject) {
+        return new Promise<SQLiteObject>((resolve, reject) => {
+            try {
+                db.executeSql(`CREATE TABLE IF NOT EXISTS likes(
+                        bcid CHAR(13) NOT NULL,
+                        memid CHAR(36) NOT NULL,
+                        UNIQUE(bcid, memid))`, {})
+                    .then(() => { resolve(db); })
+                    .catch(e => { reject(e); })
+            } catch (e) {
+                reject(e);
+            }
         });
     }
 }

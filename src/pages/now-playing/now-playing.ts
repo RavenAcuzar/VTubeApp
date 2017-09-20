@@ -1,5 +1,5 @@
 import { Component, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy, ElementRef, Renderer } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, Content } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, Content, ToastController } from 'ionic-angular';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { Subscription } from "rxjs/Subscription";
 import { VideoService } from "../../app/services/video.service";
@@ -13,6 +13,7 @@ import { HomePopoverPage } from "../../app/popover";
 import { ChannelService } from "../../app/services/channel.service";
 import { ChannelDetails } from "../../app/models/channel.models";
 import { PlaylistService } from "../../app/services/playlist.service";
+import { LoginPage } from "../login/login";
 
 @Component({
   selector: 'page-now-playing',
@@ -21,17 +22,17 @@ import { PlaylistService } from "../../app/services/playlist.service";
 export class NowPlayingPage {
   @ViewChild('videoPlayer') videoplayer;
   @ViewChild('content') content;
-  
+
   private videoId: string;
   private videoDetails: VideoDetails;
   private playlistVideoIds: string[] = [];
   private playlistVideoDetails: VideoDetails[] = [];
   private relatedVideoDetails: VideoDetails[] = [];
   private videoComments: VideoComment[] = [];
-  
+
   private safeVideoUrl: SafeResourceUrl;
   private userImageUrl: string;
-  
+
   private numOfChannelFollowers = 0;
   private relatedVideosPage = 1;
   private playlistIndex = 0;
@@ -68,7 +69,8 @@ export class NowPlayingPage {
     private alertController: AlertController,
     private sanitizer: DomSanitizer,
     private ref: ChangeDetectorRef,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private toastCtrl: ToastController
   ) {
     this.shouldPlayPlaylist = navParams.get('playAll');
     this.videoId = navParams.get('id');
@@ -84,7 +86,6 @@ export class NowPlayingPage {
     if (!this.shouldPlayPlaylist) {
       this.goToVideo(this.videoId);
     } else {
-      // TODO: retrieve the first video in playlist
       this.getPlaylistAndPlayFirstVideo();
     }
   }
@@ -116,10 +117,16 @@ export class NowPlayingPage {
 
   likeVideo() {
     this.storage.get(USER_DATA_KEY).then(userData => {
-      this.videoService.addLike(this.videoId, userData.id).subscribe(_ => {
-        // do something when the video has been liked by the user
-        // TODO: UPDATE LIKED BUTTON TO RED COLOR
-      });
+      return this.videoService.addLike(this.videoId, userData.id);
+    }).then(isSuccessful => {
+      if (isSuccessful)
+        return this.videoService.getLikes(this.videoId);
+      else
+        throw new Error('not_liked_successfully');
+    }).then(numOfLikes => {
+      this.videoDetails.likes = `${numOfLikes}`;
+    }).catch(e => {
+      
     });
   }
 
@@ -154,9 +161,18 @@ export class NowPlayingPage {
       if (userData) {
         return this.videoService.addToPlaylist(this.videoId, userData.id);
       } else {
-        // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
-        // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
-        console.log('The user needs to sign in.');
+        let toast = this.toastCtrl.create({
+          duration: 1000,
+          position: 'bottom',
+          showCloseButton: true,
+          closeButtonText: 'Login',
+          dismissOnPageChange: true,
+          message: 'Login to like this video.',
+        });
+        toast.onDidDismiss(() => {
+          this.navCtrl.push(LoginPage);
+        });
+        toast.present();
       }
     }).then(isSuccessful => {
       if (isSuccessful) {
@@ -197,17 +213,37 @@ export class NowPlayingPage {
             }
           }]
         });
+        alert.present();
       }
 
       if (e instanceof Error) {
         switch (e.message) {
           case 'not_logged_in':
-            // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
-            // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
-            console.log('The user needs to sign in.');
+            let toast = this.toastCtrl.create({
+              duration: 1000,
+              position: 'bottom',
+              showCloseButton: true,
+              closeButtonText: 'Login',
+              dismissOnPageChange: true,
+              message: 'Login to add this video to your playlist.',
+            });
+            toast.onDidDismiss(() => {
+              this.navCtrl.push(LoginPage);
+            });
+            toast.present();
             break;
           case 'already_downloaded':
-            console.log('Video has already been downloaded by the user.');
+            let alert = this.alertController.create({
+              title: 'Oops!',
+              message: 'This video has already been added to your playlist!',
+              buttons: [{
+                text: 'OK', handler: () => {
+                  alert.dismiss();
+                  return true;
+                }
+              }]
+            });
+            alert.present();
             break;
           default:
             unknownError(e);
@@ -249,14 +285,24 @@ export class NowPlayingPage {
             }
           }]
         });
+        alert.present();
       }
 
       if (e instanceof Error) {
         switch (e.message) {
           case 'not_logged_in':
-            // TODO: 4 RICO, DISPLAY A TOAST TO TELL USER THAT
-            // USER NEEDS TO SIGN IN TO BE ABLE TO ADD A LIKE 
-            console.log('The user needs to sign in.');
+            let toast = this.toastCtrl.create({
+              duration: 1000,
+              position: 'bottom',
+              showCloseButton: true,
+              closeButtonText: 'Login',
+              dismissOnPageChange: true,
+              message: 'Login to download this video.',
+            });
+            toast.onDidDismiss(() => {
+              this.navCtrl.push(LoginPage);
+            });
+            toast.present();
             break;
           case 'already_in_playlist':
             console.log('Video has already been added to the playlist by the user.');
