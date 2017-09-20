@@ -32,6 +32,8 @@ import { UserService } from "./services/user.service";
 import { ChannelService } from "./services/channel.service";
 import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-downloaded-video";
 import { AndroidPermissions } from "@ionic-native/android-permissions";
+import { ConnectionService } from "./services/network.service";
+import { Network } from "@ionic-native/network";
 
 @NgModule({
   declarations: [
@@ -89,6 +91,8 @@ import { AndroidPermissions } from "@ionic-native/android-permissions";
     DownloadService,
     ChannelService,
     AndroidPermissions,
+    ConnectionService,
+    Network,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

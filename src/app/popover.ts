@@ -1,5 +1,5 @@
 import { ViewController, NavController, NavParams, AlertController, ToastController } from "ionic-angular";
-import { Component } from "@angular/core";
+import { Component, ChangeDetectorRef } from "@angular/core";
 import { Storage } from "@ionic/storage";
 import { VideoDetails } from "./models/video.models";
 import { VideoService } from "./services/video.service";
@@ -7,17 +7,23 @@ import { USER_DATA_KEY } from "./app.constants";
 import { FallbackPage } from "../pages/fallback/fallback";
 import { PlaylistService } from "./services/playlist.service";
 import { DownloadService } from "./services/download.service";
+import { Observable } from "rxjs/Observable";
 
 @Component({
   template: `
     <ion-list class="playlist-popover-page">
       <button ion-item (click)="addToPlaylist()">Add to Playlist</button>
-      <button ion-item (click)="download()">Download</button>
+      <button ion-item (click)="download()" *ngIf = "!isVideoDownloading && !isVideoDownloaded">Download</button>
+      <button ion-item  *ngIf = "isVideoDownloading && !isVideoDownloaded">Downloading {{downloadProgress}}%</button>
+      <button ion-item  *ngIf = "isVideoDownloaded ">Downloaded</button>
     </ion-list>
   `
 })
 export class HomePopoverPage {
 
+  isVideoDownloading = false;
+  private isVideoDownloaded = false;
+  downloadProgress: number = 0;
   private videoDetails: VideoDetails;
 
   constructor(
@@ -28,11 +34,34 @@ export class HomePopoverPage {
     private videoService: VideoService,
     private downloadService: DownloadService,
     private alertController: AlertController,
+    private ref: ChangeDetectorRef,
     private toastCtrl: ToastController
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
   }
+  ionViewDidLoad() {
+    document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
 
+    this.storage.get(USER_DATA_KEY).then(userData => {
+        this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
+          this.isVideoDownloaded = isDownloaded;
+
+          let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
+          if (obs) {
+            this.isVideoDownloading = true;
+            this.observeInProgressDownload(this.videoDetails.bcid, obs);
+          }
+        }).catch(e => {
+          console.log(e);
+        });
+      })
+  }
+
+
+  ionViewWillLeave() {
+    if (document.getElementsByTagName("ion-app").item(0).classList.contains("disable-scroll"))
+      document.getElementsByTagName("ion-app").item(0).classList.remove("disable-scroll");
+  }
   addToPlaylist() {
     this.viewCtrl.dismiss();
     this.storage.get(USER_DATA_KEY).then(userData => {
@@ -126,6 +155,7 @@ export class HomePopoverPage {
         duration: 4000
       });
       toast.present();
+      this.observeInProgressDownload(this.videoDetails.bcid, observable);
       observable.subscribe(progress => { }, e => {
         this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
       }, () => {
@@ -157,6 +187,22 @@ export class HomePopoverPage {
       this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
     })
   }
+  private observeInProgressDownload(id: string, observable: Observable<number>) {
+    this.downloadProgress = 0;
+    this.isVideoDownloading = true;
+
+    observable.subscribe(progress => {
+      this.downloadProgress = progress;
+      this.ref.detectChanges();
+    }, e => {
+      console.log(e);
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
+    }, () => {
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
+    });
+  }
 }
 
 @Component({
@@ -168,6 +214,10 @@ export class HomePopoverPage {
   `
 })
 export class PlaylistPopoverPage {
+  
+  isVideoDownloading = false;
+  private isVideoDownloaded = false;
+  downloadProgress: number = 0;
   private refreshPlaylistCallback: () => void;
 
   private videoDetails: VideoDetails;
@@ -180,12 +230,35 @@ export class PlaylistPopoverPage {
     private videoService: VideoService,
     private playlistService: PlaylistService,
     private alertController: AlertController,
+    private downloadService: DownloadService,
+    private ref: ChangeDetectorRef,
     private toastCtrl: ToastController
   ) {
     this.videoDetails = <VideoDetails>this.navParams.data.videoDetails;
     this.refreshPlaylistCallback = this.navParams.data.refreshPlaylistCallback;
   }
+  ionViewDidLoad() {
+    document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
+    
+      this.storage.get(USER_DATA_KEY).then(userData => {
+        this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
+          this.isVideoDownloaded = isDownloaded;
 
+          let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
+          if (obs) {
+            this.observeInProgressDownload(this.videoDetails.bcid, obs);
+          }
+        }).catch(e => {
+          console.log(e);
+        });
+      })
+    
+  }
+
+  ionViewWillLeave() {
+    if (document.getElementsByTagName("ion-app").item(0).classList.contains("disable-scroll"))
+      document.getElementsByTagName("ion-app").item(0).classList.remove("disable-scroll");
+  }
   removeFromPlaylist() {
     this.viewCtrl.dismiss();
     this.playlistService.removeVideoFromPlaylist(this.videoDetails.bcid).then(isSuccessful => {
@@ -236,6 +309,7 @@ export class PlaylistPopoverPage {
         duration: 4000
       });
       toast.present();
+      this.observeInProgressDownload(this.videoDetails.bcid, observable);
       observable.subscribe(progress => { }, e => { }, () => {
         let alert = this.alertController.create({
           title: 'Download Video',
@@ -294,5 +368,22 @@ export class PlaylistPopoverPage {
         unknownError(e);
       }
     })
+
+  }
+  private observeInProgressDownload(id: string, observable: Observable<number>) {
+    this.downloadProgress = 0;
+    this.isVideoDownloading = true;
+
+    observable.subscribe(progress => {
+      this.downloadProgress = progress;
+      this.ref.detectChanges();
+    }, e => {
+      console.log(e);
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadErrorFinishAlertFor(this.videoDetails.bcid);
+    }, () => {
+      this.isVideoDownloading = false;
+      this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
+    });
   }
 }

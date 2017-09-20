@@ -25,6 +25,15 @@ page-home {
         min-height: 6vh;
         padding: 0;
     }
+    ion-card{
+        ion-label{
+            white-space: normal !important;
+        }
+    }
+
+    ion-segment-button.segment-button.segment-activated{
+        font-size: 1.5rem;
+    }
     
     .parent {
         position: relative;

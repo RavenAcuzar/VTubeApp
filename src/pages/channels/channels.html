@@ -38,7 +38,8 @@
         <img src="assets/img/VOLT-front.png" />
         <h3>"You have to log in to view your channel."</h3>
       </div>
-      <div [hidden]='isLoggedOut'>
+      
+      <div [hidden]='isLoggedOut' *ngIf="userHasChannel">
         <ion-card>
           <div class="channelMain">
             <img [src]="userChannel.cover" />
@@ -86,7 +87,7 @@
 
             <ion-item>
               <ion-avatar item-start>
-                <img [src]="channelDetail.channelImageFinalUrl" />
+                <img [src]="userChannel.finalAvatarUrl" />
               </ion-avatar>
               <h2>
                 <ion-icon name="lock" color="secondary" [hidden]="vids.noLock"></ion-icon> {{vids.title}}</h2>
@@ -103,6 +104,11 @@
             </ion-infinite-scroll-content>
           </ion-infinite-scroll>
         </div>
+      </div>
+      <div padding class="channelPlaceholder" [hidden]='isLoggedOut' *ngIf="!userHasChannel">
+        <!-- put global boolean login variable here -->
+        <img src="assets/img/VOLT-front.png" />
+        <h3>"You dont have your own channel yet."</h3>
       </div>
     </div>
 
