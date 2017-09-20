@@ -93,7 +93,7 @@ export class VideoService {
         headers.set('Content-Type', 'application/x-www-form-urlencoded')
 
         return this.http.post(VideoService.API_URL, encodeObject({
-            'action': 'App_Video_AddLikes',
+            'action': 'DDrupal_Video_AddLikes',
             'id': id,
             'userid': userId
         }), { headers: headers }).map(response => {
