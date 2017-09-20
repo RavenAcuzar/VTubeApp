@@ -1,0 +1,90 @@
+<!--
+  Generated template for the UploadVideoPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar no-border-bottom>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Upload Video</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="uploadVid()"> 
+      <ion-icon name="md-send"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <video #videoPlayer controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="vidUploadPrev">
+    <source [src]="vidSource" type="video/mp4" />
+  </video>
+  <div class="tags-bottom" style="margin-right:20px;"><i>Upload videos up to 200MB only. Allows MOV, MP4, M4V, AVI, 3GP, 3GP2, ASF, WMV, MPEG formats.</i></div>
+  <div padding>
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Title</ion-label>
+        <ion-input type="text" required autofocus name="title" [(ngModel)]="title"></ion-input>
+      </ion-item>
+      <div class="tags-bottom"><i>Special Characters are not allowed </i></div>
+      <ion-item>
+        <ion-label floating>Description</ion-label>
+        <ion-input type="text" required name="description" [(ngModel)]="description"></ion-input>
+      </ion-item>
+      <div class="tags-bottom"><i>Special Characters are not allowed </i></div>
+      <ion-item>
+        <ion-label floating>Tags</ion-label>
+        <ion-input type="text" required name="tags" [(ngModel)]="tags"></ion-input>
+      </ion-item>
+      <div class="tags-bottom"><i>Optional: Separate by comma. Ex: IRs, V-Con</i></div> <br><br>
+      <ion-list-header>
+        Publish Settings
+      </ion-list-header>
+      <ion-item>
+        <ion-label>Privacy</ion-label>
+        <ion-select [(ngModel)]="privacy" required>
+          <ion-option value="public">
+            <ion-icon name="md-globe"></ion-icon> Public</ion-option>
+          <ion-option value="private">
+            <ion-icon name="md-lock"></ion-icon> Private</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Category</ion-label>
+        <ion-select [(ngModel)]="category" required>
+          <ion-option *ngFor="let cat of categories" [value]="cat.value">{{cat.title}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Level</ion-label>
+        <ion-select [(ngModel)]="level" required>
+          <ion-option *ngFor="let level of levels" [value]="level.value">{{level.title}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Target Market Location</ion-label>
+        <ion-select [(ngModel)]="targetMarketLoc" multiple="true" required>
+          <ion-option *ngFor="let loc of locs">{{loc.title}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Allow Comments</ion-label>
+        <ion-select [(ngModel)]="allowComment" required>
+          <ion-option value="yes">Yes</ion-option>
+          <ion-option value="no">No</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>Allow Sharing</ion-label>
+        <ion-select [(ngModel)]="allowSharing" required> 
+          <ion-option value="yes">Yes</ion-option>
+          <ion-option value="no">No</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

@@ -34,6 +34,7 @@ import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-dow
 import { AndroidPermissions } from "@ionic-native/android-permissions";
 import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
+import { UploadVideoPage } from "../pages/upload-video/upload-video";
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { Network } from "@ionic-native/network";
     HomePage,
     ChannelsPage,
     ChannelPrevPage,
+    UploadVideoPage,
     DownloadsPage,
     LoginPage,
     NowPlayingPage,
@@ -66,6 +68,7 @@ import { Network } from "@ionic-native/network";
     HomePage,
     ChannelsPage,
     ChannelPrevPage,
+    UploadVideoPage,
     DownloadsPage,
     LoginPage,
     NowPlayingPage,

@@ -16,6 +16,7 @@ import { AppStateService } from "./services/app_state.service";
 import { DownloadService } from "./services/download.service";
 import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
+import { UploadVideoPage } from "../pages/upload-video/upload-video";
 
 @Component({
   templateUrl: 'app.html'
@@ -99,6 +100,7 @@ export class MyApp {
           { title: 'Home', component: HomePage, icon: "md-home" },
           { title: 'Profile', component: ProfilePage, icon: "md-person" },
           { title: 'Channels', component: ChannelsPage, icon: "md-easel" },
+          { title: 'Upload Video', component: UploadVideoPage, icon: "md-videocam" },
           { title: 'Playlist', component: PlaylistPage, icon: "md-albums" },
           { title: 'Downloads', component: DownloadsPage, icon: "md-download" }
         ];
@@ -115,6 +117,7 @@ export class MyApp {
           { title: 'Home', component: HomePage, icon: "md-home" },
           { title: 'Profile', component: FallbackPage, icon: "md-person" },
           { title: 'Channels', component: ChannelsPage, icon: "md-easel" },
+          { title: 'Upload Video', component: FallbackPage, icon: "md-videocam" },
           { title: 'Playlist', component: FallbackPage, icon: "md-albums" },
           { title: 'Downloads', component: FallbackPage, icon: "md-download" }
         ];

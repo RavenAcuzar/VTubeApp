@@ -1,0 +1,51 @@
+page-upload-video {
+
+    ion-header [class^="toolbar-background"] {
+        background-color: map-get($colors,light );
+        border:none !important;
+    }
+    ion-header [class^="toolbar"] {
+        min-height: 40px;
+        padding: 0;
+        color: map-get($colors, primary);
+    }
+    ion-content {
+        background-color: #cecece!important;
+    }
+    ion-title{
+        margin-top: 12px;
+    }
+
+    ion-navbar {
+        min-height: 6vh;
+        padding: 0;
+    }
+
+    ion-list {
+        
+        > ion-list-header[class^="item"]{
+            margin-bottom: 0 !important;
+            background-color: transparent !important;
+            border-top: none !important;
+            color: black !important;
+        }
+        >ion-item{
+            background-color: transparent !important;
+            >.item-inner .input-wrapper ion-label{
+                color: rgba(0, 0, 0, 0.64) !important;
+            } 
+        }
+
+    }
+
+    .tags-bottom{
+        opacity: 0.4;
+        margin: 3px 0px 0px 20px;
+        font-size: 7pt;
+    }
+
+    .vidUploadPrev{
+        width: 100%;
+        min-height: 40vw;
+    }
+}
