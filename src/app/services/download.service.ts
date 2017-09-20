@@ -16,7 +16,7 @@ import 'rxjs/add/operator/map';
 
 type BcidAndResult = {
     bcid: string,
-    result: RemoveResult
+    isSuccessful: boolean
 }
 
 @Injectable()
@@ -63,6 +63,10 @@ export class DownloadService {
             return null;
     }
 
+    getAllInProgressDownloads() {
+        return this.inProgressDownloads;
+    }
+
     getPathOfVideo(id: string) {
         this.updatePaths();
         return `${this.rootPath}/${id}.mp4`;
@@ -75,7 +79,7 @@ export class DownloadService {
 
     getDownloadedVideosOf(userId: string) {
         this.updatePaths();
-        
+
         return this.preparePlaylistTable().then(db => {
             return db.executeSql('SELECT * FROM downloads WHERE memid = ?', [userId])
         }).then(a => {
@@ -107,7 +111,7 @@ export class DownloadService {
 
     isVideoDownloaded(userId: string, bcid: string) {
         this.updatePaths();
-        
+
         return this.preparePlaylistTable().then(db => {
             return db.executeSql('SELECT * FROM downloads WHERE memid = ? and bcid = ?', [userId, bcid])
         }).then(a => {
@@ -132,7 +136,7 @@ export class DownloadService {
 
     addVideoFor(userId: string, email: string, bcid: string, title: string, channelName: string, time: string, imageUrl: string) {
         this.updatePaths();
-        
+
         return new Promise<Observable<number>>((resolve, reject) => {
             // check if the video has lready been downloaded and is stated in the manifest (local db)
             this.isVideoDownloaded(userId, bcid).then(isDownloaded => {
@@ -178,6 +182,7 @@ export class DownloadService {
                     return finalUrl;
                 }
             }).then(finalUrl => {
+                // TODO: save video and thumb to a directory with a name of `userid`
                 // check if video has already been downloaded
                 return this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(isPresent => {
                     if (isPresent) // remove file if it has already been downloaded
@@ -242,7 +247,7 @@ export class DownloadService {
 
     removeVideoFor(userId: string, bcid: string) {
         this.updatePaths();
-        
+
         return this.preparePlaylistTable().then(db => {
             return db.executeSql('DELETE FROM downloads WHERE memid = ? and bcid = ?', [userId, bcid])
         }).then(a => {
@@ -253,14 +258,9 @@ export class DownloadService {
             else
                 throw new Error('Multiple values were deleted!');
         }).then(isManifestUpdated => {
-            return this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(isPresent => {
-                if (isPresent)
-                    return this.file.removeFile(`${this.rootPath}`, `${bcid}.mp4`);
-                else
-                    throw new Error('Non existent file!');
-            });
+            return this.deleteVideoAndThumbnailFor(userId, bcid);
         }).then(result => {
-            return result.success;
+            return result.every(r => r.success);
         })
     }
 
@@ -291,12 +291,11 @@ export class DownloadService {
 
     removeAllExpiredVideosFor(userId: string) {
         return this.getDownloadedVideosOf(userId).then(downloadEntries => {
-            let sevenDaysFromNow = new Date();
-            sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-
             // filter videos which are past the expiration data
             let bcidsOfExpiredVideos = downloadEntries.filter(d => {
-                return d.dl_date.getDate() <= Date.now();
+                let sevenDaysFromDlDate = new Date(d.dl_date);
+                sevenDaysFromDlDate.setDate(sevenDaysFromDlDate.getDate() + 7);
+                return sevenDaysFromDlDate.getTime() <= Date.now();
             }).map(d => d.bcid);
 
             // delete all the videos in list from storage
@@ -363,23 +362,20 @@ export class DownloadService {
 
     private performCleanup(bcids: string[]) {
         this.updatePaths();
-        
+
         return new Promise<string[]>((resolve, reject) => {
             try {
                 let promises: Promise<BcidAndResult>[] = [];
                 bcids.forEach(bcid => {
-                    let promise = this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(s => {
-                        if (s) return this.file.removeFile(`${this.rootPath}`, `${bcid}.mp4`);
-                    }).then(result => {
-                        return { bcid: bcid, result: result }
-                    });
-                    promises.push(promise);
+                    promises.push(this.deleteVideoAndThumbnailFor('<userid>', bcid).then(results => {
+                        return { bcid: bcid, isSuccessful: results.every(r => r.success) };
+                    }));
                 });
                 Promise.all(promises).then(p => {
-                    if (p.every(r => r.result.success)) {
+                    if (p.every(r => r.isSuccessful)) {
                         resolve(p.map(r => r.bcid));
                     } else {
-                        let successfulDeletions = p.filter(r => r.result.success);
+                        let successfulDeletions = p.filter(r => r.isSuccessful);
                         resolve(successfulDeletions.map(r => r.bcid));
                     }
                 });
@@ -387,6 +383,23 @@ export class DownloadService {
                 reject(e);
             }
         })
+    }
+
+    private deleteVideoAndThumbnailFor(userId: string, bcid: string) {
+        return Promise.all([
+            this.file.checkFile(this.rootDirectory, `${this.folderPath}/${bcid}.mp4`).then(isPresent => {
+                if (isPresent)
+                    return this.file.removeFile(`${this.rootDirectory}`, `${this.folderPath}/${bcid}.mp4`);
+                else
+                    throw new Error('not_found_video:' + bcid);
+            }),
+            this.file.checkFile(this.rootDirectory, `${this.thumbsFolderPath}/${bcid}.jpeg`).then(isPresent => {
+                if (isPresent)
+                    return this.file.removeFile(`${this.rootDirectory}`, `${this.thumbsFolderPath}/${bcid}.jpeg`);
+                else
+                    throw new Error('not_found_thumb:' + bcid);
+            })
+        ]);
     }
 
     private preparePlaylistTable() {

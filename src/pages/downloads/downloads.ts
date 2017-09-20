@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController, ViewController, AlertController } from 'ionic-angular';
 import { DownloadService } from "../../app/services/download.service";
 import { Storage } from '@ionic/storage';
@@ -18,7 +18,8 @@ export class DownloadsPage {
     private storage: Storage,
     private alertCtrl: AlertController,
     private downloadService: DownloadService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private ref: ChangeDetectorRef
   ) { }
 
   ionViewDidEnter() {
@@ -30,16 +31,50 @@ export class DownloadsPage {
       }
     }).then(downloadedVideos => {
       this.downloadedVideos = downloadedVideos;
+
+      let inProgressDownloads = this.downloadService.getAllInProgressDownloads();
+      this.downloadedVideos.forEach(de => {
+        let ipdl = inProgressDownloads[de.bcid];
+        de.isInProgress = ipdl != null && ipdl.observable != null;
+        if (de.isInProgress) {
+          de.progress = {
+            progress: 0,
+            hasErrors: false,
+            isDownloading: true,
+            subscription: null
+          };
+          de.progress.subscription = ipdl.observable.subscribe(progress => {
+            de.progress.progress = progress;
+            this.ref.detectChanges();
+          }, e => {
+            de.progress.isDownloading = false;
+            de.progress.hasErrors = true;
+            de.isInProgress = false;
+          }, () => {
+            de.progress.isDownloading = false;
+            de.progress.hasErrors = false;
+            de.isInProgress = false;
+          });
+        }
+      });
     });
   }
 
   playVideo(entry: DownloadEntry) {
+    if (entry.isInProgress) {
+      return;
+    }
+
     this.navCtrl.push(PlayDownloadedVideoPage, {
       id: entry.id
     });
   }
 
   deleteEntry(entry: DownloadEntry) {
+    if (entry.isInProgress) {
+      return;
+    }
+
     let confirm = this.alertCtrl.create({
       title: 'Delete video?',
       message: `Are you sure you want to remove the downloaded copy of '${entry.title}'?`,

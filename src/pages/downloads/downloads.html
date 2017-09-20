@@ -15,7 +15,11 @@
 <ion-content padding>
   <div class="container-videos">
     <div class="video-box" *ngFor="let dv of downloadedVideos">
-      <img [src]="dv.imageUrl" (click)="playVideo(dv)"/>
+      <div class="image-holder">
+        <img [src]="dv.imageUrl" (click)="playVideo(dv)"/>
+        <!-- TODO: FIX THE STyLE OF THIS SHIT PROGRESS BAR -->
+        <progress max="100" *ngIf="dv.isInProgress" value="{{dv.progress.progress}}" [hidden]="!dv.progress.isDownloading"></progress>
+      </div>
       <div class="info" (click)="playVideo(dv)">
         <h2>{{dv.title}}</h2>
         <p>
@@ -23,7 +27,7 @@
           <span class="views">{{dv.time}}</span>
         </p>
       </div>
-      <button ion-button padding-bottom="false" (click)="deleteEntry(dv)">
+      <button ion-button padding-bottom="false" (click)="deleteEntry(dv)" [disabled]="dv.isInProgress">
         <ion-icon name="md-trash"></ion-icon>
       </button>
     </div>

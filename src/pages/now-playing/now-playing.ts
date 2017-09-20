@@ -21,21 +21,22 @@ import { PlaylistService } from "../../app/services/playlist.service";
 export class NowPlayingPage {
   @ViewChild('videoPlayer') videoplayer;
   @ViewChild('content') content;
-
+  
   private videoId: string;
   private videoDetails: VideoDetails;
   private playlistVideoIds: string[] = [];
   private playlistVideoDetails: VideoDetails[] = [];
   private relatedVideoDetails: VideoDetails[] = [];
   private videoComments: VideoComment[] = [];
-
+  
   private safeVideoUrl: SafeResourceUrl;
   private userImageUrl: string;
-
+  
   private numOfChannelFollowers = 0;
   private relatedVideosPage = 1;
   private playlistIndex = 0;
   private downloadProgress: number = 0;
+  private downloadProgressSubscription: Subscription;
 
   private isLoading = false;
   private isLoggedIn = false;
@@ -90,6 +91,7 @@ export class NowPlayingPage {
 
   ionViewWillLeave() {
     this.orientationSubscription.unsubscribe();
+    this.downloadProgressSubscription.unsubscribe();
   }
 
   presentPopover(myEvent, vids) {
@@ -424,7 +426,7 @@ export class NowPlayingPage {
     this.isVideoDownloading = true;
     this.downloadProgress = 0;
 
-    observable.subscribe(progress => {
+    this.downloadProgressSubscription = observable.subscribe(progress => {
       this.downloadProgress = progress;
       this.ref.detectChanges();
     }, e => {

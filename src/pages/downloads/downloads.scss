@@ -42,10 +42,21 @@ page-downloads {
                     margin-right: 10px;
                 }
 
-                img {
+                div.image-holder {
                     width: 40vw;
                     contain: none;
+                    display: flex;
+                    flex-direction: column;
                     align-self: flex-start;
+                    align-items: stretch;
+
+                    img {
+                    }
+
+                    progress {
+                        height: 6px;
+                        
+                    }
                 }
 
                 .info {
