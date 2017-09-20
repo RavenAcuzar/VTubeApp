@@ -20,8 +20,8 @@
 <ion-content padding>
   <div class="container-videos" *ngFor="let items of SearchResults" [hidden]="hideResults">
     <div class="video-box">
-      <img [src]="items.vidImage" (click)="playVideo(items.URL, items.vidPriv)"/>
-      <div class="info" (click)="playVideo(items.URL, items.vidPriv)">
+      <img [src]="items.vidImage" (click)="playVideo(items.bcid, items.vidPriv)"/>
+      <div class="info" (click)="playVideo(items.bcid, items.vidPriv)">
         <h2><ion-icon name="lock" color="secondary" [hidden]="items.noLock"></ion-icon> {{items.Title}}</h2>
         <p>
           <span class="channel">{{items.chName}}</span><br>
@@ -30,7 +30,7 @@
           <span class="points">{{items.vidPoints}} points</span>
         </p>
       </div>
-      <button ion-button padding-bottom="false" (click)="presentPopover($event, vids)">
+      <button ion-button padding-bottom="false" (click)="presentPopover($event, items)">
             <ion-icon name="md-more"></ion-icon>
           </button>
     </div>

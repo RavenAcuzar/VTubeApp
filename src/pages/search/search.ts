@@ -50,8 +50,9 @@ export class SearchPage {
       .subscribe(response => {
         let data = response.json();
         data.forEach(sr => {
-          this.getVideoDetails(sr.URL).subscribe(response => {
+          this.getVideoDetails(sr.URL.substring('/vtube/video?id='.length)).subscribe(response => {
             details = response.json();
+            sr.bcid = sr.URL.substring('/vtube/video?id='.length);
             sr.viewsNo = details[0].views;
             sr.chName = details[0].channelName;
             sr.vidImage = "http://the-v.net" + details[0].image;
