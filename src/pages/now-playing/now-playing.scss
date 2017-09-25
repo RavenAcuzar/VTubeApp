@@ -30,6 +30,7 @@ page-now-playing {
     }
 
     .videoPlayer {
+        border: none;
         z-index: 10;
         height: 40vh;
         width: 100%;
@@ -142,7 +143,7 @@ page-now-playing {
                     background-color: transparent !important;
                 }
 
-                &.downloaded, &.addedToPlaylist {
+                &.downloaded, &.addedToPlaylist, &.liked {
                     color: #D52730;
                 }
             }

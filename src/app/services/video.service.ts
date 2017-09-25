@@ -97,9 +97,23 @@ export class VideoService {
         return this.playlistService.isVideoAddedToPlaylist(userId, id);
     }
 
+    hasBeenLiked(id: string, userId: string) {
+        return this.preparePlaylistTable().then(db => {
+            return db.executeSql('SELECT * FROM likes WHERE bcid = ? AND memid = ?', [id, userId]);
+        }).then(a => {
+            if (a.rows.length === 1) {
+                return true;
+            } else if (a.rows.length === 0) {
+                return false;
+            } else {
+                throw new Error('multiple_entries'); // DUPES!
+            }
+        });
+    }
+
     addLike(id: string, userId: string) {
         return this.preparePlaylistTable().then(db => {
-            return db.executeSql('SELECT FROM likes WHERE bcid = ? AND memid = ?', [id, userId]);
+            return db.executeSql('SELECT * FROM likes WHERE bcid = ? AND memid = ?', [id, userId]);
         }).then(a => {
             if (a.rows.length === 1) {
                 // this video has already been liked by the user
@@ -115,7 +129,7 @@ export class VideoService {
                     'userid': userId
                 }), { headers: headers }).map(response => {
                     let data = <any[]>response.json();
-                    let isDataEmpty = data.length > 0;
+                    let isDataEmpty = data.length === 0;
 
                     let hasError = !isDataEmpty && data[0].Info !== undefined && data[0].Info === 'Error';
                     let isSuccessful = !isDataEmpty && data[0].Data !== undefined && data[0].Data === 'True';

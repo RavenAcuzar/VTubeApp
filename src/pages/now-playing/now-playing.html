@@ -49,7 +49,7 @@
         <ion-row>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="likeVideo()">
+              <button ion-button icon-only block (click)="likeVideo()" [class.liked]="hasBeenLiked">
                 <ion-icon class="icon" name="md-heart"></ion-icon>
               </button>
               <span class="text">{{videoDetails.likes}}</span>
@@ -57,7 +57,7 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="downloadVideo()" [disabled]="isVideoDownloaded || isVideoDownloading" [class.downloaded]="isVideoDownloaded">
+              <button ion-button icon-only block (click)="downloadVideo()" [class.downloaded]="isVideoDownloaded || isStarting || isVideoDownloading">
                 <ion-icon class="icon" name="md-download"></ion-icon>
               </button>
               <span class="text" *ngIf="isVideoDownloaded">Downloaded</span>
@@ -68,7 +68,7 @@
           </ion-col>
           <ion-col col-4>
             <div class="vid-actions">
-              <button ion-button icon-only block (click)="addVideoToPlaylist()" [disabled]="isVideoAddedToPlaylist" [class.addedToPlaylist]="isVideoAddedToPlaylist">
+              <button ion-button icon-only block (click)="addVideoToPlaylist()" [class.addedToPlaylist]="isVideoAddedToPlaylist">
                 <ion-icon class="icon" name="md-add"></ion-icon>
               </button>
               <span class="text" *ngIf="!isVideoAddedToPlaylist">Add to playlist</span>
