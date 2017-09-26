@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <p>Chat with Volt &nbsp;&nbsp;</p>
+      <div>
+        <img src="assets/img/volt-login.png" />
+      </div>
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="info()"> 
+      <ion-icon name="md-help"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+   <div *ngFor="let msgEntry of conversation">
+    <div class="chat-bubble" [class.left]="msgEntry.sender === 'Volt'" [class.right]="msgEntry.sender !== 'Volt'">
+      <div>{{msgEntry.message}}</div>
+      <div class="message-detail">
+        <p style="text-align:left;"><b>{{msgEntry.sender}}</b>, {{msgEntry.dateSentStr}}</p>
+      </div>
+    </div>
+    <div style="clear: both;"></div>
+    <div [class.content-center-left]="msgEntry.sender === 'Volt'" [class.content-center-right]="msgEntry.sender !== 'Volt'">
+      <img [src]="msgEntry.senderImageUrl" style="width: 60px; height: 60px;">
+    </div>
+    <div style="clear: both;"></div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-10>
+          <input type="text" placeholder="Message..." [(ngModel)]="message">
+        </ion-col>
+        <ion-col col-2 style="text-align:center;">
+          <ion-buttons>
+            <button ion-button icon-only (click)="sendMessage()"><ion-icon name="md-paper-plane"></ion-icon></button>
+          </ion-buttons>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>

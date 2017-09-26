@@ -34,6 +34,8 @@ import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-dow
 import { AndroidPermissions } from "@ionic-native/android-permissions";
 import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
+import { VoltChatPage } from "../pages/volt-chat/volt-chat";
+import { VoltChatService } from "./services/volt-chat.service";
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { Network } from "@ionic-native/network";
     ForgotPasswordPage,
     HomePopoverPage,
     PlayDownloadedVideoPage,
-    PlaylistPopoverPage
+    PlaylistPopoverPage,
+    VoltChatPage
   ],
   imports: [
     BrowserModule,
@@ -76,7 +79,8 @@ import { Network } from "@ionic-native/network";
     ForgotPasswordPage,
     HomePopoverPage,
     PlayDownloadedVideoPage,
-    PlaylistPopoverPage
+    PlaylistPopoverPage,
+    VoltChatPage
   ],
   providers: [
     File,
@@ -92,6 +96,7 @@ import { Network } from "@ionic-native/network";
     ChannelService,
     AndroidPermissions,
     ConnectionService,
+    VoltChatService,
     Network,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

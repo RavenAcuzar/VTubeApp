@@ -16,6 +16,7 @@ import { AppStateService } from "./services/app_state.service";
 import { DownloadService } from "./services/download.service";
 import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
+import { VoltChatPage } from "../pages/volt-chat/volt-chat";
 
 @Component({
   templateUrl: 'app.html'
@@ -100,7 +101,8 @@ export class MyApp {
           { title: 'Profile', component: ProfilePage, icon: "md-person" },
           { title: 'Channels', component: ChannelsPage, icon: "md-easel" },
           { title: 'Playlist', component: PlaylistPage, icon: "md-albums" },
-          { title: 'Downloads', component: DownloadsPage, icon: "md-download" }
+          { title: 'Downloads', component: DownloadsPage, icon: "md-download" },
+          { title: 'Chat with Volt', component: VoltChatPage, icon: "ios-text" }
         ];
         this.storage.get(USER_DATA_KEY).then(userDetails => {
           this.username = userDetails.first_name;
@@ -116,7 +118,8 @@ export class MyApp {
           { title: 'Profile', component: FallbackPage, icon: "md-person" },
           { title: 'Channels', component: ChannelsPage, icon: "md-easel" },
           { title: 'Playlist', component: FallbackPage, icon: "md-albums" },
-          { title: 'Downloads', component: FallbackPage, icon: "md-download" }
+          { title: 'Downloads', component: FallbackPage, icon: "md-download" },
+          { title: 'Chat with Volt', component: FallbackPage, icon: "ios-text" }
         ];
         this.pageState = isloggedin;
       }
