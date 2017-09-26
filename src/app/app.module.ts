@@ -34,6 +34,7 @@ import { PlayDownloadedVideoPage } from "../pages/play-downloaded-video/play-dow
 import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
 import { VoltChatPage } from "../pages/volt-chat/volt-chat";
+import { VoltChatService } from "./services/volt-chat.service";
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { VoltChatPage } from "../pages/volt-chat/volt-chat";
     DownloadService,
     ChannelService,
     ConnectionService,
+    VoltChatService,
     Network,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
