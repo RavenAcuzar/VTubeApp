@@ -11,7 +11,7 @@
     </button>
     <ion-title>Upload Video</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only (click)="uploadVid()"> 
+      <button ion-button icon-only (click)="sendVideo()"> 
       <ion-icon name="md-send"></ion-icon>
       </button>
     </ion-buttons>
@@ -20,19 +20,29 @@
 
 
 <ion-content>
-  <video #videoPlayer controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" class="vidUploadPrev">
-    <source [src]="vidSource" type="video/mp4" />
+  <video #videoPlayer controls="controls" [src]="vidSrc" preload="metadata" webkit-playsinline="webkit-playsinline" class="vidUploadPrev"
+    [hidden]="hidePlayer">
   </video>
+  <div [hidden]="!hidePlayer">
+    <ion-grid>
+      <ion-row>
+        <button ion-button class="btn-vidUpload" (click)="selectVid()"><ion-icon name="md-open"></ion-icon>&nbsp;&nbsp;Select a video</button>
+      </ion-row>
+      <ion-row>
+        <button ion-button class="btn-vidUpload" (click)="captureVid()"><ion-icon name="md-film"></ion-icon>&nbsp;&nbsp;Capture a video</button>
+      </ion-row>
+    </ion-grid>
+  </div>
   <div class="tags-bottom" style="margin-right:20px;"><i>Upload videos up to 200MB only. Allows MOV, MP4, M4V, AVI, 3GP, 3GP2, ASF, WMV, MPEG formats.</i></div>
   <div padding>
     <ion-list>
       <ion-item>
-        <ion-label floating>Title</ion-label>
+        <ion-label floating>Title*</ion-label>
         <ion-input type="text" required autofocus name="title" [(ngModel)]="title"></ion-input>
       </ion-item>
       <div class="tags-bottom"><i>Special Characters are not allowed </i></div>
       <ion-item>
-        <ion-label floating>Description</ion-label>
+        <ion-label floating>Description*</ion-label>
         <ion-input type="text" required name="description" [(ngModel)]="description"></ion-input>
       </ion-item>
       <div class="tags-bottom"><i>Special Characters are not allowed </i></div>
@@ -42,10 +52,10 @@
       </ion-item>
       <div class="tags-bottom"><i>Optional: Separate by comma. Ex: IRs, V-Con</i></div> <br><br>
       <ion-list-header>
-        Publish Settings
+        PUBLISH SETTINGS
       </ion-list-header>
       <ion-item>
-        <ion-label>Privacy</ion-label>
+        <ion-label>Privacy*</ion-label>
         <ion-select [(ngModel)]="privacy" required>
           <ion-option value="public">
             <ion-icon name="md-globe"></ion-icon> Public</ion-option>
@@ -54,35 +64,35 @@
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Category</ion-label>
-        <ion-select [(ngModel)]="category" required>
+        <ion-label>Category*</ion-label>
+        <ion-select [(ngModel)]="category" placeholder="-select-" required>
           <ion-option *ngFor="let cat of categories" [value]="cat.value">{{cat.title}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Level</ion-label>
-        <ion-select [(ngModel)]="level" required>
+        <ion-label>Level*</ion-label>
+        <ion-select [(ngModel)]="level" placeholder="-select-" required>
           <ion-option *ngFor="let level of levels" [value]="level.value">{{level.title}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Target Market Location</ion-label>
-        <ion-select [(ngModel)]="targetMarketLoc" multiple="true" required>
+        <ion-label>Target Market Location*</ion-label>
+        <ion-select [(ngModel)]="targetMarketLoc" multiple="true" placeholder="-select-" required>
           <ion-option *ngFor="let loc of locs">{{loc.title}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Allow Comments</ion-label>
+        <ion-label>Allow Comments*</ion-label>
         <ion-select [(ngModel)]="allowComment" required>
-          <ion-option value="yes">Yes</ion-option>
-          <ion-option value="no">No</ion-option>
+          <ion-option value="1">Yes</ion-option>
+          <ion-option value="0">No</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Allow Sharing</ion-label>
-        <ion-select [(ngModel)]="allowSharing" required> 
-          <ion-option value="yes">Yes</ion-option>
-          <ion-option value="no">No</ion-option>
+        <ion-label>Allow Sharing*</ion-label>
+        <ion-select [(ngModel)]="allowSharing" required>
+          <ion-option value="1">Yes</ion-option>
+          <ion-option value="0">No</ion-option>
         </ion-select>
       </ion-item>
     </ion-list>
