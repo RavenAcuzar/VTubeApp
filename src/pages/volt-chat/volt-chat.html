@@ -18,7 +18,7 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content #content padding>
    <div *ngFor="let msgEntry of conversation">
     <div class="chat-bubble" [class.left]="msgEntry.sender === 'Volt'" [class.right]="msgEntry.sender !== 'Volt'">
       <div>{{msgEntry.message}}</div>

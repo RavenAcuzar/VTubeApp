@@ -82,8 +82,15 @@ page-volt-chat {
     .message-detail{
         p{
             -webkit-margin-after: 0px;
+            font-size: 8pt;
         }
     }
+
+    .content-center-right img,
+    .content-center-left img {
+        border-radius: 50%;
+    }
+
     .content-center-left{
         float: left;
     }

@@ -1,59 +1,49 @@
-import { Component } from '@angular/core';
+import { Component, Renderer, ViewChild, ElementRef } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { VoltChatService } from "../../app/services/volt-chat.service";
+import { VoltChatService, VoltChatEntry } from "../../app/services/volt-chat.service";
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'page-volt-chat',
-  templateUrl: 'volt-chat.html',
+  templateUrl: 'volt-chat.html'
 })
 export class VoltChatPage {
+  @ViewChild('content') content;
 
-  private conversation: {
-    message: string,
-    sender: string,
-    senderImageUrl: string,
-    dateSent: number,
-    dateSentStr: string
-  }[] = [];
   private message: string = '';
+  private subscription: Subscription;
+  private conversation: VoltChatEntry[] = [];
 
   constructor(
     private chatService: VoltChatService,
-    public navCtrl: NavController,
-    public navParams: NavParams) {
+    private rendered: Renderer,
+    private navCtrl: NavController,
+    private navParams: NavParams) {
+  }
+
+  ionViewDidEnter() {
+    this.chatService.getPreviousMessages().then(entries => {
+      this.conversation = entries;
+      return this.chatService.getObservableChat();
+    }).then(o => {
+      this.subscription = o.subscribe(entry => {
+        this.conversation.push(entry);
+        this.content.scrollToBottom(300);
+      });
+    });
+  }
+
+  ionViewDidLeave() {
+    this.subscription.unsubscribe();
   }
 
   sendMessage() {
     if (this.message === '') {
       return;
+    } else {
+      this.chatService.sendMessage(this.message).then(() => {
+        this.message = '';
+      });
     }
-
-    this.chatService.sendMessage(this.message, (id, username) => {
-      let date = Date.now();
-      let dateStr = new Date(date).toLocaleTimeString();
-
-      this.conversation.push({
-        sender: username,
-        senderImageUrl: `http://the-v.net/Widgets_Site/avatar.ashx?id=${id}`,
-        message: this.message,
-        dateSent: date,
-        dateSentStr: dateStr
-      });
-    }).then(m => {
-      let date = Date.now();
-      let dateStr = new Date(date).toLocaleTimeString();
-
-      this.conversation.push({
-        sender: 'Volt',
-        senderImageUrl: 'assets/img/volt-login.png',
-        message: m,
-        dateSent: date,
-        dateSentStr: dateStr
-      });
-
-      this.message = '';
-    }).catch(e => {
-
-    });
   }
 }
