@@ -36,7 +36,6 @@ import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
 import { UploadVideoPage } from "../pages/upload-video/upload-video";
 import { Camera } from "@ionic-native/camera";
-import { VoltChatPage } from "../pages/volt-chat/volt-chat";
 import { MediaCapture } from "@ionic-native/media-capture";
 
 @NgModule({
@@ -55,7 +54,6 @@ import { MediaCapture } from "@ionic-native/media-capture";
     FallbackPage,
     ForgotPasswordPage,
     HomePopoverPage,
-    VoltChatPage,
     PlayDownloadedVideoPage,
     PlaylistPopoverPage
   ],

@@ -8,6 +8,7 @@ import { Http, Headers, RequestOptions, URLSearchParams } from "@angular/http";
 import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY } from "../../app/app.constants";
 import { encodeObject } from "../../app/app.utils";
+import { UploadService } from "../../app/services/upload.service";
 /**
  * Generated class for the UploadVideoPage page.
  *
@@ -45,7 +46,8 @@ export class UploadVideoPage {
     private mediaCapture: MediaCapture,
     private platform: Platform,
     private http: Http,
-    private storage: Storage) {
+    private storage: Storage,
+    private uploadSrvc: UploadService) {
     this.categories = [
       { title: 'Entertainment', value: 'Entertainment' },
       { title: 'Messages', value: 'Messages' },
@@ -82,81 +84,18 @@ export class UploadVideoPage {
   }
 
   ionViewDidLoad() {
-    //open file picker here
-    // 
+    
   }
 
   sendVideo() {
-    let guid = Math.round(new Date().getTime() + (Math.random() * 100));
-    this.uploadVid(guid);
-    let tmark = this.targetMarketLoc.toString();
-    let body = new URLSearchParams();
-    body.set('action', 'Drupal_Video_Create');
-    body.set('name', this.title);
-    body.set('desc', this.description);
-    body.set('tags', this.tags);
-    body.set('category', this.category);
-    body.set('level', this.level);
-    body.set('targetMarketLocations', tmark);
-    body.set('comment', this.allowComment);
-    body.set('share', this.allowSharing);
-    body.set('publish', this.privacy);
-    body.set('filename', guid.toString());
-
-    let options = new RequestOptions({
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    });
-
-    this.http.post('http://cums.the-v.net/site.aspx', body, options)
-      .subscribe(response => {
-        console.log(response);
-      })
-  }
-
-  uploadVid(guid) {
-    let uri = encodeURI('http://cums.the-v.net/Vtube.aspx')
-
-    this.file.resolveDirectoryUrl(this.vidSrc.substring(0, this.vidSrc.lastIndexOf('/'))).then(vid => {
-      return this.file.getFile(vid, this.vidSrc.substr(this.vidSrc.lastIndexOf('/') + 1), {})
-    }).then(file => {
-      let d = (mimetype) => {
-        this.storage.get(USER_DATA_KEY).then(userDetails => {
-          let id = userDetails.id;
-          let options = {
-            fileKey: 'UploadedFile',
-            fileName: this.vidSrc.substr(this.vidSrc.lastIndexOf('/') + 1),
-            httpMethod: 'POST',
-            mimeType: mimetype,
-            params: {
-              type: 'video',
-              userid: id,
-              action: 'VideoCreate',
-              guid: guid.toString()
-            },
-          }
-          let fileTransfer = new FileTransferObject()
-          fileTransfer.onProgress((e) => {
-            console.log("Uploaded " + e.loaded + " of " + e.total);
-          })
-          fileTransfer.upload(this.vidSrc, uri, options)
-            .then((r) => {
-              console.log(r);
-            }, (error) => {
-              console.log(error);
-            }).catch((error) => {
-              console.log(error);
-            })
-        })
-      }
-
-      file.file(file => {
-        d(file.type == null ? 'video/*' : file.type);
-      }, err => {
-        d('video/*');
-      })
-    })
+    //verify entries
+    //if valid, execute upload
+    this.uploadSrvc.uploadVideo(
+      this.vidSrc,this.title,
+      this.description,this.tags,
+      this.category,this.level, 
+      this.targetMarketLoc,this.allowComment,
+      this.allowSharing,this.privacy);
   }
 
   selectVid() {
