@@ -5,99 +5,184 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-nati
 import { File, FileEntry } from '@ionic-native/file';
 import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY, UPLOAD_DETAILS } from "../app.constants";
+import { Subject } from "rxjs/Subject";
+
+export type VideoUploadDetails = {
+    source: string,
+    title: string,
+    description: string,
+    tags: string,
+    category: string,
+    level: string,
+    targetMarketLoc: string,
+    allowComment: string,
+    allowSharing: string,
+    privacy: string,
+    filename?: string
+};
 
 @Injectable()
 export class UploadService {
+    public static readonly NOT_UPLOADING = 0;
+    public static readonly PREPARING_VIDEO_UPLOAD = 1;
+    public static readonly SAVING_VIDEO_DETAILS = 2;
+    public static readonly STARTING_VIDEO_UPLOAD = 3;
+    public static readonly VIDEO_UPLOADING = 4;
+    public static readonly SENDING_VIDEO_DETAILS = 5;
+    public static readonly FINISHED_VIDEO_UPLOAD = 6;
 
-    constructor(private file: File,
+    public static readonly ERROR_UPLOAD_CANCELLED = -1;
+    public static readonly ERROR_DURING_DETAILS_SAVE = -2;
+    public static readonly ERROR_DURING_UPLOAD = -3;
+    public static readonly ERROR_DURING_DETAILS_SEND = -4;
+
+    private uploadStatus = UploadService.NOT_UPLOADING;
+    private currentUploadObservable: Subject<number>;
+    private currentUploadStatusObservable: Subject<number>;
+
+    constructor(
+        private file: File,
         private storage: Storage,
-        private http: Http) {
+        private http: Http
+    ) {
+        this.currentUploadStatusObservable = new Subject<number>();
     }
-    uploadVideo(vidsrc, title, description, tags, category, level, targetMarketLoc, allowComment, allowSharing, privacy) {
-        this.saveInfoToStoraage(vidsrc, title, description, tags, category, level, targetMarketLoc, allowComment, allowSharing, privacy)
+
+    getCurrentUploadStatus() {
+        return this.uploadStatus;
+    }
+
+    isAnUploadInProgress() {
+        return this.currentUploadStatusObservable != null
+            && this.currentUploadObservable != null
+            && this.uploadStatus > 0;
+    }
+
+    getCurrentUploadStatusObservable() {
+        return this.currentUploadStatusObservable;
+    }
+
+    getInProgressUploadObservable() {
+        return this.currentUploadObservable;
+    }
+
+    uploadVideo(details: VideoUploadDetails) {
+        this.currentUploadStatusObservable.next(UploadService.PREPARING_VIDEO_UPLOAD);
+
+        let lastIndexOfSlash = details.source.lastIndexOf('/');
+        let fileName = details.source.substring(lastIndexOfSlash + 1);
         let guid = Math.round(new Date().getTime() + (Math.random() * 100));
-        this.sendVidToServer(guid, vidsrc);
-        let tmark = targetMarketLoc.toString();
+
+        this.currentUploadStatusObservable.next(UploadService.SAVING_VIDEO_DETAILS);
+
+        return this.saveVideoDetailsToStorage(details).then(_ => {
+            this.currentUploadStatusObservable.next(UploadService.STARTING_VIDEO_UPLOAD);
+            return this.sendVideoToServer(`${guid}`, details.source);
+        }).then(observable => {
+            this.currentUploadStatusObservable.next(UploadService.VIDEO_UPLOADING);
+            return observable;
+        });
+    }
+
+    private sendVideoToServer(guid: string, vidSrc: string): Promise<Subject<number>> {
+        if (this.isAnUploadInProgress()) {
+            return Promise.reject(new Error('upload_in_progress'));
+        }
+
+        let uri = encodeURI('http://cums.the-v.net/Vtube.aspx');
+        let lastIndexOfSlash = vidSrc.lastIndexOf('/');
+        let fileName = vidSrc.substring(lastIndexOfSlash + 1);
+        let fileContainingDirectory = vidSrc.substring(0, lastIndexOfSlash);
+
+        return this.file.resolveDirectoryUrl(fileContainingDirectory).then(vid => {
+            return this.file.getFile(vid, fileName, {});
+        }).then(file => {
+            return new Promise<string>((resolve, reject) => {
+                // it becomes null when platform is ios
+                file.file(
+                    file => resolve(file.type == null ? 'video/*' : file.type),
+                    err => resolve('video/*'));
+            });
+        }).then(mimetype => {
+            return this.storage.get(USER_DATA_KEY).then(userDetails => {
+                let options = {
+                    fileKey: 'UploadedFile',
+                    fileName: fileName,
+                    mimeType: mimetype,
+                    params: {
+                        type: 'video',
+                        userid: userDetails.id,
+                        action: 'VideoCreate',
+                        guid: guid.toString()
+                    },
+                }
+
+                this.currentUploadObservable = new Subject<number>();
+                let observable = this.currentUploadObservable;
+
+                let errorOccured = (error) => {
+                    observable.error(error);
+                    this.currentUploadObservable = null;
+                };
+
+                let fileTransfer = new FileTransferObject();
+                fileTransfer.onProgress(e => {
+                    let progress = (e.lengthComputable) ? Math.floor(e.loaded / e.total * 100) : -1;
+                    observable.next(progress);
+                });
+                fileTransfer.upload(vidSrc, uri, options).then(r => {
+                    this.getVideoDetailsFromStorage().then(details => {
+                        this.currentUploadStatusObservable.next(UploadService.SENDING_VIDEO_DETAILS);
+                        return this.sendVideoDetailsToServer(details);
+                    }).then(response => {
+                        observable.complete();
+                        this.currentUploadObservable = null;
+                        this.currentUploadStatusObservable.next(UploadService.FINISHED_VIDEO_UPLOAD);
+                    }).catch(error => {
+                        this.currentUploadStatusObservable.next(UploadService.ERROR_DURING_DETAILS_SEND);
+                        errorOccured(error);
+                    });
+                }, error => {
+                    // TODO: handle cancelled video upload
+                    this.currentUploadStatusObservable.next(UploadService.ERROR_DURING_UPLOAD);
+                    errorOccured(error);
+                }).catch(error => {
+                    this.currentUploadStatusObservable.next(UploadService.ERROR_DURING_UPLOAD);
+                    errorOccured(error);
+                });
+
+                return observable;
+            });
+        });
+    }
+
+    private getVideoDetailsFromStorage() {
+        return this.storage.get(UPLOAD_DETAILS).then(details => <VideoUploadDetails>details);
+    }
+
+    private saveVideoDetailsToStorage(details: VideoUploadDetails) {
+        return this.storage.set(UPLOAD_DETAILS, details).then(_ => details);
+    }
+
+    private sendVideoDetailsToServer(details: VideoUploadDetails) {
         let body = new URLSearchParams();
         body.set('action', 'Drupal_Video_Create');
-        body.set('name', title);
-        body.set('desc', description);
-        body.set('tags', tags);
-        body.set('category', category);
-        body.set('level', level);
-        body.set('targetMarketLocations', tmark);
-        body.set('comment', allowComment);
-        body.set('share', allowSharing);
-        body.set('publish', privacy);
-        body.set('filename', guid.toString());
+        body.set('name', details.title);
+        body.set('desc', details.description);
+        body.set('tags', details.tags);
+        body.set('category', details.category);
+        body.set('level', details.level);
+        body.set('targetMarketLocations', details.targetMarketLoc.toString());
+        body.set('comment', details.allowComment);
+        body.set('share', details.allowSharing);
+        body.set('publish', details.privacy);
+        body.set('filename', details.filename);
 
         let options = new RequestOptions({
-            headers: new Headers({
-                'Content-Type': 'application/x-www-form-urlencoded'
-            })
+            headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' })
         });
 
-        this.http.post('http://cums.the-v.net/site.aspx', body, options)
-            .subscribe(response => {
-                console.log(response);
-            })
+        return this.http.post('http://cums.the-v.net/site.aspx', body, options)
+            .map(r => r.json()).toPromise();
     }
-
-    private sendVidToServer(guid, vidSrc) {
-        let uri = encodeURI('http://cums.the-v.net/Vtube.aspx')
-
-        this.file.resolveDirectoryUrl(vidSrc.substring(0, vidSrc.lastIndexOf('/'))).then(vid => {
-            return this.file.getFile(vid, vidSrc.substr(vidSrc.lastIndexOf('/') + 1), {})
-        }).then(file => {
-            let d = (mimetype) => {
-                this.storage.get(USER_DATA_KEY).then(userDetails => {
-                    let id = userDetails.id;
-                    let options = {
-                        fileKey: 'UploadedFile',
-                        fileName: vidSrc.substr(vidSrc.lastIndexOf('/') + 1),
-                        httpMethod: 'POST',
-                        mimeType: mimetype,
-                        params: {
-                            type: 'video',
-                            userid: id,
-                            action: 'VideoCreate',
-                            guid: guid.toString()
-                        },
-                    }
-                    let fileTransfer = new FileTransferObject()
-                    fileTransfer.onProgress((e) => {
-                        console.log("Uploaded " + e.loaded + " of " + e.total);
-                    })
-                    fileTransfer.upload(vidSrc, uri, options)
-                        .then((r) => {
-                            console.log(r);
-                        }, (error) => {
-                            console.log(error);
-                        }).catch((error) => {
-                            console.log(error);
-                        })
-                })
-            }
-            file.file(file => {
-                d(file.type == null ? 'video/*' : file.type);
-            }, err => {
-                d('video/*');
-            })
-        })
-    }
-    private saveInfoToStoraage(vidsrc, title, description, tags, category, level, targetMarketLoc, allowComment, allowSharing, privacy){
-        this.storage.set(UPLOAD_DETAILS, {
-            vidsrc: vidsrc,
-            title: title,
-            description: description,
-            tags: tags,
-            category: category,
-            level: level,
-            targetMarketLoc: targetMarketLoc,
-            allowComment:allowComment,
-            allowSharing: allowSharing,
-            privacy: privacy
-        })
-    }
-
 }

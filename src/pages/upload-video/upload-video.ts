@@ -9,6 +9,8 @@ import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY } from "../../app/app.constants";
 import { encodeObject } from "../../app/app.utils";
 import { UploadService } from "../../app/services/upload.service";
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 /**
  * Generated class for the UploadVideoPage page.
  *
@@ -83,19 +85,31 @@ export class UploadVideoPage {
     ]
   }
 
-  ionViewDidLoad() {
-    
+  ionViewDidEnter() {
+    this.tryObserveToUploadStatus();
+  }
+
+  ionViewDidLeave() {
+
   }
 
   sendVideo() {
     //verify entries
     //if valid, execute upload
-    this.uploadSrvc.uploadVideo(
-      this.vidSrc,this.title,
-      this.description,this.tags,
-      this.category,this.level, 
-      this.targetMarketLoc,this.allowComment,
-      this.allowSharing,this.privacy);
+    this.uploadSrvc.uploadVideo({
+      source: this.vidSrc,
+      title: this.title,
+      description: this.description,
+      tags: this.tags,
+      category: this.category,
+      level: this.level,
+      targetMarketLoc: this.targetMarketLoc.toString(),
+      allowComment: this.allowComment,
+      allowSharing: this.allowSharing,
+      privacy: this.privacy
+    }).then(observable => {
+      this.trySubscribeToUploadProgress(observable);
+    });
   }
 
   selectVid() {
@@ -122,7 +136,7 @@ export class UploadVideoPage {
       //show alert title
       return false;
     }
-    if ( this.tags== '') {
+    if (this.tags == '') {
       // set video tags value to none
       return false;
     }
@@ -144,20 +158,88 @@ export class UploadVideoPage {
     let options: CaptureImageOptions = {
       limit: 1
     }
-    this.mediaCapture.captureVideo(options).then(
-      (data: MediaFile[]) => {
-        this.selectedVid = data;
-        if (this.platform.is('ios')) {
-          this.vidSrc = 'file://' + data[0].fullPath;
-        } else if (this.platform.is('android')) {
-          this.vidSrc = data[0].fullPath;
-        } else {
-          throw new Error('Platform not supported.');
-        }
-        console.log(data);
-        this.hidePlayer = false;
-      },
-      (err: CaptureError) => console.error(err)
-    );
+    this.mediaCapture.captureVideo(options).then((data: MediaFile[]) => {
+      this.hidePlayer = false;
+      this.selectedVid = data;
+
+      if (this.platform.is('ios')) {
+        this.vidSrc = 'file://' + data[0].fullPath;
+      } else if (this.platform.is('android')) {
+        this.vidSrc = data[0].fullPath;
+      } else {
+        throw new Error('Platform not supported.');
+      }
+    }, (err: CaptureError) => console.error(err));
+  }
+
+  private tryObserveToUploadStatus(observable?: Subject<number>) {
+    // check if there are upload in progress
+    if (this.uploadSrvc.isAnUploadInProgress()) {
+      let status = this.uploadSrvc.getCurrentUploadStatus();
+
+      if (status === UploadService.VIDEO_UPLOADING) {
+        // if the in progress upload is at VIDEO_UPLOADING status
+        this.trySubscribeToUploadProgress();
+      } else {
+        // do the appropriate action accdg to the status
+        this.doActionBasedOnStatus(status);
+      }
+
+      // subscribe to changes in the status of the video
+      this.uploadSrvc.getCurrentUploadStatusObservable().subscribe(status => {
+        this.doActionBasedOnStatus(status);
+      });
+    }
+  }
+
+  private trySubscribeToUploadProgress(readyObservable?: Subject<number>) {
+    let observable: Subject<number>, canSubscribeToObservable: boolean = false;
+
+    if (!readyObservable) {
+      observable = this.uploadSrvc.getInProgressUploadObservable();
+      canSubscribeToObservable = observable !== null;
+    } else {
+      observable = readyObservable;
+      // check if the passed observable is valid
+      if (observable) {
+        canSubscribeToObservable = true;
+      }
+    }
+
+    if (canSubscribeToObservable) {
+      observable.subscribe(progress => {
+
+      });
+    }
+  }
+
+  private doActionBasedOnStatus(status: number) {
+    switch (status) {
+      case UploadService.NOT_UPLOADING:
+        break;
+      case UploadService.PREPARING_VIDEO_UPLOAD:
+        break;
+      case UploadService.SAVING_VIDEO_DETAILS:
+        break;
+      case UploadService.STARTING_VIDEO_UPLOAD:
+        break;
+      case UploadService.VIDEO_UPLOADING:
+        this.trySubscribeToUploadProgress();
+        break;
+      case UploadService.SENDING_VIDEO_DETAILS:
+        break;
+      case UploadService.FINISHED_VIDEO_UPLOAD:
+        break;
+      case UploadService.ERROR_UPLOAD_CANCELLED:
+        break;
+      case UploadService.ERROR_DURING_DETAILS_SAVE:
+        break;
+      case UploadService.ERROR_DURING_UPLOAD:
+        break;
+      case UploadService.ERROR_DURING_DETAILS_SEND:
+        break;
+      default:
+        throw new Error('never_gonna_exec');
+    }
   }
 }
