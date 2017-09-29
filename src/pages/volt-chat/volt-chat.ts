@@ -8,11 +8,12 @@ import { Subscription } from 'rxjs/Subscription';
   templateUrl: 'volt-chat.html'
 })
 export class VoltChatPage {
-  @ViewChild('content') content;
+  @ViewChild('content') content:any;
 
   private message: string = '';
   private subscription: Subscription;
   private conversation: VoltChatEntry[] = [];
+  private shouldScrollToBottom =  false;
 
   constructor(
     private chatService: VoltChatService,
@@ -23,12 +24,16 @@ export class VoltChatPage {
 
   ionViewDidEnter() {
     this.chatService.getPreviousMessages().then(entries => {
-      this.conversation = entries;
+      this.conversation = entries.map(en=>{
+        en.selected = true;
+        return en
+      });
+      this.shouldScrollToBottom = true;
       return this.chatService.getObservableChat();
     }).then(o => {
       this.subscription = o.subscribe(entry => {
+        this.shouldScrollToBottom = true;
         this.conversation.push(entry);
-        this.content.scrollToBottom(300);
       });
     });
   }
@@ -37,12 +42,20 @@ export class VoltChatPage {
     this.subscription.unsubscribe();
   }
 
+  ngAfterViewChecked() {
+    if (this.shouldScrollToBottom) {
+      this.shouldScrollToBottom = false;
+      this.content.scrollToBottom(300);
+    }
+  }
+
   sendMessage() {
     if (this.message === '') {
       return;
     } else {
       this.chatService.sendMessage(this.message).then(() => {
         this.message = '';
+        this.content.scrollToBottom(300);
       });
     }
   }

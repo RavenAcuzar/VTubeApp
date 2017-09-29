@@ -13,7 +13,8 @@ export type VoltChatEntry = {
     sender: string,
     senderImageUrl: string,
     dateSent: number,
-    dateSentStr: string
+    dateSentStr: string,
+    selected?: boolean
 };
 
 @Injectable()
@@ -68,17 +69,20 @@ export class VoltChatService {
         return this.storage.get(USER_DATA_KEY).then(ud => {
             let date = Date.now();
             let dateStr = new Date(date).toLocaleTimeString();
+            let selected = true;
 
             let newMessage: VoltChatEntry = {
                 sender: ud.first_name,
                 senderImageUrl: `http://the-v.net/Widgets_Site/avatar.ashx?id=${ud.id}`,
                 message: message,
                 dateSent: date,
-                dateSentStr: dateStr
+                dateSentStr: dateStr,
+                selected: selected
             };
 
             return this.pushMessage(newMessage, ud.id);
         }).then(() => {
+            let selected = true;
             let headers = new Headers();
             headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
@@ -92,7 +96,8 @@ export class VoltChatService {
                         dateSent: time,
                         sender: 'Volt',
                         dateSentStr: timeStr,
-                        senderImageUrl: 'assets/img/volt-login.png'
+                        senderImageUrl: 'assets/img/volt-login.png',
+                        selected: selected
                     }).then(() => {});
                 });
         });

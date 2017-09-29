@@ -18,7 +18,9 @@ page-volt-chat {
         margin-top: 13vh;
     }
     ion-content {
-        background-color: #cecece!important;
+        background-image: url("../assets/img/chat-bg.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
     }
 
     ion-navbar {
@@ -50,33 +52,30 @@ page-volt-chat {
         position: absolute;
         bottom: -7.5px;
     }
-
+    
+    .chatConv.left{
+        display: flex;
+        flex-direction: row;
+    }
+    .chatConv.right{
+        display: flex;
+        flex-direction: row-reverse;
+    }
     .chat-bubble.left {
         background-color: map-get($colors, primary);
         font-size: 11pt;
         color: #cacaca;
-        float: left;
-        margin-left: 15vw;
+        border-bottom-left-radius: 0px;
+        max-width: 55vw;
     }
 
-    .chat-bubble.left:before {
-        background-color: map-get($colors, primary);
-        left: 10px;
-        -webkit-transform: rotate(70deg) skew(5deg);
-    }
 
     .chat-bubble.right {
         background-color: #b3b3b3;
         font-size: 11pt;
         color: black;
-        float: right;
-        margin-right: 15vw;
-    }
-
-    .chat-bubble.right:before {
-        background-color: #b3b3b3;
-        right: 10px;
-        -webkit-transform: rotate(118deg) skew(-5deg);
+        border-bottom-right-radius: 0px;
+        max-width: 55vw;
     }
 
     .message-detail{
@@ -85,16 +84,12 @@ page-volt-chat {
             font-size: 8pt;
         }
     }
-
-    .content-center-right img,
-    .content-center-left img {
-        border-radius: 50%;
-    }
-
-    .content-center-left{
-        float: left;
-    }
-    .content-center-right{
-        float: right;
+    .content-center{
+        align-self: flex-end;
+        >img{
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+        }
     }
 }
