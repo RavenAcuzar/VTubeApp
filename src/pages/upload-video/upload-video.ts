@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform, AlertController } from 'ionic-angular';
 import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { File, FileEntry } from '@ionic-native/file';
 import { Camera, CameraOptions } from '@ionic-native/camera';
@@ -23,6 +23,7 @@ import { Subject } from 'rxjs/Subject';
   templateUrl: 'upload-video.html',
 })
 export class UploadVideoPage {
+  alertMessage: string;
   selectedVid: MediaFile[];
   hidePlayer: boolean = true;
   vidSrc = '';
@@ -49,7 +50,8 @@ export class UploadVideoPage {
     private platform: Platform,
     private http: Http,
     private storage: Storage,
-    private uploadSrvc: UploadService) {
+    private uploadSrvc: UploadService,
+    private alertController: AlertController) {
     this.categories = [
       { title: 'Entertainment', value: 'Entertainment' },
       { title: 'Messages', value: 'Messages' },
@@ -96,20 +98,34 @@ export class UploadVideoPage {
   sendVideo() {
     //verify entries
     //if valid, execute upload
-    this.uploadSrvc.uploadVideo({
-      source: this.vidSrc,
-      title: this.title,
-      description: this.description,
-      tags: this.tags,
-      category: this.category,
-      level: this.level,
-      targetMarketLoc: this.targetMarketLoc.toString(),
-      allowComment: this.allowComment,
-      allowSharing: this.allowSharing,
-      privacy: this.privacy
-    }).then(observable => {
-      this.trySubscribeToUploadProgress(observable);
-    });
+    if (!this.formValidate()) {
+      this.uploadSrvc.uploadVideo({
+        source: this.vidSrc,
+        title: this.title,
+        description: this.description,
+        tags: this.tags,
+        category: this.category,
+        level: this.level,
+        targetMarketLoc: this.targetMarketLoc.toString(),
+        allowComment: this.allowComment,
+        allowSharing: this.allowSharing,
+        privacy: this.privacy
+      }).then(observable => {
+        this.trySubscribeToUploadProgress(observable);
+      });
+    }
+    else {
+      let alert = this.alertController.create({
+        title: 'Error Uploading Video!',
+        buttons: [{
+          text: 'OK', handler: () => {
+            alert.dismiss();
+            return true;
+          }
+        }]
+      }).setMessage(this.alertMessage);
+      alert.present();
+    }
   }
 
   selectVid() {
@@ -134,23 +150,31 @@ export class UploadVideoPage {
   formValidate() {
     if ((this.title == '') || (this.description == '')) {
       //show alert title
+      this.alertMessage = "Name/Description Empty. Please fill up all required fields.";
       return false;
     }
-    if (this.tags == '') {
+    else if ( this.tags== '') {
       // set video tags value to none
+      this.alertMessage = "Please enter a tag for the video.";
       return false;
     }
-    if (this.category == '') {
+    else if (this.category == '') {
       //show alert category
+      this.alertMessage = "Please select the video category.";
       return false;
     }
-    if (this.level == '') {
+    else if (this.level == '') {
       //show alert level
+      this.alertMessage = "Please select the video level.";
       return false;
     }
-    if (this.targetMarketLoc == []) {
+    else if (this.targetMarketLoc == []) {
       //show alert targetLoc
+      this.alertMessage = "Please select the market location.";
       return false;
+    }
+    else {
+      return true;
     }
   }
 

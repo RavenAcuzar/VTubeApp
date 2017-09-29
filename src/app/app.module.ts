@@ -37,6 +37,7 @@ import { Network } from "@ionic-native/network";
 import { UploadVideoPage } from "../pages/upload-video/upload-video";
 import { Camera } from "@ionic-native/camera";
 import { MediaCapture } from "@ionic-native/media-capture";
+import { UploadService } from "./services/upload.service";
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { MediaCapture } from "@ionic-native/media-capture";
     PlaylistService,
     DownloadService,
     ChannelService,
+    UploadService,
     AndroidPermissions,
     ConnectionService,
     Camera,
