@@ -8,6 +8,7 @@ import { FallbackPage } from "../pages/fallback/fallback";
 import { PlaylistService } from "./services/playlist.service";
 import { DownloadService } from "./services/download.service";
 import { Observable } from "rxjs/Observable";
+import { VoltChatService } from "./services/volt-chat.service";
 
 @Component({
   template: `
@@ -43,18 +44,18 @@ export class HomePopoverPage {
     document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
 
     this.storage.get(USER_DATA_KEY).then(userData => {
-        this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
-          this.isVideoDownloaded = isDownloaded;
+      this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
+        this.isVideoDownloaded = isDownloaded;
 
-          let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
-          if (obs) {
-            this.isVideoDownloading = true;
-            this.observeInProgressDownload(this.videoDetails.bcid, obs);
-          }
-        }).catch(e => {
-          console.log(e);
-        });
-      })
+        let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
+        if (obs) {
+          this.isVideoDownloading = true;
+          this.observeInProgressDownload(this.videoDetails.bcid, obs);
+        }
+      }).catch(e => {
+        console.log(e);
+      });
+    })
   }
 
 
@@ -214,7 +215,7 @@ export class HomePopoverPage {
   `
 })
 export class PlaylistPopoverPage {
-  
+
   isVideoDownloading = false;
   private isVideoDownloaded = false;
   downloadProgress: number = 0;
@@ -239,20 +240,20 @@ export class PlaylistPopoverPage {
   }
   ionViewDidLoad() {
     document.getElementsByTagName("ion-app").item(0).classList.add("disable-scroll");
-    
-      this.storage.get(USER_DATA_KEY).then(userData => {
-        this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
-          this.isVideoDownloaded = isDownloaded;
 
-          let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
-          if (obs) {
-            this.observeInProgressDownload(this.videoDetails.bcid, obs);
-          }
-        }).catch(e => {
-          console.log(e);
-        });
-      })
-    
+    this.storage.get(USER_DATA_KEY).then(userData => {
+      this.videoService.isDownloaded(this.videoDetails.bcid, userData.id).then(isDownloaded => {
+        this.isVideoDownloaded = isDownloaded;
+
+        let obs = this.videoService.getInProgressDownload(this.videoDetails.bcid);
+        if (obs) {
+          this.observeInProgressDownload(this.videoDetails.bcid, obs);
+        }
+      }).catch(e => {
+        console.log(e);
+      });
+    })
+
   }
 
   ionViewWillLeave() {
@@ -385,5 +386,54 @@ export class PlaylistPopoverPage {
       this.isVideoDownloading = false;
       this.downloadService.showDownloadFinishAlertFor(this.videoDetails.bcid);
     });
+  }
+}
+
+@Component({
+  template: `
+    <ion-list class="playlist-popover-page">
+      <button ion-item (click)="clearMessages()">Clear messages</button>
+    </ion-list>
+  `
+})
+export class ChatPopoverPage {
+
+  constructor(
+    private chatService: VoltChatService,
+    private alertController: AlertController,
+    private viewController: ViewController,
+    private navCtrl: NavController
+  ) { }
+
+  clearMessages() {
+    this.viewController.dismiss();
+    let unknownError = (e) => {
+      console.error(JSON.stringify(e));
+      let alert = this.alertController.create({
+        title: 'Oops!',
+        message: 'An error occurred while trying to clear your messages. Please try again.',
+        buttons: [{
+          text: 'OK', handler: () => {
+            alert.dismiss();
+            return true;
+          }
+        }]
+      });
+    };
+
+    this.chatService.deleteUserConversation().catch(e => {
+      if (e instanceof Error) {
+        switch (e.message) {
+          case 'not_logged_in':
+            this.navCtrl.push(FallbackPage);
+            break;
+          default:
+            unknownError(e);
+            break;
+        }
+      } else {
+        unknownError(e);
+      }
+    })
   }
 }

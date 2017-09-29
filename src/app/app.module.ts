@@ -17,7 +17,7 @@ import { ForgotPasswordPage } from "../pages/forgot-password/forgot-password";
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { HomePopoverPage, PlaylistPopoverPage } from "./popover";
+import { HomePopoverPage, PlaylistPopoverPage, ChatPopoverPage } from "./popover";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
 import { IonicStorageModule } from "@ionic/storage";
 import { HttpModule } from "@angular/http";
@@ -54,6 +54,7 @@ import { VoltChatService } from "./services/volt-chat.service";
     HomePopoverPage,
     PlayDownloadedVideoPage,
     PlaylistPopoverPage,
+    ChatPopoverPage,
     VoltChatPage
   ],
   imports: [
@@ -80,6 +81,7 @@ import { VoltChatService } from "./services/volt-chat.service";
     HomePopoverPage,
     PlayDownloadedVideoPage,
     PlaylistPopoverPage,
+    ChatPopoverPage,
     VoltChatPage
   ],
   providers: [

@@ -1,32 +1,36 @@
 import { Component, Renderer, ViewChild, ElementRef } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
 import { VoltChatService, VoltChatEntry } from "../../app/services/volt-chat.service";
 import { Subscription } from 'rxjs/Subscription';
+import { ChatPopoverPage } from "../../app/popover";
 
 @Component({
   selector: 'page-volt-chat',
   templateUrl: 'volt-chat.html'
 })
 export class VoltChatPage {
-  @ViewChild('content') content:any;
+  @ViewChild('content') content: any;
 
   private message: string = '';
   private subscription: Subscription;
+  private clearSubscription: Subscription;
   private conversation: VoltChatEntry[] = [];
-  private shouldScrollToBottom =  false;
+  private shouldScrollToBottom = false;
+  private isSendingMessage = false;
 
   constructor(
     private chatService: VoltChatService,
     private rendered: Renderer,
     private navCtrl: NavController,
-    private navParams: NavParams) {
-  }
+    private navParams: NavParams,
+    private popoverCtrl: PopoverController
+  ) { }
 
   ionViewDidEnter() {
     this.chatService.getPreviousMessages().then(entries => {
-      this.conversation = entries.map(en=>{
+      this.conversation = entries.map(en => {
         en.selected = true;
-        return en
+        return en;
       });
       this.shouldScrollToBottom = true;
       return this.chatService.getObservableChat();
@@ -35,11 +39,17 @@ export class VoltChatPage {
         this.shouldScrollToBottom = true;
         this.conversation.push(entry);
       });
+      return this.chatService.getObservableChatClear();
+    }).then(o => {
+      this.clearSubscription = o.subscribe(() => {
+        this.conversation = [];
+      });
     });
   }
 
   ionViewDidLeave() {
     this.subscription.unsubscribe();
+    this.clearSubscription.unsubscribe();
   }
 
   ngAfterViewChecked() {
@@ -52,11 +62,21 @@ export class VoltChatPage {
   sendMessage() {
     if (this.message === '') {
       return;
-    } else {
-      this.chatService.sendMessage(this.message).then(() => {
-        this.message = '';
+    } else if (!this.isSendingMessage) {
+      this.isSendingMessage = true;
+      let newmessage = this.message;
+      this.message = '';
+      this.chatService.sendMessage(newmessage).then(() => {
         this.content.scrollToBottom(300);
+        this.isSendingMessage = false;
       });
     }
+  }
+
+  presentPopover(myEvent) {
+    let popover = this.popoverCtrl.create(ChatPopoverPage);
+    popover.present({
+      ev: myEvent
+    });
   }
 }

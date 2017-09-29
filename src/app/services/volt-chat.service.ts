@@ -21,6 +21,7 @@ export type VoltChatEntry = {
 export class VoltChatService {
 
     private chatObservable: Subject<VoltChatEntry>;
+    private chatClearObservable: Subject<void>;
 
     constructor(
         private http: Http,
@@ -28,13 +29,22 @@ export class VoltChatService {
         private sqlite: SQLite
     ) {
         this.chatObservable = new Subject();
+        this.chatClearObservable = new Subject<void>();
+    }
+
+    getObservableChat() {
+        return this.chatObservable;
+    }
+
+    getObservableChatClear() {
+        return this.chatClearObservable;
     }
 
     getPreviousMessages() {
         return this.storage.get(USER_DATA_KEY).then(ud => {
             if (ud) {
                 return this.prepareVoltChatTable().then(db => {
-                    return db.executeSql(`SELECT * FROM volt_chat WHERE userid = ? or sender = 'Volt'`, [ud.id]);
+                    return db.executeSql(`SELECT * FROM volt_chat WHERE userid = ?`, [ud.id]);
                 });
             } else {
                 throw new Error('not_logged_in');
@@ -61,10 +71,6 @@ export class VoltChatService {
         });
     }
 
-    getObservableChat() {
-        return this.chatObservable;
-    }
-
     sendMessage(message: string): Promise<void> {
         return this.storage.get(USER_DATA_KEY).then(ud => {
             let date = Date.now();
@@ -80,26 +86,24 @@ export class VoltChatService {
                 selected: selected
             };
 
-            return this.pushMessage(newMessage, ud.id);
-        }).then(() => {
-            let selected = true;
-            let headers = new Headers();
-            headers.set('Content-Type', 'application/x-www-form-urlencoded');
+            return this.pushMessage(newMessage, ud.id).then(() => {
+                let selected = true;
 
-            return this.http.post('http://192.168.130.166:8080', encodeObject({ message: message }), { headers: headers })
-                .map(r => r.json().message).toPromise().then(message => {
-                    let time = Date.now();
-                    let timeStr = new Date(time).toLocaleTimeString();
+                return this.http.get('http://cums.the-v.net/apiai.aspx?ask=' + encodeURI(message))
+                    .map(r => r.text()).toPromise().then(message => {
+                        let time = Date.now();
+                        let timeStr = new Date(time).toLocaleTimeString();
 
-                    return this.pushMessage({
-                        message: message,
-                        dateSent: time,
-                        sender: 'Volt',
-                        dateSentStr: timeStr,
-                        senderImageUrl: 'assets/img/volt-login.png',
-                        selected: selected
-                    }).then(() => {});
-                });
+                        return this.pushMessage({
+                            message: message,
+                            dateSent: time,
+                            sender: 'Volt',
+                            dateSentStr: timeStr,
+                            senderImageUrl: 'assets/img/volt-login.png',
+                            selected: selected
+                        }, ud.id).then(() => { });
+                    });
+            });
         });
     }
 
@@ -109,7 +113,7 @@ export class VoltChatService {
                 let query = 'INSERT INTO volt_chat(userid, sender, senderimageurl, message, datesent) VALUES(?, ?, ?, ?, ?)';
                 return db.executeSql(query, [
                     userid,
-                    chatEntry.sender, 
+                    chatEntry.sender,
                     chatEntry.senderImageUrl,
                     chatEntry.message,
                     new Date(chatEntry.dateSent).toLocaleString()
@@ -122,6 +126,21 @@ export class VoltChatService {
                     throw new Error('not_successfully_inserted');
                 }
             });
+        });
+    }
+
+    deleteUserConversation() {
+        return this.storage.get(USER_DATA_KEY).then(ud => {
+            if (ud) {
+                return this.prepareVoltChatTable().then(db => {
+                    return db.executeSql(`DELETE FROM volt_chat WHERE userid = ?`, [ud.id]);
+                });
+            } else {
+                throw new Error('not_logged_in');
+            }
+        }).then(a => {
+            this.chatClearObservable.next();
+            return true;
         });
     }
 
