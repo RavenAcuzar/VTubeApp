@@ -23,6 +23,10 @@ import { Subject } from 'rxjs/Subject';
   templateUrl: 'upload-video.html',
 })
 export class UploadVideoPage {
+  sendDisabled: boolean = false;
+  uploadStatus: string;
+  hideProgress: boolean =true;
+  Uploadprogress: number;
   alertMessage: string;
   selectedVid: MediaFile[];
   hidePlayer: boolean = true;
@@ -98,7 +102,7 @@ export class UploadVideoPage {
   sendVideo() {
     //verify entries
     //if valid, execute upload
-    if (!this.formValidate()) {
+    if (this.formValidate()) {
       this.uploadSrvc.uploadVideo({
         source: this.vidSrc,
         title: this.title,
@@ -153,7 +157,7 @@ export class UploadVideoPage {
       this.alertMessage = "Name/Description Empty. Please fill up all required fields.";
       return false;
     }
-    else if ( this.tags== '') {
+    else if (this.tags == '') {
       // set video tags value to none
       this.alertMessage = "Please enter a tag for the video.";
       return false;
@@ -232,9 +236,12 @@ export class UploadVideoPage {
 
     if (canSubscribeToObservable) {
       observable.subscribe(progress => {
-
+        this.Uploadprogress = progress;
       });
     }
+  }
+  private cancelUpload() {
+    this.uploadSrvc.cancelUpload();
   }
 
   private doActionBasedOnStatus(status: number) {
@@ -242,19 +249,59 @@ export class UploadVideoPage {
       case UploadService.NOT_UPLOADING:
         break;
       case UploadService.PREPARING_VIDEO_UPLOAD:
+        this.sendDisabled = true;
+        this.uploadStatus = "Preparing your video...";
         break;
       case UploadService.SAVING_VIDEO_DETAILS:
+        this.uploadStatus = "Saving video details...";
         break;
       case UploadService.STARTING_VIDEO_UPLOAD:
+        this.uploadStatus = "Starting upload...";
         break;
       case UploadService.VIDEO_UPLOADING:
+        this.uploadStatus = '';
+        this.hideProgress = false;
         this.trySubscribeToUploadProgress();
         break;
       case UploadService.SENDING_VIDEO_DETAILS:
         break;
       case UploadService.FINISHED_VIDEO_UPLOAD:
+        {
+          this.sendDisabled = false;
+          this.hideProgress = true;
+          this.hidePlayer = true;
+          //show alert
+          let alert = this.alertController.create({
+            title: "Upload Finished!",
+            message: "Your video has been uploaded. We will review your video before its public.",
+            buttons: [{
+              text: 'OK',
+              handler: () => {
+                alert.dismiss();
+                return false;
+              }
+            }]
+          })
+        }
         break;
       case UploadService.ERROR_UPLOAD_CANCELLED:
+        {
+          this.sendDisabled = false;
+          this.hideProgress = true;
+          this.hidePlayer = true;
+          //show alert
+          let alert = this.alertController.create({
+            title: "Upload Cancelled!",
+            message: "You cancelled your upload.",
+            buttons: [{
+              text: 'OK',
+              handler: () => {
+                alert.dismiss();
+                return false;
+              }
+            }]
+          })
+        }
         break;
       case UploadService.ERROR_DURING_DETAILS_SAVE:
         break;

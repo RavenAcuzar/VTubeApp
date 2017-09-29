@@ -5,7 +5,7 @@
     </button>
     <ion-title>Upload Video</ion-title>
     <ion-buttons end>
-      <button ion-button icon-only (click)="sendVideo()"> 
+      <button ion-button icon-only (click)="sendVideo()" [disabled]="sendDisabled"> 
       <ion-icon name="md-send"></ion-icon>
       </button>
     </ion-buttons>
@@ -13,6 +13,10 @@
 </ion-header>
 
 <ion-content>
+  <p>{{uploadStatus}}</p>
+  <div [hidden]="hideProgress" class= "uploadProgress">
+    <progress-bar [progress]="Uploadprogress" ></progress-bar><ion-icon name="md-close" (click)="cancelUpload()"></ion-icon>
+  </div>
   <video #videoPlayer controls="controls" [src]="vidSrc" preload="metadata" webkit-playsinline="webkit-playsinline" class="vidUploadPrev"
     [hidden]="hidePlayer">
   </video>

@@ -38,6 +38,7 @@ import { UploadVideoPage } from "../pages/upload-video/upload-video";
 import { Camera } from "@ionic-native/camera";
 import { MediaCapture } from "@ionic-native/media-capture";
 import { UploadService } from "./services/upload.service";
+import { ProgressBarComponent } from '../components/progress-bar/progress-bar';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { UploadService } from "./services/upload.service";
     ForgotPasswordPage,
     HomePopoverPage,
     PlayDownloadedVideoPage,
-    PlaylistPopoverPage
+    PlaylistPopoverPage,
+    ProgressBarComponent
   ],
   imports: [
     BrowserModule,

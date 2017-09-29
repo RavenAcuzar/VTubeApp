@@ -39,11 +39,13 @@ export class UploadService {
     private uploadStatus = UploadService.NOT_UPLOADING;
     private currentUploadObservable: Subject<number>;
     private currentUploadStatusObservable: Subject<number>;
+    private fileTransferObject: FileTransferObject;
 
     constructor(
         private file: File,
         private storage: Storage,
-        private http: Http
+        private http: Http,
+        private fileTransfer: FileTransfer
     ) {
         this.currentUploadStatusObservable = new Subject<number>();
     }
@@ -82,6 +84,12 @@ export class UploadService {
             this.currentUploadStatusObservable.next(UploadService.VIDEO_UPLOADING);
             return observable;
         });
+    }
+
+    cancelUpload(){
+        if (this.fileTransferObject) {
+            this.fileTransferObject.abort();
+        }
     }
 
     private sendVideoToServer(guid: string, vidSrc: string): Promise<Subject<number>> {
@@ -125,12 +133,12 @@ export class UploadService {
                     this.currentUploadObservable = null;
                 };
 
-                let fileTransfer = new FileTransferObject();
-                fileTransfer.onProgress(e => {
+                this.fileTransferObject = this.fileTransfer.create();
+                this.fileTransferObject.onProgress(e => {
                     let progress = (e.lengthComputable) ? Math.floor(e.loaded / e.total * 100) : -1;
                     observable.next(progress);
                 });
-                fileTransfer.upload(vidSrc, uri, options).then(r => {
+                this.fileTransferObject.upload(vidSrc, uri, options).then(r => {
                     this.getVideoDetailsFromStorage().then(details => {
                         this.currentUploadStatusObservable.next(UploadService.SENDING_VIDEO_DETAILS);
                         return this.sendVideoDetailsToServer(details);

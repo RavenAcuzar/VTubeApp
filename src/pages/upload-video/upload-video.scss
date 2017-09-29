@@ -38,6 +38,18 @@ page-upload-video {
 
     }
 
+    .uploadProgress{
+        display: flex;
+        flex-direction: row;
+        progress-bar{
+            width: 90%;
+        }
+        ion-icon{
+            font-size: 30px;
+            align-self: center;
+        }
+    }
+
     .tags-bottom{
         opacity: 0.4;
         margin: 3px 0px 0px 20px;
