@@ -48,6 +48,11 @@ export class UploadService {
         private fileTransfer: FileTransfer
     ) {
         this.currentUploadStatusObservable = new Subject<number>();
+
+        // make sure the service's internal status variable is also updated
+        this.currentUploadStatusObservable.subscribe(status => {
+            this.uploadStatus = status;
+        });
     }
 
     getCurrentUploadStatus() {

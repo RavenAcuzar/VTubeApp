@@ -11,12 +11,7 @@ import { encodeObject } from "../../app/app.utils";
 import { UploadService } from "../../app/services/upload.service";
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-/**
- * Generated class for the UploadVideoPage page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
+
 
 @Component({
   selector: 'page-upload-video',
@@ -212,12 +207,12 @@ export class UploadVideoPage {
         // do the appropriate action accdg to the status
         this.doActionBasedOnStatus(status);
       }
-
-      // subscribe to changes in the status of the video
-      this.uploadSrvc.getCurrentUploadStatusObservable().subscribe(status => {
-        this.doActionBasedOnStatus(status);
-      });
     }
+
+    // subscribe to changes in the upload status of the video
+    this.uploadSrvc.getCurrentUploadStatusObservable().subscribe(status => {
+      this.doActionBasedOnStatus(status);
+    });
   }
 
   private trySubscribeToUploadProgress(readyObservable?: Subject<number>) {
