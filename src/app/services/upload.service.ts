@@ -26,9 +26,9 @@ export class UploadService {
     public static readonly NOT_UPLOADING = 0;
     public static readonly PREPARING_VIDEO_UPLOAD = 1;
     public static readonly SAVING_VIDEO_DETAILS = 2;
-    public static readonly STARTING_VIDEO_UPLOAD = 3;
-    public static readonly VIDEO_UPLOADING = 4;
-    public static readonly SENDING_VIDEO_DETAILS = 5;
+    public static readonly SENDING_VIDEO_DETAILS = 3;
+    public static readonly STARTING_VIDEO_UPLOAD = 4;
+    public static readonly VIDEO_UPLOADING = 5;
     public static readonly FINISHED_VIDEO_UPLOAD = 6;
 
     public static readonly ERROR_UPLOAD_CANCELLED = -1;
@@ -83,24 +83,21 @@ export class UploadService {
         this.currentUploadStatusObservable.next(UploadService.SAVING_VIDEO_DETAILS);
 
         return this.saveVideoDetailsToStorage(details).then(_ => {
-            this.currentUploadStatusObservable.next(UploadService.STARTING_VIDEO_UPLOAD);
-            return this.sendVideoToServer(`${guid}`, details.source);
+            this.currentUploadStatusObservable.next(UploadService.SENDING_VIDEO_DETAILS);
+            return this.sendVideoDetailsToServer(details, `${guid}`);
         }).then(observable => {
-            this.currentUploadStatusObservable.next(UploadService.VIDEO_UPLOADING);
+
             return observable;
         });
     }
 
-    cancelUpload(){
+    cancelUpload() {
         if (this.fileTransferObject) {
             this.fileTransferObject.abort();
         }
     }
 
-    private sendVideoToServer(guid: string, vidSrc: string): Promise<Subject<number>> {
-        if (this.isAnUploadInProgress()) {
-            return Promise.reject(new Error('upload_in_progress'));
-        }
+    private sendVideoToServer(guid: string, vidSrc: string) {
 
         let uri = encodeURI('http://cums.the-v.net/Vtube.aspx');
         let lastIndexOfSlash = vidSrc.lastIndexOf('/');
@@ -142,19 +139,13 @@ export class UploadService {
                 this.fileTransferObject.onProgress(e => {
                     let progress = (e.lengthComputable) ? Math.floor(e.loaded / e.total * 100) : -1;
                     observable.next(progress);
+                    console.log("Uploaded " + e.loaded.toString() + " of " + e.total.toString());
                 });
                 this.fileTransferObject.upload(vidSrc, uri, options).then(r => {
-                    this.getVideoDetailsFromStorage().then(details => {
-                        this.currentUploadStatusObservable.next(UploadService.SENDING_VIDEO_DETAILS);
-                        return this.sendVideoDetailsToServer(details);
-                    }).then(response => {
-                        observable.complete();
-                        this.currentUploadObservable = null;
-                        this.currentUploadStatusObservable.next(UploadService.FINISHED_VIDEO_UPLOAD);
-                    }).catch(error => {
-                        this.currentUploadStatusObservable.next(UploadService.ERROR_DURING_DETAILS_SEND);
-                        errorOccured(error);
-                    });
+                    observable.complete();
+                    this.currentUploadObservable = null;
+                    this.currentUploadStatusObservable.next(UploadService.FINISHED_VIDEO_UPLOAD);
+                    console.log(r);
                 }, error => {
                     // TODO: handle cancelled video upload
                     this.currentUploadStatusObservable.next(UploadService.ERROR_DURING_UPLOAD);
@@ -177,25 +168,52 @@ export class UploadService {
         return this.storage.set(UPLOAD_DETAILS, details).then(_ => details);
     }
 
-    private sendVideoDetailsToServer(details: VideoUploadDetails) {
-        let body = new URLSearchParams();
-        body.set('action', 'Drupal_Video_Create');
-        body.set('name', details.title);
-        body.set('desc', details.description);
-        body.set('tags', details.tags);
-        body.set('category', details.category);
-        body.set('level', details.level);
-        body.set('targetMarketLocations', details.targetMarketLoc.toString());
-        body.set('comment', details.allowComment);
-        body.set('share', details.allowSharing);
-        body.set('publish', details.privacy);
-        body.set('filename', details.filename);
+    private sendVideoDetailsToServer(details: VideoUploadDetails, guid): Promise<Subject<number>> {
+        if (this.isAnUploadInProgress()) {
+            return Promise.reject(new Error('upload_in_progress'));
+        }
+        this.storage.get(USER_DATA_KEY).then(userDetails => {
+            let body = new URLSearchParams();
+            body.set('action', 'DDrupal_Video_Create');
+            body.set('name', details.title);
+            body.set('desc', details.description);
+            body.set('tags', details.tags);
+            body.set('category', details.category);
+            body.set('level', details.level);
+            body.set('targetMarketLocations', details.targetMarketLoc.toString());
+            body.set('comment', details.allowComment);
+            body.set('share', details.allowSharing);
+            body.set('publish', details.privacy);
+            body.set('filename', guid.toString());
+            body.set('userid', userDetails.id); 
 
-        let options = new RequestOptions({
-            headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' })
+            this.currentUploadObservable = new Subject<number>();
+            let observable = this.currentUploadObservable;
+
+            let errorOccured = (error) => {
+                observable.error(error);
+                this.currentUploadObservable = null;
+            };
+
+            let options = new RequestOptions({
+                headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' })
+            });
+
+            this.http.post('http://cums.the-v.net/site.aspx', body, options).toPromise().then(r => {
+                let response = r.json();
+                if (response[0].Data == "False") {
+                    observable.complete();
+                    this.currentUploadObservable = null;
+                    this.currentUploadStatusObservable.next(UploadService.ERROR_DURING_DETAILS_SEND);
+                }
+                else {
+                    this.currentUploadStatusObservable.next(UploadService.STARTING_VIDEO_UPLOAD);
+                    this.currentUploadStatusObservable.next(UploadService.VIDEO_UPLOADING);
+                    return this.sendVideoToServer(guid, details.source);
+                }
+            }).catch(error => {
+                errorOccured(error);
+            });
         });
-
-        return this.http.post('http://cums.the-v.net/site.aspx', body, options)
-            .map(r => r.json()).toPromise();
     }
 }

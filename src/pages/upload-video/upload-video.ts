@@ -93,6 +93,24 @@ export class UploadVideoPage {
   ionViewDidLeave() {
 
   }
+  resetContentPage(){
+    this.sendDisabled = false;
+    this.hideProgress =true;
+    this.hidePlayer = true;
+    this.vidSrc = '';
+    this.categories = [];
+    this.levels = [];
+    this.locs = [];
+    this.title = '';
+    this.description = '';
+    this.tags = '';
+    this.privacy = 'public';
+    this.category = '';
+    this.level = '';
+    this.targetMarketLoc = [];
+    this.allowComment = '0';
+    this.allowSharing = '0';
+  }
 
   sendVideo() {
     //verify entries
@@ -265,6 +283,8 @@ export class UploadVideoPage {
           this.sendDisabled = false;
           this.hideProgress = true;
           this.hidePlayer = true;
+          this.uploadStatus = '';
+          this.resetContentPage();
           //show alert
           let alert = this.alertController.create({
             title: "Upload Finished!",
@@ -277,6 +297,7 @@ export class UploadVideoPage {
               }
             }]
           })
+          alert.present()
         }
         break;
       case UploadService.ERROR_UPLOAD_CANCELLED:
@@ -284,6 +305,7 @@ export class UploadVideoPage {
           this.sendDisabled = false;
           this.hideProgress = true;
           this.hidePlayer = true;
+          this.uploadStatus = '';
           //show alert
           let alert = this.alertController.create({
             title: "Upload Cancelled!",
@@ -296,6 +318,7 @@ export class UploadVideoPage {
               }
             }]
           })
+          alert.present();
         }
         break;
       case UploadService.ERROR_DURING_DETAILS_SAVE:
@@ -303,6 +326,26 @@ export class UploadVideoPage {
       case UploadService.ERROR_DURING_UPLOAD:
         break;
       case UploadService.ERROR_DURING_DETAILS_SEND:
+      {
+        this.sendDisabled = false;
+        this.hideProgress = true;
+        this.hidePlayer = false;
+        this.uploadStatus = '';
+        this.resetContentPage();
+        //show alert
+        let alert = this.alertController.create({
+          title: "Error Upload!",
+          message: "An error encountered while uploading. Please contact your administrator.",
+          buttons: [{
+            text: 'OK',
+            handler: () => {
+              alert.dismiss();
+              return false;
+            }
+          }]
+        })
+        alert.present();
+      }
         break;
       default:
         throw new Error('never_gonna_exec');
