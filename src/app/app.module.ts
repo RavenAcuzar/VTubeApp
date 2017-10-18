@@ -36,6 +36,11 @@ import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
 import { VoltChatPage } from "../pages/volt-chat/volt-chat";
 import { VoltChatService } from "./services/volt-chat.service";
+import { UploadVideoPage } from "../pages/upload-video/upload-video";
+import { Camera } from "@ionic-native/camera";
+import { MediaCapture } from "@ionic-native/media-capture";
+import { UploadService } from "./services/upload.service";
+import { ProgressBarComponent } from '../components/progress-bar/progress-bar';
 
 @NgModule({
   declarations: [
@@ -43,6 +48,7 @@ import { VoltChatService } from "./services/volt-chat.service";
     HomePage,
     ChannelsPage,
     ChannelPrevPage,
+    UploadVideoPage,
     DownloadsPage,
     LoginPage,
     NowPlayingPage,
@@ -55,7 +61,8 @@ import { VoltChatService } from "./services/volt-chat.service";
     PlayDownloadedVideoPage,
     PlaylistPopoverPage,
     ChatPopoverPage,
-    VoltChatPage
+    VoltChatPage,
+    ProgressBarComponent
   ],
   imports: [
     BrowserModule,
@@ -70,6 +77,7 @@ import { VoltChatService } from "./services/volt-chat.service";
     HomePage,
     ChannelsPage,
     ChannelPrevPage,
+    UploadVideoPage,
     DownloadsPage,
     LoginPage,
     NowPlayingPage,
@@ -96,10 +104,13 @@ import { VoltChatService } from "./services/volt-chat.service";
     PlaylistService,
     DownloadService,
     ChannelService,
+    UploadService,
     AndroidPermissions,
     ConnectionService,
     VoltChatService,
+    Camera,
     Network,
+    MediaCapture,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
