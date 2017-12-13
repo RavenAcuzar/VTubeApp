@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, AlertController, Events, ToastController } from 'ionic-angular';
+import { Nav, Platform, AlertController, Events, ToastController, NavController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -18,6 +18,8 @@ import { ConnectionService } from "./services/network.service";
 import { Network } from "@ionic-native/network";
 import { VoltChatPage } from "../pages/volt-chat/volt-chat";
 import { UploadVideoPage } from "../pages/upload-video/upload-video";
+import { NowPlayingPage } from "../pages/now-playing/now-playing";
+import { Deeplinks } from '@ionic-native/deeplinks';
 
 @Component({
   templateUrl: 'app.html'
@@ -44,7 +46,8 @@ export class MyApp {
     private downloadService: DownloadService,
     private network: Network,
     private toastCtrl: ToastController,
-    private connectionSrvc: ConnectionService
+    private connectionSrvc: ConnectionService,
+    private deeplinks: Deeplinks
   ) {
     this.initializeApp();
     this.updateMenu();
@@ -61,6 +64,13 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.deeplinks.routeWithNavController(this.nav,{
+        '/vid/:id': NowPlayingPage
+      }).subscribe((match) => {
+        console.log('Successfully matched route', match);
+      }, (nomatch) => {
+        console.error('Got a deeplink that didn\'t match', nomatch);
+      });
       if(this.network.type ==="none"){
         let toast = this.toastCtrl.create({
                 message: "You're Offline. Check your internet connection.",

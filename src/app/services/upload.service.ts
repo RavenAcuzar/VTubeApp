@@ -110,7 +110,7 @@ export class UploadService {
             return new Promise<string>((resolve, reject) => {
                 // it becomes null when platform is ios
                 file.file(
-                    file => resolve(file.type == null ? 'video/*' : file.type),
+                    file => resolve(file.type == null ? 'video/quicktime' : file.type),
                     err => resolve('video/*'));
             });
         }).then(mimetype => {
