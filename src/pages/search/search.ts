@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, LoadingController, PopoverController } from 'ionic-angular';
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
 import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
 import { NowPlayingPage } from "../now-playing/now-playing";
@@ -21,7 +21,8 @@ export class SearchPage {
     public navParams: NavParams, 
     private http: Http,
     private storage: Storage,
-    private popoverCtrl: PopoverController) {
+    private popoverCtrl: PopoverController,
+    private loading: LoadingController) {
   }
 
   ionViewDidLoad() {
@@ -29,6 +30,7 @@ export class SearchPage {
   }
 
   onInput() {
+    let loader = this.loading.create({content:"Loading..."});
     if(this.keyword===''){
       this.SearchResults = [];
       this.hideResults = true;
@@ -45,7 +47,7 @@ export class SearchPage {
         'Content-Type': 'application/x-www-form-urlencoded'
       })
     });
-
+    loader.present();
     this.http.post('http://cums.the-v.net/site.aspx', body, options)
       .subscribe(response => {
         let data = response.json();
@@ -55,7 +57,7 @@ export class SearchPage {
             sr.bcid = sr.URL.substring('/vtube/video?id='.length);
             sr.viewsNo = details[0].views;
             sr.chName = details[0].channelName;
-            sr.vidImage = "http://the-v.net" + details[0].image;
+            sr.vidImage = "http://site.the-v.net" + details[0].image;
             sr.vidPoints = details[0].points;
             sr.noLock = (details[0].videoPrivacy === 'public');
             sr.vidPriv = details[0].videoPrivacy;
@@ -69,6 +71,7 @@ export class SearchPage {
         if(this.SearchResults.length<=0){
           this.hideResults = true;
         }
+        loader.dismiss();
       }, e => {
         console.log(e);
       }, () => {

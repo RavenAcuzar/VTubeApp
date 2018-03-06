@@ -6,14 +6,18 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content no-padding *ngIf="videoDetails">
+<ion-content no-padding>
   <!-- <video #videoPlayer ion-fixed controls="controls" preload="metadata" webkit-playsinline="webkit-playsinline" 
     class="videoPlayer" [class.fullscreen]="isVideoFullscreen">
     <source src="http://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_20mb.mp4" type="video/mp4" />
   </video> -->
-  <iframe #videoPlayer ion-fixed class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl" allowfullscreen="allowfullscreen"
-    mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" oallowfullscreen="oallowfullscreen" webkitallowfullscreen="webkitallowfullscreen"></iframe>
-  <ion-content no-padding *ngIf="!isVideoFullscreen" #content>
+  <div *ngIf="videoDetails" style="display: inline-block;" class="videoPlayer" ion-fixed >
+      <iframe ion-fixed #videoPlayer class="videoPlayer" [class.fullscreen]="isVideoFullscreen" [src]="safeVideoUrl" allowfullscreen="allowfullscreen"
+      mozallowfullscreen="mozallowfullscreen" msallowfullscreen="msallowfullscreen" oallowfullscreen="oallowfullscreen" webkitallowfullscreen="webkitallowfullscreen"></iframe>
+  </div>
+  <div *ngIf="videoDetails" style="display: inline-block;"> 
+  
+  <div no-padding *ngIf="!isVideoFullscreen" #content>
     <div class="vid-playlist" *ngIf="shouldPlayPlaylist">
       <button (click)="playPrevVideo()" [disabled]="hasPreviousVideoInPlaylist()">
         <ion-icon class="icon" name="md-skip-backward"></ion-icon>
@@ -128,5 +132,6 @@
         </div>
       </div>
     </div>
-  </ion-content>
+  </div>
+</div>
 </ion-content>

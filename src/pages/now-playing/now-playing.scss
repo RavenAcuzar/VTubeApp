@@ -14,18 +14,12 @@ page-now-playing {
     }
 
     > ion-content {
-        > div.scroll-content, > div.fixed-content {
+        > div.fixed-content {
             margin-top: 0 !important;
         }
         > div.scroll-content {
-            > ion-content {
-                position: fixed;
-                // margin-top: 40vh;
-
-                > div.scroll-content {
-                    padding-top: 40vh !important;
-                }
-            }
+            position: fixed;
+            margin-top: 40vh !important;
         }
     }
 

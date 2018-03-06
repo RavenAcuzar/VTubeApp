@@ -77,9 +77,7 @@ export class NowPlayingPage {
     this.videoId = navParams.get('id');
   }
 
-  ionViewWillEnter() {
-    // get orientation subscription so that this can be unsubscribed later when
-    // the user leaves the page
+  ionViewDidLoad(){
     this.orientationSubscription = this.screenOrientation.onChange().subscribe(() => {
       let videoPlayerNE = this.videoplayer.nativeElement;
       this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
@@ -354,7 +352,7 @@ export class NowPlayingPage {
     }).then(userData => {
       this.isLoggedIn = userData !== null;
       if (this.isLoggedIn) {
-        this.userImageUrl = `http://the-v.net/Widgets_Site/avatar.ashx?id=${userData.id}`;
+        this.userImageUrl = `http://site.the-v.net/Widgets_Site/avatar.ashx?id=${userData.id}`;
 
         // check if the video has been added to the playlist by the user
         this.videoService.isAddedToPlaylist(this.videoId, userData.id).then(isAdded => {

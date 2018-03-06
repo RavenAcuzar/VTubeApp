@@ -74,7 +74,7 @@ export class VideoService {
                 let promise = this.userService.getUserDetails(c.UserId).then(ud => {
                     if (ud) {
                         c.mapped = {
-                            userImageUrl: `http://the-v.net${ud.imageUser}`
+                            userImageUrl: `http://site.the-v.net${ud.imageUser}`
                         }
                         return c;
                     }
@@ -212,8 +212,8 @@ export class VideoService {
                 isDownloadable: videoDetail.videoDl.toLowerCase() !== 'locked',
                 canBeAccessedAnonymously: videoDetail.videoPrivacy.toLowerCase() === 'public',
 
-                imageUrl: `http://the-v.net${videoDetail.image}`,
-                channelImageUrl: `http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?id=${videoDetail.channelId}&type=channel`,
+                imageUrl: `http://site.the-v.net${videoDetail.image}`,
+                channelImageUrl: `http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?id=${videoDetail.channelId}&type=channel`,
                 playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
             }
             return videoDetail;

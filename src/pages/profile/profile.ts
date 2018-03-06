@@ -13,7 +13,7 @@ export class ProfilePage {
 
   userDetails = {};
   days_left = '';
-  url = 'http://the-v.net/';
+  url = 'http://site.the-v.net/';
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private storage: Storage, private http: Http, private alertCtrl: AlertController) {

@@ -26,6 +26,31 @@ export class HomePage {
     this.getFreeVids(this.numvids.toString());
     this.getPremVids(this.numvids.toString());
   }
+  ionViewDidLoad(){
+    this.http.get('http://cums.the-v.net/upgrade.aspx')
+    .subscribe(response => {
+      console.log(response);
+      if(response.json()){
+        let youralert = this.alertCtrl.create({
+          title: "Your VTube+ App is outdated!",
+          message: "Download the new version of Vtube+ App now!",
+          buttons: [
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                console.log('Cancel clicked');
+              }
+            }
+          ]
+        });
+        youralert.present();
+      }
+    }, e => {
+      console.log(e);
+    }, () => {
+    });
+  }
   presentPopover(myEvent, vids) {
     let popover = this.popoverCtrl.create(HomePopoverPage, {
       videoDetails: vids
@@ -119,7 +144,7 @@ export class HomePage {
     this.http.post('http://cums.the-v.net/site.aspx', body, options)
       .subscribe(response => {
         let channelDetail = response.json();
-        fv.channelImage = 'http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id=' + channelDetail[0].channelUrl;
+        fv.channelImage = 'http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id=' + channelDetail[0].channelUrl;
       }, e => {
         console.log(e);
       }, () => {

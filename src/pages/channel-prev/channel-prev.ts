@@ -64,7 +64,7 @@ export class ChannelPrevPage {
     this.http.post('http://cums.the-v.net/site.aspx', body)
       .subscribe(response => {
         let data = response.json().map(ch => {
-          ch.channelImageFinalUrl = "http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id=" + ch.id;
+          ch.channelImageFinalUrl = "http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id=" + ch.id;
           ch.chViews = numberFormat(ch.views);
           ch.chVidsCount = numberFormat(ch.numVideos);
           ch.chFollowers = numberFormat(ch.followers);
@@ -72,7 +72,7 @@ export class ChannelPrevPage {
         })
         this.channelDetail = data[0];
         if (data[0].cover == "") {
-          this.channelCover = "http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channelcover&id=" + data[0].id;
+          this.channelCover = "http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channelcover&id=" + data[0].id;
         }
         else {
           this.channelCover = data[0].cover;

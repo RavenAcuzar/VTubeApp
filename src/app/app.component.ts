@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform, AlertController, Events, ToastController, NavController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
 import { HomePage } from '../pages/home/home';
 import { ProfilePage } from "../pages/profile/profile";
 import { ChannelsPage } from "../pages/channels/channels";
@@ -20,6 +19,7 @@ import { VoltChatPage } from "../pages/volt-chat/volt-chat";
 import { UploadVideoPage } from "../pages/upload-video/upload-video";
 import { NowPlayingPage } from "../pages/now-playing/now-playing";
 import { Deeplinks } from '@ionic-native/deeplinks';
+import { Push, PushObject, PushOptions } from '@ionic-native/push';
 
 @Component({
   templateUrl: 'app.html'
@@ -47,7 +47,8 @@ export class MyApp {
     private network: Network,
     private toastCtrl: ToastController,
     private connectionSrvc: ConnectionService,
-    private deeplinks: Deeplinks
+    private deeplinks: Deeplinks,
+    public push: Push
   ) {
     this.initializeApp();
     this.updateMenu();
@@ -63,21 +64,22 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();
+
       this.splashScreen.hide();
-      this.deeplinks.routeWithNavController(this.nav,{
+      this.deeplinks.routeWithNavController(this.nav, {
         '/vid/:id': NowPlayingPage
       }).subscribe((match) => {
         console.log('Successfully matched route', match);
       }, (nomatch) => {
         console.error('Got a deeplink that didn\'t match', nomatch);
       });
-      if(this.network.type ==="none"){
+      if (this.network.type === "none") {
         let toast = this.toastCtrl.create({
-                message: "You're Offline. Check your internet connection.",
-                position: 'bottom'
-            });
-            toast.present();
-            this.connectionSrvc.setActiveToast(toast);
+          message: "You're Offline. Check your internet connection.",
+          position: 'bottom'
+        });
+        toast.present();
+        this.connectionSrvc.setActiveToast(toast);
       }
       this.connectionSrvc.checkNetworkConnection();
       this.storage.get(USER_DATA_KEY).then(userdata => {
@@ -85,7 +87,9 @@ export class MyApp {
           this.downloadService.removeAllExpiredVideosFor(userdata.id);
         }
       })
+      this.pushsetup();
     });
+
   }
 
   openPage(page) {
@@ -120,7 +124,7 @@ export class MyApp {
           this.username = userDetails.first_name;
           this.email = userDetails.email;
           this.points = userDetails.points;
-          this.avatar = 'http://the-v.net/Widgets_Site/avatar.ashx?id=' + userDetails.id;
+          this.avatar = 'http://site.the-v.net/Widgets_Site/avatar.ashx?id=' + userDetails.id;
         })
         this.pageState = isloggedin;
       }
@@ -183,6 +187,81 @@ export class MyApp {
   checkActive(page) {
     return page == this.activePage;
   }
+  pushsetup() {
+    const options: PushOptions = {
+      android: {
+        senderID: '597577788490',
+        topics: ["VTUBE_ALL_USERS"]
+      },
+      ios: {
+        alert: 'true',
+        badge: true,
+        sound: 'false',
+        topics: ['VTUBE_ALL_USERS']
+      }
+    };
 
+    const pushObject: PushObject = this.push.init(options);
+
+    pushObject.on('notification').subscribe((data: any) => {
+      if (!data.additionalData.coldstart) {
+        if (data.additionalData.dataid) {
+          let youralert = this.alertCtrl.create({
+            title: data.title,
+            message: data.message,
+            buttons: [
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                handler: () => {
+                  console.log('Cancel clicked');
+                }
+              },
+              {
+                text: 'View',
+                handler: () => {
+                  this.nav.push(NowPlayingPage, {
+                    id: data.additionalData.dataid
+                  });
+                }
+              }
+            ]
+          });
+          youralert.present();
+        }
+        else {
+          let youralert = this.alertCtrl.create({
+            title: data.title,
+            message: data.message,
+            buttons: [
+              {
+                text: 'Cancel',
+                role: 'cancel',
+                handler: () => {
+                  console.log('Cancel clicked');
+                }
+              }
+            ]
+          });
+          youralert.present();
+        }
+      }
+      else {
+        if (data.additionalData.dataid) {
+          this.nav.push(NowPlayingPage, {
+            id: data.additionalData.dataid
+          });
+        }
+      }
+
+
+    });
+
+    pushObject.on('registration').subscribe((registration: any) => {
+      console.log(registration);
+    });
+
+    pushObject.on('error').subscribe(error => alert('Error with Push plugin' + error));
+  }
 
 }

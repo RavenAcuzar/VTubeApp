@@ -79,7 +79,7 @@ export class VoltChatService {
 
             let newMessage: VoltChatEntry = {
                 sender: ud.first_name,
-                senderImageUrl: `http://the-v.net/Widgets_Site/avatar.ashx?id=${ud.id}`,
+                senderImageUrl: `http://site.the-v.net/Widgets_Site/avatar.ashx?id=${ud.id}`,
                 message: message,
                 dateSent: date,
                 dateSentStr: dateStr,

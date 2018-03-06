@@ -23,7 +23,8 @@ export class ChannelsPage {
   recommendedChannels = [];
   allChannels = [];
   userChannel =[];
-  channelAvatar = 'http://the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id='
+  channelAvatar = 'http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channel&id=';
+  channelCover;
   num = 1;
   num2=1;
   page = 1;
@@ -166,7 +167,7 @@ export class ChannelsPage {
       this.http.post('http://cums.the-v.net/site.aspx', body, options)
         .subscribe(response => {
           let data = response.json().map(c => {
-            c.finalAvatarUrl = 'http://the-v.net/' + c.thumbnail;
+            c.finalAvatarUrl = 'http://site.the-v.net/' + c.thumbnail;
             c.chViews = numberFormat(c.views);
             c.chVidsCount = numberFormat(c.videoCount);
             c.chFollowers = numberFormat(c.followers);
@@ -177,6 +178,7 @@ export class ChannelsPage {
             this.userChannel = data[0];
             this.userChannelId = data[0].id;
             this.getChannelVids(data[0].id);
+            this.channelCover = [data[0].cover.slice(0,7), 'site.', data[0].cover.slice(7)].join('');
           } else {
             //do something here if no channel is available
             this.userHasChannel = false;

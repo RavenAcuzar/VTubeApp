@@ -42,6 +42,7 @@ import { MediaCapture } from "@ionic-native/media-capture";
 import { UploadService } from "./services/upload.service";
 import { ProgressBarComponent } from '../components/progress-bar/progress-bar';
 import { Deeplinks } from "@ionic-native/deeplinks";
+import { Push } from '@ionic-native/push';
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import { Deeplinks } from "@ionic-native/deeplinks";
     Network,
     MediaCapture,
     Deeplinks,
+    Push,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

@@ -4,7 +4,7 @@
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title style="text-align: center">
-      <img src="assets/img/vtube-logo.png" style="width:25vw" />
+      <img src="assets/img/vtube-logo.png" style="height:40px;" />
       <!--here goes vtube logo  -->
     </ion-title>
     <ion-buttons end>
@@ -33,7 +33,7 @@
       <!--here goes vid cards  ng-repeat-->
       <ion-card *ngFor="let vids of freeVids">
         <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
-          <img src="http://the-v.net{{vids.image}}" />
+          <img src="http://site.the-v.net{{vids.image}}" />
           <div class="duration">
             <ion-badge color="duration">{{vids.time}}</ion-badge>
           </div>
@@ -73,7 +73,7 @@
       <ion-card *ngFor="let vids of premiumVids">
         <ion-card-content no-padding (click)="playVideo(vids.id, vids.videoPrivacy)">
           <div class="parent">
-            <img src="http://the-v.net{{vids.image}}"/>
+            <img src="http://site.the-v.net{{vids.image}}"/>
             <div class="duration">
               <ion-badge color="duration">{{vids.time}}</ion-badge>
             </div>

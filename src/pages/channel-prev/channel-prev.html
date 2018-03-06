@@ -82,7 +82,7 @@
     <h1 style="opacity:0.5; text-align:center; margin-top:100px;" [hidden]="hasVids">No Videos uploaded.</h1>
     <ion-card *ngFor="let vids of channelVids" [hidden]="!hasVids">
       <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
-        <img src="http://the-v.net{{vids.image}}" />
+        <img src="http://site.the-v.net{{vids.image}}" />
         <div class="duration">
           <ion-badge color="duration">{{vids.time}}</ion-badge>
         </div>
