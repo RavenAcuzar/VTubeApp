@@ -9,6 +9,7 @@ import { FallbackPage } from "../fallback/fallback";
 import { VideoDetails } from "../../app/models/video.models";
 import { ChannelService } from "../../app/services/channel.service";
 import { numberFormat } from "../../app/app.utils";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-channel-prev',
@@ -30,9 +31,12 @@ export class ChannelPrevPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public popoverCtrl: PopoverController,
     private http: Http, private storage: Storage,
     private alertCtrl: AlertController,
-    private channelService: ChannelService) {
+    private channelService: ChannelService,
+    private gaSvc:GoogleAnalyticsService) {
     this.getChannelDatails();
     this.getChannelVids();
+    
+    
   }
   ionViewDidEnter() {
 
@@ -71,6 +75,8 @@ export class ChannelPrevPage {
           return ch;
         })
         this.channelDetail = data[0];
+        //console.log(data[0].name);
+        this.gaSvc.gaTrackPageEnter('Channel: '+data[0].name);
         if (data[0].cover == "") {
           this.channelCover = "http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?type=channelcover&id=" + data[0].id;
         }

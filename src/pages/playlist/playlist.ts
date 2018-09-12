@@ -9,6 +9,7 @@ import { FallbackPage } from "../fallback/fallback";
 import { PlaylistPopoverPage } from "../../app/popover";
 import { DownloadEntry } from "../../app/models/download.models";
 import { NowPlayingPage } from "../now-playing/now-playing";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-playlist',
@@ -23,11 +24,13 @@ export class PlaylistPage {
     private storage: Storage,
     private playlistService: PlaylistService,
     private videoService: VideoService,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private gaSvc:GoogleAnalyticsService
   ) { }
 
   ionViewDidEnter() {
     this.refreshPlaylist();
+    this.gaSvc.gaTrackPageEnter('Playlist');
   }
 
   showPopover(event: any, videoDetail: VideoDetails) {

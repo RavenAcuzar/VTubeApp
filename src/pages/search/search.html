@@ -7,13 +7,18 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Search</ion-title>
+    <ion-title>{{'SEARCH'|translate}}</ion-title>
   </ion-navbar>
+  <ion-toolbar>
   <ion-searchbar autofocus
-      [(ngModel)]="keyword"
-      (ionInput)="onInput($event)"
-      (ionCancel)="onCancel($event)">
+      [(ngModel)]="keyword">
     </ion-searchbar>
+    <ion-buttons right>
+			<button ion-button icon-only (click)='onInput()'>
+				<ion-icon name="md-search"></ion-icon>
+			</button>
+		</ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 
@@ -25,9 +30,9 @@
         <h2><ion-icon name="lock" color="secondary" [hidden]="items.noLock"></ion-icon> {{items.Title}}</h2>
         <p>
           <span class="channel">{{items.chName}}</span><br>
-          <span class="views">{{items.viewsNo}} views</span>
+          <span class="views">{{items.viewsNo}} {{'VIEWS'|translate}}</span>
           <span>&nbsp;&bull;&nbsp;</span>
-          <span class="points">{{items.vidPoints}} points</span>
+          <span class="points">{{items.vidPoints}} {{'POINTS'|translate}}</span>
         </p>
       </div>
       <button ion-button padding-bottom="false" (click)="presentPopover($event, items)">

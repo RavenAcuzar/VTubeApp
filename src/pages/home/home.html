@@ -17,10 +17,10 @@
   <ion-toolbar no-border-top>
     <ion-segment [(ngModel)]="vidType" mode="md">
       <ion-segment-button value="freeVid">
-        FREE
+        {{'FREE'|translate}}
       </ion-segment-button>
       <ion-segment-button value="premVid">
-        PREMIUM
+        {{'PREMIUM'|translate}}
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -33,14 +33,14 @@
       <!--here goes vid cards  ng-repeat-->
       <ion-card *ngFor="let vids of freeVids">
         <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
-          <img src="http://site.the-v.net{{vids.image}}" />
+          <img src="{{vids.image}}" />
           <div class="duration">
             <ion-badge color="duration">{{vids.time}}</ion-badge>
           </div>
           <div class="vidpoints">
             <ion-chip color="secondary">
               <ion-icon name="star"></ion-icon>
-              <ion-label>{{vids.points}} Points</ion-label>
+              <ion-label>{{vids.points}} {{'POINTS'|translate}}</ion-label>
             </ion-chip>
           </div>
           <div class="vidplay">
@@ -53,7 +53,7 @@
             <img [src]="vids.channelImage" />
           </ion-avatar>
           <h2>{{vids.title}}</h2>
-          <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
+          <p>{{vids.channelName}} <br> {{vids.views}} {{'VIEWS'|translate}}</p>
           <p>
             <ion-icon name="globe"></ion-icon>: {{vids.language}}</p>
           <div item-end icon-only class="more" (click)="presentPopover($event, vids)">
@@ -73,14 +73,14 @@
       <ion-card *ngFor="let vids of premiumVids">
         <ion-card-content no-padding (click)="playVideo(vids.id, vids.videoPrivacy)">
           <div class="parent">
-            <img src="http://site.the-v.net{{vids.image}}"/>
+            <img src="{{vids.image}}"/>
             <div class="duration">
               <ion-badge color="duration">{{vids.time}}</ion-badge>
             </div>
             <div class="vidpoints">
               <ion-chip color="secondary">
                 <ion-icon name="star" color="primary"></ion-icon>
-                <ion-label>{{vids.points}} Points</ion-label>
+                <ion-label>{{vids.points}} {{'POINTS'|translate}}</ion-label>
               </ion-chip>
             </div>
             <div class="vidplay">
@@ -95,7 +95,7 @@
           </ion-avatar>
           <h2>
             <ion-icon name="lock" color="secondary"></ion-icon> {{vids.title}}</h2>
-          <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
+          <p>{{vids.channelName}} <br> {{vids.views}} {{'VIEWS'|translate}}</p>
           <p>
             <ion-icon name="globe"></ion-icon> : {{vids.language}}</p>
           <div item-end icon-only (click)="presentPopover($event, vids)">

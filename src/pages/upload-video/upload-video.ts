@@ -11,6 +11,7 @@ import { encodeObject } from "../../app/app.utils";
 import { UploadService } from "../../app/services/upload.service";
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 
 @Component({
@@ -50,7 +51,8 @@ export class UploadVideoPage {
     private http: Http,
     private storage: Storage,
     private uploadSrvc: UploadService,
-    private alertController: AlertController) {
+    private alertController: AlertController,
+    private gaSvc:GoogleAnalyticsService) {
     this.categories = [
       { title: 'Entertainment', value: 'Entertainment' },
       { title: 'Messages', value: 'Messages' },
@@ -88,6 +90,7 @@ export class UploadVideoPage {
 
   ionViewDidEnter() {
     this.tryObserveToUploadStatus();
+    this.gaSvc.gaTrackPageEnter('Upload Video');
   }
 
   ionViewDidLeave() {

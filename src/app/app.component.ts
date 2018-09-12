@@ -2,6 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform, AlertController, Events, ToastController, NavController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { TranslateService } from '@ngx-translate/core';
+
 import { HomePage } from '../pages/home/home';
 import { ProfilePage } from "../pages/profile/profile";
 import { ChannelsPage } from "../pages/channels/channels";
@@ -10,7 +12,7 @@ import { DownloadsPage } from "../pages/downloads/downloads";
 import { LoginPage } from "../pages/login/login";
 import { FallbackPage } from "../pages/fallback/fallback";
 import { Storage } from '@ionic/storage';
-import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "./app.constants";
+import { IS_LOGGED_IN_KEY, USER_DATA_KEY, APP_LANG } from "./app.constants";
 import { AppStateService } from "./services/app_state.service";
 import { DownloadService } from "./services/download.service";
 import { ConnectionService } from "./services/network.service";
@@ -20,6 +22,9 @@ import { UploadVideoPage } from "../pages/upload-video/upload-video";
 import { NowPlayingPage } from "../pages/now-playing/now-playing";
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
+import { Http } from '@angular/http';
+import { InboxPage } from '../pages/inbox/inbox';
+import { SelectLangPage } from '../pages/select-lang/select-lang';
 
 @Component({
   templateUrl: 'app.html'
@@ -35,6 +40,7 @@ export class MyApp {
   avatar: string = ' ';
   private didLoginHadErrors = false;
   pageState: boolean;
+  menuSide:string="left";
   pages: Array<{ title: string, component: any, icon: string }> = [];
 
   constructor(public platform: Platform,
@@ -48,12 +54,13 @@ export class MyApp {
     private toastCtrl: ToastController,
     private connectionSrvc: ConnectionService,
     private deeplinks: Deeplinks,
-    public push: Push
+    public push: Push,
+    public http:Http,
+    private translateSvc:TranslateService
   ) {
     this.initializeApp();
     this.updateMenu();
     this.activePage = this.pages[0];
-
     events.subscribe(AppStateService.UPDATE_MENU_STATE_EVENT, _ => {
       this.updateMenu();
     })
@@ -86,7 +93,23 @@ export class MyApp {
         if (userdata) {
           this.downloadService.removeAllExpiredVideosFor(userdata.id);
         }
-      })
+      });
+      this.storage.get(APP_LANG).then(lang=>{
+        if(lang!=null){
+          this.translateSvc.setDefaultLang(lang);
+          this.translateSvc.use(lang);
+          if(lang=='ar')
+          {
+            this.platform.setDir('rtl', true);
+            this.platform.setDir('ltr', false); 
+          }
+        }
+        else
+        {
+          this.translateSvc.setDefaultLang('en');
+          this.translateSvc.use('en');
+        }
+      });
       this.pushsetup();
     });
 
@@ -103,7 +126,9 @@ export class MyApp {
       this.activePage = page;
     }
   }
+  updateMenuLanguage(){
 
+  }
   updateMenu() {
     this.didLoginHadErrors = false;
     let errCallback = e => {
@@ -112,13 +137,15 @@ export class MyApp {
     this.storage.get(IS_LOGGED_IN_KEY).then(isloggedin => {
       if (isloggedin) {
         this.pages = [
-          { title: 'Home', component: HomePage, icon: "md-home" },
-          { title: 'Profile', component: ProfilePage, icon: "md-person" },
-          { title: 'Channels', component: ChannelsPage, icon: "md-easel" },
-          { title: 'Upload Video', component: UploadVideoPage, icon: "md-videocam" },
-          { title: 'Playlist', component: PlaylistPage, icon: "md-albums" },
-          { title: 'Downloads', component: DownloadsPage, icon: "md-download" },
-          { title: 'Chat with Volt', component: VoltChatPage, icon: "ios-text" }
+          { title: 'HOME', component: HomePage, icon: "md-home" },
+          { title: 'PROFILE', component: ProfilePage, icon: "md-person" },
+          { title: 'CHANNELS', component: ChannelsPage, icon: "md-easel" },
+          { title: 'INBOX', component: InboxPage, icon: "md-mail" },
+          { title: 'UPLOAD_VID', component: UploadVideoPage, icon: "md-videocam" },
+          { title: 'PLAYLIST_M', component: PlaylistPage, icon: "md-albums" },
+          { title: 'DOWNLOAD', component: DownloadsPage, icon: "md-download" },
+          { title: 'CHAT', component: VoltChatPage, icon: "ios-text" },
+          { title: 'SELECT_LANG', component: SelectLangPage, icon: "md-settings" }
         ];
         this.storage.get(USER_DATA_KEY).then(userDetails => {
           this.username = userDetails.first_name;
@@ -130,13 +157,15 @@ export class MyApp {
       }
       else {
         this.pages = [
-          { title: 'Home', component: HomePage, icon: "md-home" },
-          { title: 'Profile', component: FallbackPage, icon: "md-person" },
-          { title: 'Channels', component: ChannelsPage, icon: "md-easel" },
-          { title: 'Upload Video', component: FallbackPage, icon: "md-videocam" },
-          { title: 'Playlist', component: FallbackPage, icon: "md-albums" },
-          { title: 'Downloads', component: FallbackPage, icon: "md-download" },
-          { title: 'Chat with Volt', component: FallbackPage, icon: "ios-text" }
+          { title: 'HOME', component: HomePage, icon: "md-home" },
+          { title: 'PROFILE', component: FallbackPage, icon: "md-person" },
+          { title: 'CHANNELS', component: ChannelsPage, icon: "md-easel" },
+          { title: 'INBOX', component: FallbackPage, icon: "md-mail" },
+          { title: 'UPLOAD_VID', component: FallbackPage, icon: "md-videocam" },
+          { title: 'PLAYLIST_M', component: FallbackPage, icon: "md-albums" },
+          { title: 'DOWNLOAD', component: FallbackPage, icon: "md-download" },
+          { title: 'CHAT', component: FallbackPage, icon: "ios-text" },
+          { title: 'SELECT_LANG', component: SelectLangPage, icon: "md-settings" }
         ];
         this.pageState = isloggedin;
       }

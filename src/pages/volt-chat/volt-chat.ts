@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-an
 import { VoltChatService, VoltChatEntry } from "../../app/services/volt-chat.service";
 import { Subscription } from 'rxjs/Subscription';
 import { ChatPopoverPage } from "../../app/popover";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-volt-chat',
@@ -23,7 +24,8 @@ export class VoltChatPage {
     private rendered: Renderer,
     private navCtrl: NavController,
     private navParams: NavParams,
-    private popoverCtrl: PopoverController
+    private popoverCtrl: PopoverController,
+    private gaSvc:GoogleAnalyticsService
   ) { }
 
   ionViewDidEnter() {
@@ -45,6 +47,7 @@ export class VoltChatPage {
         this.conversation = [];
       });
     });
+    this.gaSvc.gaTrackPageEnter('Volt Chat');
   }
 
   ionViewDidLeave() {

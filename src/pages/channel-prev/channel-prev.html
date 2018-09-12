@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Channel</ion-title>
+    <ion-title>{{'CHANNEL'|translate}}</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -50,10 +50,10 @@
       <img [src]="channelCover" />
       <img [src]="channelDetail.channelImageFinalUrl" class="channelDetail" />
       <button ion-button round outline class="btn-follow" (click)="followChannel()" *ngIf="!isFollowing">
-        <span>20PTS Follow</span>
+        <span>20PTS {{'FOLLOW'|translate}}</span>
       </button>
       <button ion-button round outline class="btn-follow" (click)="unfollowChannel()" *ngIf="isFollowing">
-        <span>Unfollow</span>
+        <span>{{'UNFOLLOW'|translate}}</span>
       </button>
       <div class="channelViews">
         <h6>{{channelDetail.chViews}}</h6>
@@ -66,30 +66,30 @@
     </div>
     <ion-item class="channelLabel">
       <h2>{{channelDetail.name}}</h2>
-      <p>{{channelDetail.chFollowers}} Followers</p>
+      <p>{{channelDetail.chFollowers}} {{'FOLLOWERS'|translate}}</p>
       <div item-end icon-only (click)='seeDesc()' class="showDescBtn">
         <ion-icon name={{descLabel}}></ion-icon>
       </div>
       <div [hidden]="!isDescriptionShown" style="margin-top:15px;">
-        <h6>Description</h6>
+        <h6>{{'DESCRIPTION'|translate}}</h6>
         <p>{{channelDetail.description}}</p>
       </div>
     </ion-item>
   </ion-card>
 
   <div padding>
-    <h4>UPLOADS</h4>
-    <h1 style="opacity:0.5; text-align:center; margin-top:100px;" [hidden]="hasVids">No Videos uploaded.</h1>
+    <h4>{{'UPLOADS'|translate}}</h4>
+    <h1 style="opacity:0.5; text-align:center; margin-top:100px;" [hidden]="hasVids">{{'CHANNEL_NO_VID'|translate}}</h1>
     <ion-card *ngFor="let vids of channelVids" [hidden]="!hasVids">
       <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
-        <img src="http://site.the-v.net{{vids.image}}" />
+        <img src="{{vids.image}}" />
         <div class="duration">
           <ion-badge color="duration">{{vids.time}}</ion-badge>
         </div>
         <div class="vidpoints">
           <ion-chip color="secondary">
             <ion-icon name="star"></ion-icon>
-            <ion-label>{{vids.points}} Points</ion-label>
+            <ion-label>{{vids.points}} {{'POINTS'|translate}}</ion-label>
           </ion-chip>
         </div>
         <div class="vidplay">
@@ -103,7 +103,7 @@
         </ion-avatar>
         <h2>
           <ion-icon name="lock" color="secondary" [hidden]="vids.noLock"></ion-icon> {{vids.title}}</h2>
-        <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
+        <p>{{vids.channelName}} <br> {{vids.views}} {{'VIEWS'|translate}}</p>
         <p>
           <ion-icon name="globe"></ion-icon>: {{vids.language}}</p>
         <div item-end icon-only (click)="presentPopover($event, vids)">

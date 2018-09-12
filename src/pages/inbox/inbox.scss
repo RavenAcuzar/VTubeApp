@@ -1,0 +1,18 @@
+page-inbox {
+    ion-note{
+        margin-top: 10px !important;
+        margin-right: 0 !important;
+        align-self: normal !important;
+        font-size: 12px;
+    }
+    ion-content{
+        background: #efefef !important;
+    }
+    .list-head{
+      border-bottom: 1px solid #cccccc !important;
+      background-color: transparent !important;
+      margin-bottom: 0 !important;
+      color: #333 !important;
+    }
+    
+}

@@ -4,12 +4,14 @@ import { SQLite, SQLiteObject } from "@ionic-native/sqlite";
 import { SQLITE_DB_NAME } from "../app.constants";
 import { openSqliteDb } from "../app.utils";
 import { PlaylistEntry } from "../models/playlist.models";
+import { GoogleAnalyticsService } from "./analytics.service";
 
 @Injectable()
 export class PlaylistService {
 
     constructor(
-        private sqlite: SQLite
+        private sqlite: SQLite,
+        private gaSvc:GoogleAnalyticsService
     ) { }
 
     getPlaylistOf(userId: string) {
@@ -49,8 +51,10 @@ export class PlaylistService {
             return db.executeSql(`INSERT INTO playlist(bcid, memid) VALUES(?, ?)`, [bcid, userId])
         }).then(a => {
             return new Promise<boolean>((resolve, reject) => {
-                if (a.rowsAffected === 1)
-                    resolve(true)
+                if (a.rowsAffected === 1){
+                    this.gaSvc.gaEventTracker('Video','Add to Playlist','Video added to playlist');
+                    resolve(true);
+                }
                 else if (a.rowsAffected === 0)
                     resolve(false)
                 else

@@ -437,3 +437,23 @@ export class ChatPopoverPage {
     })
   }
 }
+
+@Component({
+  template: `
+    <h6 style="color:#999999 !important;">{{content.Subject}}</h6>
+    <hr>
+    <ion-item style="padding-left:0 !important; padding-bottom:20px!important;">
+      <h3 style="color:#D52730 !important;">{{content.Sender}}</h3>
+      <p style="font-size: 12px;">{{content.date}}</p>
+  </ion-item>
+    <div [innerHTML]="content.Body">
+    </div>
+  `
+})
+export class InboxPopoverPage{
+  content;
+  constructor(public navParams:NavParams){
+    this.content = this.navParams.get('content');
+    //console.log(this.content);
+  }
+}

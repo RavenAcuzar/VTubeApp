@@ -6,6 +6,7 @@ import { NowPlayingPage } from "../now-playing/now-playing";
 import { FallbackPage } from "../fallback/fallback";
 import { Storage } from "@ionic/storage"
 import { HomePopoverPage } from "../../app/popover";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-search',
@@ -16,65 +17,72 @@ export class SearchPage {
   SearchResults = [];
   keyword = '';
   hideResults = true;
-  constructor(public navCtrl: NavController, 
-    private alertCtrl: AlertController, 
-    public navParams: NavParams, 
+  constructor(public navCtrl: NavController,
+    private alertCtrl: AlertController,
+    public navParams: NavParams,
     private http: Http,
     private storage: Storage,
     private popoverCtrl: PopoverController,
-    private loading: LoadingController) {
+    private loading: LoadingController,
+    private gaSvc: GoogleAnalyticsService) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SearchPage');
+    this.gaSvc.gaTrackPageEnter('Search');
   }
 
   onInput() {
-    let loader = this.loading.create({content:"Loading..."});
-    if(this.keyword===''){
+    let req;
+    let loader = this.loading.create({ content: "Loading...", enableBackdropDismiss: true });
+    if (this.keyword === '') {
       this.SearchResults = [];
       this.hideResults = true;
-    }else{
+    } else {
       this.hideResults = false;
-    this.SearchResults = [];
-    let details = [];
-    let body = new URLSearchParams();
-    body.set('action', 'App_Search');
-    body.set('keyword', this.keyword);
+      this.SearchResults = [];
+      let details = [];
+      let body = new URLSearchParams();
+      body.set('action', 'App_Search');
+      body.set('keyword', this.keyword);
 
-    let options = new RequestOptions({
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    });
-    loader.present();
-    this.http.post('http://cums.the-v.net/site.aspx', body, options)
-      .subscribe(response => {
-        let data = response.json();
-        data.forEach(sr => {
-          this.getVideoDetails(sr.URL.substring('/vtube/video?id='.length)).subscribe(response => {
-            details = response.json();
-            sr.bcid = sr.URL.substring('/vtube/video?id='.length);
-            sr.viewsNo = details[0].views;
-            sr.chName = details[0].channelName;
-            sr.vidImage = "http://site.the-v.net" + details[0].image;
-            sr.vidPoints = details[0].points;
-            sr.noLock = (details[0].videoPrivacy === 'public');
-            sr.vidPriv = details[0].videoPrivacy;
+      let options = new RequestOptions({
+        headers: new Headers({
+          'Content-Type': 'application/x-www-form-urlencoded'
+        })
+      });
+      loader.onDidDismiss(() => {
+        req.unsubscribe();
+      });
+      loader.present().then(() => {
+        req = this.http.post('http://cums.the-v.net/site.aspx', body, options)
+          .subscribe(response => {
+            let data = response.json();
+            data.forEach(sr => {
+              this.getVideoDetails(sr.URL.substring('/vtube/video?id='.length)).subscribe(response => {
+                details = response.json();
+                sr.bcid = sr.URL.substring('/vtube/video?id='.length);
+                sr.viewsNo = details[0].views;
+                sr.chName = details[0].channelName;
+                sr.vidImage = details[0].image;
+                sr.vidPoints = details[0].points;
+                sr.noLock = (details[0].videoPrivacy === 'public');
+                sr.vidPriv = details[0].videoPrivacy;
+              }, e => {
+                console.log(e);
+              }, () => {
+              });
+              return sr;
+            })
+            this.SearchResults = data;
+            if (this.SearchResults.length <= 0) {
+              this.hideResults = true;
+            }
+            loader.dismiss();
           }, e => {
             console.log(e);
           }, () => {
           });
-          return sr;
-        })
-        this.SearchResults = data;
-        if(this.SearchResults.length<=0){
-          this.hideResults = true;
-        }
-        loader.dismiss();
-      }, e => {
-        console.log(e);
-      }, () => {
       });
     }
   }
@@ -147,6 +155,6 @@ export class SearchPage {
   }
 
   onCancel() {
-    
+
   }
 }

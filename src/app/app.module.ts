@@ -17,10 +17,10 @@ import { ForgotPasswordPage } from "../pages/forgot-password/forgot-password";
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { HomePopoverPage, PlaylistPopoverPage, ChatPopoverPage } from "./popover";
+import { HomePopoverPage, PlaylistPopoverPage, ChatPopoverPage, InboxPopoverPage } from "./popover";
 import { ScreenOrientation } from "@ionic-native/screen-orientation";
 import { IonicStorageModule } from "@ionic/storage";
-import { HttpModule } from "@angular/http";
+import { HttpModule, Http } from "@angular/http";
 import { FormsModule } from "@angular/forms";
 import { SQLite } from "@ionic-native/sqlite";
 import { FileTransfer } from '@ionic-native/file-transfer';
@@ -43,6 +43,16 @@ import { UploadService } from "./services/upload.service";
 import { ProgressBarComponent } from '../components/progress-bar/progress-bar';
 import { Deeplinks } from "@ionic-native/deeplinks";
 import { Push } from '@ionic-native/push';
+import { InboxPage } from '../pages/inbox/inbox';
+import { GoogleAnalyticsService } from './services/analytics.service';
+import { GoogleAnalytics } from '@ionic-native/google-analytics';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { SelectLangPage } from '../pages/select-lang/select-lang';
+
+export function HttpLoaderFactory(http: Http) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
 
 @NgModule({
   declarations: [
@@ -60,10 +70,13 @@ import { Push } from '@ionic-native/push';
     FallbackPage,
     ForgotPasswordPage,
     HomePopoverPage,
+    InboxPopoverPage,
     PlayDownloadedVideoPage,
     PlaylistPopoverPage,
     ChatPopoverPage,
     VoltChatPage,
+    InboxPage,
+    SelectLangPage,
     ProgressBarComponent
   ],
   imports: [
@@ -71,7 +84,14 @@ import { Push } from '@ionic-native/push';
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot(),
     HttpModule,
-    FormsModule
+    FormsModule,
+    TranslateModule.forRoot({
+      loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [Http]
+      }
+  })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -89,10 +109,13 @@ import { Push } from '@ionic-native/push';
     FallbackPage,
     ForgotPasswordPage,
     HomePopoverPage,
+    InboxPopoverPage,
     PlayDownloadedVideoPage,
     PlaylistPopoverPage,
     ChatPopoverPage,
-    VoltChatPage
+    VoltChatPage,
+    SelectLangPage,
+    InboxPage
   ],
   providers: [
     File,
@@ -110,11 +133,13 @@ import { Push } from '@ionic-native/push';
     AndroidPermissions,
     ConnectionService,
     VoltChatService,
+    GoogleAnalyticsService,
     Camera,
     Network,
     MediaCapture,
     Deeplinks,
     Push,
+    GoogleAnalytics,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

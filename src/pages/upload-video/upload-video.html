@@ -3,7 +3,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Upload Video</ion-title>
+    <ion-title>{{'UPLOAD_VID'|translate}}</ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="sendVideo()" [disabled]="sendDisabled"> 
       <ion-icon name="md-send"></ion-icon>
@@ -23,70 +23,70 @@
   <div [hidden]="!hidePlayer">
     <ion-grid>
       <ion-row>
-        <button ion-button class="btn-vidUpload" (click)="selectVid()"><ion-icon name="md-open"></ion-icon>&nbsp;&nbsp;Select a video</button>
+        <button ion-button class="btn-vidUpload" (click)="selectVid()"><ion-icon name="md-open"></ion-icon>&nbsp;&nbsp;{{'SELECT_VID'|translate}}</button>
       </ion-row>
       <ion-row>
-        <button ion-button class="btn-vidUpload" (click)="captureVid()"><ion-icon name="md-film"></ion-icon>&nbsp;&nbsp;Capture a video</button>
+        <button ion-button class="btn-vidUpload" (click)="captureVid()"><ion-icon name="md-film"></ion-icon>&nbsp;&nbsp;{{'CAPTURE_VID'|translate}}</button>
       </ion-row>
     </ion-grid>
   </div>
-  <div class="tags-bottom" style="margin-right:20px;"><i>Upload videos up to 200MB only. Allows MOV, MP4, M4V, AVI, 3GP, 3GP2, ASF, WMV, MPEG formats.</i></div>
+  <div class="tags-bottom" style="margin-right:20px;"><i>{{'UPLOAD_MSG'|translate}}</i></div>
   <div padding>
     <ion-list>
       <ion-item>
-        <ion-label floating>Title*</ion-label>
+        <ion-label floating>{{'TITLE'| translate}}*</ion-label>
         <ion-input type="text" required autofocus name="title" [(ngModel)]="title"></ion-input>
       </ion-item>
-      <div class="tags-bottom"><i>Special Characters are not allowed </i></div>
+      <div class="tags-bottom"><i>{{'UPLOAD_MSG2'|translate}}</i></div>
       <ion-item>
-        <ion-label floating>Description*</ion-label>
+        <ion-label floating>{{'DESCRIPTION'|translate}}*</ion-label>
         <ion-input type="text" required name="description" [(ngModel)]="description"></ion-input>
       </ion-item>
-      <div class="tags-bottom"><i>Special Characters are not allowed </i></div>
+      <div class="tags-bottom"><i>{{'UPLOAD_MSG2'|translate}}</i></div>
       <ion-item>
-        <ion-label floating>Tags</ion-label>
+        <ion-label floating>{{'TAGS'|translate}}</ion-label>
         <ion-input type="text" required name="tags" [(ngModel)]="tags"></ion-input>
       </ion-item>
-      <div class="tags-bottom"><i>Optional: Separate by comma. Ex: IRs, V-Con</i></div> <br><br>
+      <div class="tags-bottom"><i>{{'UPLOAD_MSG3'|translate}}</i></div> <br><br>
       <ion-list-header>
-        PUBLISH SETTINGS
+        {{'PUB'|translate}}
       </ion-list-header>
       <ion-item>
-        <ion-label>Privacy*</ion-label>
+        <ion-label>{{'PRIV'|translate}}*</ion-label>
         <ion-select [(ngModel)]="privacy" required>
           <ion-option value="public">
-            <ion-icon name="md-globe"></ion-icon> Public</ion-option>
+            <ion-icon name="md-globe"></ion-icon>Public</ion-option>
           <ion-option value="private">
             <ion-icon name="md-lock"></ion-icon> Private</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Category*</ion-label>
+        <ion-label>{{'CAT'|translate}}*</ion-label>
         <ion-select [(ngModel)]="category" placeholder="-select-" required>
           <ion-option *ngFor="let cat of categories" [value]="cat.value">{{cat.title}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Level*</ion-label>
+        <ion-label>{{'LEVEL'|translate}}*</ion-label>
         <ion-select [(ngModel)]="level" placeholder="-select-" required>
           <ion-option *ngFor="let level of levels" [value]="level.value">{{level.title}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Target Market Location*</ion-label>
+        <ion-label>{{'TARGET'|translate}}*</ion-label>
         <ion-select [(ngModel)]="targetMarketLoc" multiple="true" placeholder="-select-" required>
           <ion-option *ngFor="let loc of locs">{{loc.title}}</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Allow Comments*</ion-label>
+        <ion-label>{{'COMM'|translate}}*</ion-label>
         <ion-select [(ngModel)]="allowComment" required>
           <ion-option value="1">Yes</ion-option>
           <ion-option value="0">No</ion-option>
         </ion-select>
       </ion-item>
       <ion-item>
-        <ion-label>Allow Sharing*</ion-label>
+        <ion-label>{{'SHARING'|translate}}*</ion-label>
         <ion-select [(ngModel)]="allowSharing" required>
           <ion-option value="1">Yes</ion-option>
           <ion-option value="0">No</ion-option>

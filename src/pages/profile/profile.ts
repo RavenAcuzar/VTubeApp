@@ -4,6 +4,7 @@ import { USER_DATA_KEY } from "../../app/app.constants";
 import { Storage } from '@ionic/storage';
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
 import { formatDate } from "../../app/app.utils";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-profile',
@@ -16,13 +17,15 @@ export class ProfilePage {
   url = 'http://site.the-v.net/';
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    private storage: Storage, private http: Http, private alertCtrl: AlertController) {
+    private storage: Storage, private http: Http, private alertCtrl: AlertController,
+    private gaSvc: GoogleAnalyticsService) {
   }
 
 
 
   ionViewDidEnter() {
     this.getProfileDetails();
+    this.gaSvc.gaTrackPageEnter('Profile');
   }
 
   getProfileDetails() {

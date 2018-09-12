@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
 import { HomePage } from "../home/home";
 import { AppStateService } from "../../app/services/app_state.service";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-login',
@@ -29,8 +30,11 @@ export class LoginPage {
     private http: Http,
     private storage: Storage,
     private loadingController: LoadingController,
-    private event: Events
-  ) { }
+    private event: Events,
+    private gaSvc:GoogleAnalyticsService
+  ) { 
+    this.gaSvc.gaTrackPageEnter('Login');
+  }
 
   login() {
     this.isCredentialsIncorrect = false;

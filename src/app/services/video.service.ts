@@ -10,6 +10,7 @@ import 'rxjs/add/operator/toPromise'
 import 'rxjs/add/operator/map'
 import 'rxjs/add/operator/do'
 import { SQLiteObject, SQLite } from "@ionic-native/sqlite";
+import { GoogleAnalyticsService } from "./analytics.service";
 
 @Injectable()
 export class VideoService {
@@ -20,7 +21,8 @@ export class VideoService {
         private sqlite: SQLite,
         private downloadService: DownloadService,
         private playlistService: PlaylistService,
-        private userService: UserService
+        private userService: UserService,
+        private gaSvc:GoogleAnalyticsService
     ) { }
 
     getDetails(id: string) {
@@ -74,7 +76,7 @@ export class VideoService {
                 let promise = this.userService.getUserDetails(c.UserId).then(ud => {
                     if (ud) {
                         c.mapped = {
-                            userImageUrl: `http://site.the-v.net${ud.imageUser}`
+                            userImageUrl: `http://site.the-v.net/Widgets_Site/avatar.ashx?id=${c.UserId}`
                         }
                         return c;
                     }
@@ -137,6 +139,7 @@ export class VideoService {
                     return response.ok && !hasError && isSuccessful;
                 }).toPromise().then(isSuccessful => {
                     if (isSuccessful) {
+                        this.gaSvc.gaEventTracker('Video','Like','Liked a video');
                         return this.preparePlaylistTable().then(db => {
                             return db.executeSql('INSERT INTO likes (bcid, memid) VALUES (?, ?)', [id, userId]);
                         });
@@ -172,8 +175,10 @@ export class VideoService {
             return response.json();
         }).toPromise().then(data => {
             switch (data[0].Data) {
-                case 'True':
+                case 'True':{
+                    this.gaSvc.gaEventTracker('Video','Comment','Commneted on a video');
                     return true;
+                }
                 case 'False':
                     return false;
                 default:
@@ -212,7 +217,7 @@ export class VideoService {
                 isDownloadable: videoDetail.videoDl.toLowerCase() !== 'locked',
                 canBeAccessedAnonymously: videoDetail.videoPrivacy.toLowerCase() === 'public',
 
-                imageUrl: `http://site.the-v.net${videoDetail.image}`,
+                imageUrl: `${videoDetail.image}`,
                 channelImageUrl: `http://site.the-v.net/Widgets_Site/J-Gallery/Image.ashx?id=${videoDetail.channelId}&type=channel`,
                 playerUrl: `http://players.brightcove.net/3745659807001/67a68b89-ec28-4cfd-9082-2c6540089e7e_default/index.html?videoId=${videoDetail.id}`
             }

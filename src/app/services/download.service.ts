@@ -13,6 +13,7 @@ import { Http } from "@angular/http";
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/map';
+import { GoogleAnalyticsService } from "./analytics.service";
 
 type BcidAndResult = {
     bcid: string,
@@ -42,7 +43,8 @@ export class DownloadService {
         private platform: Platform,
         private sqlite: SQLite,
         private file: File,
-        private http: Http
+        private http: Http,
+        private gaSvc: GoogleAnalyticsService
     ) { }
 
     updatePaths() {
@@ -220,6 +222,7 @@ export class DownloadService {
                         });
                         fileTransferObject.download(finalUrl, path, true).then(entry => {
                             observer.complete();
+                            this.gaSvc.gaEventTracker('Video','Download','Downloaded a video');
                         }).catch(e => {
                             observer.error(e);
                         });

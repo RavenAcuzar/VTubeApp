@@ -9,6 +9,7 @@ import { USER_DATA_KEY, IS_LOGGED_IN_KEY } from "../../app/app.constants";
 import { NowPlayingPage } from "../now-playing/now-playing";
 import { FallbackPage } from "../fallback/fallback";
 import { numberFormat } from "../../app/app.utils";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-channels',
@@ -34,8 +35,8 @@ export class ChannelsPage {
   channelType: string = "myChannel";
 
   constructor(public navCtrl: NavController, public navParams: NavParams, protected popoverCtrl: PopoverController,
-    private http: Http, private storage: Storage, private alertCtrl: AlertController) {
-
+    private http: Http, private storage: Storage, private alertCtrl: AlertController, private gaSvc:GoogleAnalyticsService) {
+      this.gaSvc.gaTrackPageEnter('Channels');
   }
 
   ionViewDidEnter() {

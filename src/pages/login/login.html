@@ -11,17 +11,17 @@
 
 
   <form class="loginCred" (ngSubmit)="login()" validate>
-    <p *ngIf="isCredentialsIncorrect">Log in failed! Incorrect email address or password.</p>
-    <p *ngIf="didLoginHadErrors">An error occurred while trying to log you in. Please try again</p>
+    <p *ngIf="isCredentialsIncorrect">{{'LOGIN_MSG1'|translate}}</p>
+    <p *ngIf="didLoginHadErrors">{{'LOGIN_MSG2'|translate}}</p>
     <ion-item>
-      <ion-label floating>Email</ion-label>
+      <ion-label floating>{{'EMAIL'|translate}}</ion-label>
       <ion-input type="text" required autofocus name="email" [(ngModel)]="loginForm.email"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label floating>Password</ion-label>
+      <ion-label floating>{{'PASSWORD'|translate}}</ion-label>
       <ion-input type="password" required name="password" [(ngModel)]="loginForm.password"></ion-input>
     </ion-item>
-    <button ion-button type="submit"><b>LOGIN</b></button>
-    <div class="forgot" (click)="forgotPass()">Forgot password?</div>
+    <button ion-button type="submit"><b>{{'LOGIN'|translate}}</b></button>
+    <div class="forgot" (click)="forgotPass()">{{'FORGOT_PASS'|translate}}</div>
   </form>
 </ion-content>

@@ -6,7 +6,9 @@ import { SearchPage } from "../search/search";
 import { FallbackPage } from "../fallback/fallback";
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
 import { Storage } from '@ionic/storage';
-import { IS_LOGGED_IN_KEY, USER_DATA_KEY } from "../../app/app.constants";
+import { IS_LOGGED_IN_KEY, USER_DATA_KEY, APP_LANG } from "../../app/app.constants";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
+import { APP_BASE_HREF } from '../../../node_modules/@angular/common';
 
 
 @Component({
@@ -22,35 +24,13 @@ export class HomePage {
 
   vidType: string = "freeVid";
   constructor(public navCtrl: NavController, protected popoverCtrl: PopoverController,
-    public http: Http, private storage: Storage, private alertCtrl: AlertController) {
+    public http: Http, private storage: Storage, private alertCtrl: AlertController,
+    private gaSvc: GoogleAnalyticsService) {
+    this.gaSvc.gaTrackPageEnter('Home');
     this.getFreeVids(this.numvids.toString());
     this.getPremVids(this.numvids.toString());
   }
-  ionViewDidLoad(){
-    this.http.get('http://cums.the-v.net/upgrade.aspx')
-    .subscribe(response => {
-      console.log(response);
-      if(response.json()){
-        let youralert = this.alertCtrl.create({
-          title: "Your VTube+ App is outdated!",
-          message: "Download the new version of Vtube+ App now!",
-          buttons: [
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              handler: () => {
-                console.log('Cancel clicked');
-              }
-            }
-          ]
-        });
-        youralert.present();
-      }
-    }, e => {
-      console.log(e);
-    }, () => {
-    });
-  }
+  
   presentPopover(myEvent, vids) {
     let popover = this.popoverCtrl.create(HomePopoverPage, {
       videoDetails: vids
@@ -74,59 +54,90 @@ export class HomePage {
   }
 
   getPremVids(num, callback?) {
-    let body = new URLSearchParams();
-    body.set('action', 'Video_GetByLevel');
-    body.set('count', '10');
-    body.set('level', 'Intermediate');
-    body.set('page', num);
+    this.storage.get(APP_LANG).then(lang => {
+      let body;
+      if (lang) {
+        body = new URLSearchParams();
+        body.set('action', 'App_GetAllVids');
+        body.set('lang', lang);
+        body.set('count', '45');
+        body.set('page', num);
+      } else {
+        body = new URLSearchParams();
+        body.set('action', 'App_GetAllVids');
+        body.set('lang', 'en');
+        body.set('count', '45');
+        body.set('page', num);
+      }
 
-    let options = new RequestOptions({
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    });
-
-    this.http.post('http://cums.the-v.net/site.aspx', body, options)
-      .subscribe(response => {
-        this.premiumVids =this.premiumVids.concat(response.json());
-        this.premiumVids.forEach(fv => {
-          this.channelAvatar(fv);
+      let options = new RequestOptions({
+        headers: new Headers({
+          'Content-Type': 'application/x-www-form-urlencoded'
         })
-        if (callback)
-          callback();
-      }, e => {
-        console.log(e);
-      }, () => {
       });
+
+      this.http.post('http://cums.the-v.net/site.aspx', body, options)
+        .subscribe(response => {
+          this.premiumVids = this.premiumVids.concat(response.json().filter((v) => {
+            return v.videoPrivacy === 'private';
+          }));
+          this.premiumVids.forEach(fv => {
+            this.channelAvatar(fv);
+          })
+          if (callback)
+            callback();
+        }, e => {
+          console.log(e);
+        }, () => {
+        });
+    })
   }
 
   getFreeVids(num, callback?) {
-    let body = new URLSearchParams();
-    body.set('action', 'Video_GetByLevel');
-    body.set('count', '10');
-    body.set('level', 'Beginner');
-    body.set('page', num);
+    this.storage.get(APP_LANG).then(lang => {
+      let body;
+      if (lang) {
+        let count;
+        if (lang !== 'en') {
+          count = '20';
+        }
+        else {
+          count = '10';
+        }
+        body = new URLSearchParams();
+        body.set('action', 'App_GetAllVids');
+        body.set('lang', lang);
+        body.set('count', count);
+        body.set('page', num);
+      } else {
+        body = new URLSearchParams();
+        body.set('action', 'App_GetAllVids');
+        body.set('lang', 'en');
+        body.set('count', '10');
+        body.set('page', num);
+      }
 
-    let options = new RequestOptions({
-      headers: new Headers({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    });
-
-    this.http.post('http://cums.the-v.net/site.aspx', body, options)
-      .subscribe(response => {
-        this.freeVids = this.freeVids.concat(response.json().filter((v) => {
-          return v.videoPrivacy === 'public';
-        }));
-        this.freeVids.forEach(fv => {
-          this.channelAvatar(fv);
+      let options = new RequestOptions({
+        headers: new Headers({
+          'Content-Type': 'application/x-www-form-urlencoded'
         })
-        if (callback)
-          callback();
-      }, e => {
-        console.log(e);
-      }, () => {
       });
+
+      this.http.post('http://cums.the-v.net/site.aspx', body, options)
+        .subscribe(response => {
+          this.freeVids = this.freeVids.concat(response.json().filter((v) => {
+            return v.videoPrivacy === 'public';
+          }));
+          this.freeVids.forEach(fv => {
+            this.channelAvatar(fv);
+          })
+          if (callback)
+            callback();
+        }, e => {
+          console.log(e);
+        }, () => {
+        });
+    });
   }
   channelAvatar(fv) {
     fv.channelImage = null;

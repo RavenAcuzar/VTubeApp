@@ -5,6 +5,7 @@ import { Storage } from '@ionic/storage';
 import { USER_DATA_KEY } from "../../app/app.constants";
 import { DownloadEntry } from "../../app/models/download.models";
 import { PlayDownloadedVideoPage } from "../play-downloaded-video/play-downloaded-video";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-downloads',
@@ -19,8 +20,11 @@ export class DownloadsPage {
     private alertCtrl: AlertController,
     private downloadService: DownloadService,
     private navCtrl: NavController,
-    private ref: ChangeDetectorRef
-  ) { }
+    private ref: ChangeDetectorRef,
+    private gaSvc:GoogleAnalyticsService
+  ) { 
+    this.gaSvc.gaTrackPageEnter('Downloads');
+  }
 
   ionViewDidEnter() {
     this.storage.get(USER_DATA_KEY).then(userData => {

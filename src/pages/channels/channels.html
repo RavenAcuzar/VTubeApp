@@ -9,7 +9,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Channels</ion-title>
+    <ion-title>{{'CHANNELS'|translate}}</ion-title>
     <ion-buttons end>
       <button ion-button icon-only (click)="searchThing()"> 
       <ion-icon name="search"></ion-icon>
@@ -19,10 +19,10 @@
   <ion-toolbar no-border-top>
     <ion-segment [(ngModel)]="channelType" mode="md">
       <ion-segment-button value="myChannel">
-        My Channel
+        {{'MY_CHANNEL'|translate}}
       </ion-segment-button>
       <ion-segment-button value="allChannels">
-        All Channels
+        {{'ALL_CHANNEL'|translate}}
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -36,7 +36,7 @@
       <div padding class="channelPlaceholder" [hidden]='!isLoggedOut'>
         <!-- put global boolean login variable here -->
         <img src="assets/img/VOLT-front.png" />
-        <h3>"You have to log in to view your channel."</h3>
+        <h3>{{'CHANNEL_NO_LOGIN'|translate}}</h3>
       </div>
       
       <div [hidden]='isLoggedOut' *ngIf="userHasChannel">
@@ -55,29 +55,29 @@
           </div>
           <ion-item class="channelLabel">
             <h2>{{userChannel.name}}</h2>
-            <p>{{userChannel.chFollowers}} Followers</p>
+            <p>{{userChannel.chFollowers}} {{'FOLLOWERS'|translate}}</p>
             <div item-end icon-only (click)='seeDesc()' class="showDescBtn">
               <ion-icon name={{descLabel}}></ion-icon>
             </div>
             <div [hidden]="!isDescriptionShown" style="margin-top:15px;">
-              <h6>Description</h6>
+              <h6>{{'DESCRIPTION'|translate}}</h6>
               <p>{{userChannel.description}}</p>
             </div>
           </ion-item>
         </ion-card>
         <div padding>
-          <h4>UPLOADS</h4>
-          <h1 style="opacity:0.5; text-align:center; margin-top:100px;" [hidden]="hasVids">No Videos uploaded.</h1>
+          <h4>{{'UPLOADS'|translate}}</h4>
+          <h1 style="opacity:0.5; text-align:center; margin-top:100px;" [hidden]="hasVids">{{'CHANNEL_NO_VID'|translate}}</h1>
           <ion-card *ngFor="let vids of channelVids" [hidden]="!hasVids">
             <div class="parent" (click)="playVideo(vids.id, vids.videoPrivacy)">
-              <img src="http://site.the-v.net{{vids.image}}" />
+              <img src="{{vids.image}}" />
               <div class="duration">
                 <ion-badge color="duration">{{vids.time}}</ion-badge>
               </div>
               <div class="vidpoints">
                 <ion-chip color="secondary">
                   <ion-icon name="star"></ion-icon>
-                  <ion-label>{{vids.points}} Points</ion-label>
+                  <ion-label>{{vids.points}} {{'POINTS'|translate}}</ion-label>
                 </ion-chip>
               </div>
               <div class="vidplay">
@@ -91,7 +91,7 @@
               </ion-avatar>
               <h2>
                 <ion-icon name="lock" color="secondary" [hidden]="vids.noLock"></ion-icon> {{vids.title}}</h2>
-              <p>{{vids.channelName}} <br> {{vids.views}} Views</p>
+              <p>{{vids.channelName}} <br> {{vids.views}} {{'VIEWS'|translate}}</p>
               <p>
                 <ion-icon name="globe"></ion-icon>: {{vids.language}}</p>
               <div item-end icon-only (click)="presentPopover($event, vids)">
@@ -108,19 +108,19 @@
       <div padding class="channelPlaceholder" [hidden]='isLoggedOut' *ngIf="!userHasChannel">
         <!-- put global boolean login variable here -->
         <img src="assets/img/VOLT-front.png" />
-        <h3>"You dont have your own channel yet."</h3>
+        <h3>{{'CHANNEL_NO_CHANNEL'|translate}}</h3>
       </div>
     </div>
 
     <!--ALL CHANNELS SECTION  -->
     <div padding *ngSwitchCase="'allChannels'" class="all-channels">
       <div class="divider">
-        <h6>Following</h6>
+        <h6>{{'FOLLOWING'|translate}}</h6>
         <ion-scroll scrollX="true" direction="x">
           <div class="channelBlock" (click)="goToChannelView(channel.channelId)" *ngFor="let channel of followingChannels" [hidden]="isLoggedOut">
             <img [src]="channel.finalAvatarUrl" />
             <div>
-              <b>{{channel.channelName}}</b><br> {{channel.followers}} Followers
+              <b>{{channel.channelName}}</b><br> {{channel.followers}} {{'FOLLOWERS'|translate}}
             </div>
           </div>
           <div style="text-align: center; color: rgba(213, 39, 48, 0.67); margin-top: 33px; white-space:normal;" [hidden]="!isLoggedOut">
@@ -129,30 +129,30 @@
         </ion-scroll>
       </div>
       <div class="divider">
-        <h6>Recommended</h6>
+        <h6>{{'RECOMM'|translate}}</h6>
         <ion-scroll scrollX="true" direction="x">
           <div class="channelBlock" (click)="goToChannelView(channel.id)" *ngFor="let channel of recommendedChannels">
             <img [src]="channel.finalAvatarUrl" />
             <div>
-              <b>{{channel.title}}</b><br> {{channel.chFollowers}} Followers
+              <b>{{channel.title}}</b><br> {{channel.chFollowers}} {{'FOLLOWERS'|translate}}
             </div>
           </div>
           <div class="channelBlockMore" (click)="loadMoreRecommended()">
-            <h3>MORE</h3>
+            <h3>{{'MORE'|translate}}</h3>
           </div>
         </ion-scroll>
       </div>
       <div class="divider">
-        <h6>All Channels</h6>
+        <h6>{{'ALL_CHA'|translate}}</h6>
         <ion-scroll scrollX="true" direction="x">
           <div class="channelBlock" (click)="goToChannelView(channel.id)" *ngFor="let channel of allChannels">
             <img [src]="channel.finalAvatarUrl" />
             <div>
-              <b>{{channel.title}}</b><br> {{channel.chFollowers}} Followers
+              <b>{{channel.title}}</b><br> {{channel.chFollowers}} {{'FOLLOWERS'|translate}}
             </div>
           </div>
           <div class="channelBlockMore" (click)="loadMoreChannel()">
-            <h3>MORE</h3>
+            <h3>{{'MORE'|translate}}</h3>
           </div>
         </ion-scroll>
       </div>

@@ -8,7 +8,7 @@
 
   <div no-padding class="playlist-Banner">
     <div class="playlist-title">
-      <h1><b>My Playlist</b></h1>
+      <h1><b>{{'PLAYLIST'|translate}}</b></h1>
     </div>
     <div class="playbutton" (click)="playAll()">
       <ion-icon name="md-play"></ion-icon>
@@ -24,9 +24,9 @@
         <h2>{{pv.title}}</h2>
         <p>
           <span class="channel">{{pv.channelName}}</span><br/>
-          <span class="views">{{pv.mapped.numOfViews}} views</span>
+          <span class="views">{{pv.mapped.numOfViews}} {{'VIEWS'|translate}}</span>
           <span>&nbsp;&bull;&nbsp;</span>
-          <span class="points">{{pv.mapped.numOfPoints}} points</span>
+          <span class="points">{{pv.mapped.numOfPoints}} {{'VIEWS'|translate}}</span>
         </p>
       </div>
       <button ion-button padding-bottom="false" (click)="showPopover($event, pv)">

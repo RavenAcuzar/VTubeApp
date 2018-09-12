@@ -10,7 +10,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Profile</ion-title>
+    <ion-title>{{'PROFILE'|translate}}</ion-title>
   </ion-navbar>
   <div no-padding class="profBanner" >
     <img class="avatar" [src]="userDetails.finalAvatarUrl" />
@@ -24,52 +24,52 @@
     <p> IR ID: {{userDetails.irid}}</p>
   </div>
   <ion-list>
-    <ion-list-header><ion-icon item-start name="md-person"></ion-icon> Details</ion-list-header>
+    <ion-list-header><ion-icon item-start name="md-person"></ion-icon> {{'DETAILS'|translate}}</ion-list-header>
     <ion-item>
-      <ion-label><ion-icon item-start name="md-contact"></ion-icon>Name</ion-label>
+      <ion-label><ion-icon item-start name="md-contact"></ion-icon>{{'NAME'|translate}}</ion-label>
       <div item-content>
         {{userDetails.fullname}}
       </div>
     </ion-item>
     <ion-item>
-      <ion-label><ion-icon item-start name="md-mail"></ion-icon>Email</ion-label>
+      <ion-label><ion-icon item-start name="md-mail"></ion-icon>{{'EMAIL'|translate}}</ion-label>
       <div item-content>
         {{userDetails.email}}
       </div>
     </ion-item>
     <ion-item>
-      <ion-label><ion-icon item-start name="md-ice-cream"></ion-icon>Birthday</ion-label>
+      <ion-label><ion-icon item-start name="md-ice-cream"></ion-icon>{{'BDAY'|translate}}</ion-label>
       <div item-content>
         {{userDetails.userBday}}
       </div>
     </ion-item>
      <ion-item>
-      <ion-label><ion-icon item-start name="md-star"></ion-icon>Points</ion-label>
+      <ion-label><ion-icon item-start name="md-star"></ion-icon>{{'POINTS'|translate}}</ion-label>
       <div item-content>
         {{userDetails.points}}
       </div>
     </ion-item>
      <ion-item>
-      <ion-label><ion-icon item-start name="ios-star-outline"></ion-icon>Redeemable Points</ion-label>
+      <ion-label><ion-icon item-start name="ios-star-outline"></ion-icon>{{'REDEEMABLE_POINTS'|translate}}</ion-label>
       <div item-content>
         {{userDetails.redeemablePoints}}
       </div>
     </ion-item>
-    <ion-list-header><ion-icon item-start name="md-videocam"></ion-icon>Subscription Details</ion-list-header>
+    <ion-list-header><ion-icon item-start name="md-videocam"></ion-icon>{{'SUB_DETAILS'|translate}}</ion-list-header>
     <ion-item>
-      <ion-label>Membership Type</ion-label>
+      <ion-label>{{'MEM_TYPE'|translate}}</ion-label>
       <div item-content>
         {{userDetails.membership}}
       </div>
     </ion-item>
     <ion-item>
-      <ion-label>Days Left</ion-label>
+      <ion-label>{{'DAYS_LEFT'|translate}}</ion-label>
       <div item-content>
         {{days_left}}
       </div>
     </ion-item>
     <ion-item>
-      <ion-label>Expiration</ion-label>
+      <ion-label>{{'EXPIRATION'|translate}}</ion-label>
       <div item-content>
         {{userDetails.membershipExpiry}}
       </div>

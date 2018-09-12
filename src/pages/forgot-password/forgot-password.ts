@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Http, RequestOptions, Headers, URLSearchParams } from "@angular/http";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 /**
  * Generated class for the ForgotPasswordPage page.
@@ -19,7 +20,9 @@ export class ForgotPasswordPage {
   private hideMessage = true;
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    private http: Http) {
+    private http: Http,
+    private gaSvc:GoogleAnalyticsService) {
+      this.gaSvc.gaTrackPageEnter('Forgot Password');
   }
   sendResetEmail() {
     let body = new URLSearchParams();

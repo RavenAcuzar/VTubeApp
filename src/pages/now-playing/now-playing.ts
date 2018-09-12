@@ -14,13 +14,14 @@ import { ChannelService } from "../../app/services/channel.service";
 import { ChannelDetails } from "../../app/models/channel.models";
 import { PlaylistService } from "../../app/services/playlist.service";
 import { LoginPage } from "../login/login";
+import { GoogleAnalyticsService } from '../../app/services/analytics.service';
 
 @Component({
   selector: 'page-now-playing',
   templateUrl: 'now-playing.html'
 })
 export class NowPlayingPage {
-  @ViewChild('videoPlayer') videoplayer;
+  @ViewChild('videoPlayer') videoplayer: ElementRef;
   @ViewChild('content') content;
 
   private videoId: string;
@@ -71,16 +72,42 @@ export class NowPlayingPage {
     private sanitizer: DomSanitizer,
     private ref: ChangeDetectorRef,
     private popoverCtrl: PopoverController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private gaSvc:GoogleAnalyticsService
   ) {
     this.shouldPlayPlaylist = navParams.get('playAll');
     this.videoId = navParams.get('id');
+    
+      
+      // videoPlayerNE.load(()=>{
+      //   videoPlayerNE.contents().find("head")
+      //   .append(`<style type='text/css'>
+      //     body{
+      //         width: 100vw !important; }
+      //         div{
+      //           width: 100vw !important; }
+      //           video{
+      //             width: 100vw !important; }  </style>`);
+      // })
   }
-
-  ionViewDidLoad(){
+  loaded() {
+    this.videoplayer.nativeElement.contentDocument.body.style.width="100vw";
+    console.log(this.videoplayer.nativeElement.contentDocument.body);
+    //y.contentDocument.body.div.setAttribute("style","width:100vw;");
+   // y.contentDocument.body.div.video.setAttribute("style","width:100vw;");
+  }
+  // ngAfterViewInit(){
+  //   this.loaded();
+  // }
+  ionViewDidLoad(){ 
     this.orientationSubscription = this.screenOrientation.onChange().subscribe(() => {
-      let videoPlayerNE = this.videoplayer.nativeElement;
       this.isVideoFullscreen = !this.isOrientationPortrait(this.screenOrientation.type);
+      this.videoplayer.nativeElement.contentDocument.location.reload();
+      //this.loaded();
+      //this.videoplayer.nativeElement.contentDocument.body.style.width="100vw";
+      //this.videoplayer.nativeElement.contentDocument.body.div.style.width="100vw";
+      //this.videoplayer.nativeElement.contentDocument.body.div.video.style.width="100vw";
+      //console.log(this.videoplayer.nativeElement.contentDocument.body);
     });
     if (!this.shouldPlayPlaylist) {
       this.goToVideo(this.videoId);
@@ -342,6 +369,7 @@ export class NowPlayingPage {
     // get video information
     let detailsPromise = this.videoService.getDetails(this.videoId).then(details => {
       this.videoDetails = details;
+      this.gaSvc.gaTrackPageEnter('Watched: '+ details.title);
       this.safeVideoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.videoDetails.mapped.playerUrl);
 
       this.channelService.getDetailsOf(this.videoDetails.channelId).then(channelDetails => {
